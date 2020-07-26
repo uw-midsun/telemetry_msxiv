@@ -14,6 +14,7 @@ from datetime import datetime
 import json
 import os
 import paho.mqtt.client as mqtt
+import pymongo
 
 can_bus = can.interface.Bus('vcan0', bustype='socketcan')
 db = cantools.database.load_file('system_can.dbc')
@@ -21,6 +22,11 @@ db = cantools.database.load_file('system_can.dbc')
 broker = "broker.hivemq.com"
 port = 1883
 client = mqtt.Client()
+
+mongo_client = pymongo.MongoClient("mongodb+srv://avery:IFreUUAVWju2CG9Z@telemetry-xiv.9jx37.azure.mongodb.net/can_messages?retryWrites=true&w=majority")
+mongo_db = mongo_client["can_messages"]
+decoded_col = mongo_db["can_messages_decoded"]
+raw_col = mongo_db["can_messages_raw"]
 
 #Write new line and header
 with open('can_messages.csv', 'a', newline='') as csvfile:
@@ -48,10 +54,13 @@ def decode_and_send():
     name = db.get_message_by_frame_id(message.arbitration_id).name
     sender = db.get_message_by_frame_id(message.arbitration_id).senders[0]
     can_decoded_data = {'datetime':time,'name':name,'sender':sender,'data':decoded}
+    can_raw_data = {'timestamp':message.timestamp,'arbitration_id':message.arbitration_id,'data':str(message.data)}
 
     # Send data out to a CSV and FRED
     write_to_csv(can_decoded_data)
     client.publish("uwmidsun/can/test", payload=json.dumps(can_decoded_data))
+    decoded_col.insert_one(can_decoded_data)
+    raw_col.insert_one(can_raw_data)
 
 def write_to_csv(can_decoded_data):
     with open('can_messages.csv', 'a', newline='') as csvfile:
