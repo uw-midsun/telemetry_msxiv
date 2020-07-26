@@ -3,7 +3,7 @@ This is the telemetry system for msxiv. This project logs data from our vehicle 
 
 To install requirements run:
 ```bash
-pip3 install -r requirements.txt to install everything.
+pip install -r requirements.txt to install everything.
 ```
 
 To set up virtual CAN run:
@@ -15,9 +15,9 @@ sudo modprobe vcan \
 
 To send random CAN messages run:
 ```bash
-python3 mock_can_data.py
+python mock_can_data.py
 ```
 To read CAN messages, store them in a CSV, and send them to FRED, run:
 ```bash
-python3 aggregate_can_data.py
+python aggregate_can_data.py
 ```
