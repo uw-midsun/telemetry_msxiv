@@ -3,7 +3,7 @@ This is the telemetry system for msxiv. This project logs data from our vehicle 
 
 To install requirements run:
 ```bash
-pip install -r requirements.txt to install everything.
+pip install -r requirements.txt
 ```
 
 To set up virtual CAN run:
