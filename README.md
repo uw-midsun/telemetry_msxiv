@@ -13,7 +13,7 @@ sudo modprobe vcan \
 && sudo ip link set up vcan0
 ```
 
-To send random CAN messages run:
+To send random CAN messages, generate a DBC file in codegen-tooling-msxiv and move it to telemetry_xiv then run:
 ```bash
 python mock_can_data.py
 ```
