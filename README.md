@@ -17,7 +17,13 @@ To send random CAN messages, generate a DBC file in codegen-tooling-msxiv and mo
 ```bash
 python mock_can_data.py
 ```
-To read CAN messages, store them in a CSV, and send them to FRED, run:
+To read CAN messages, store them in a CSV, send them to FRED, and send them to MongoDB Atlas perform the following:
+1. Set up MongoDB connection key to connect to the database. Create a .env file and enter something similar to what is shown below.
+If you don't have MongoDB Atlas set up, go to https://www.mongodb.com/
+```bash
+MONGODBKEY=mongodb://localhost:27017/
+```
+2. Run the script below
 ```bash
 python aggregate_can_data.py
 ```
