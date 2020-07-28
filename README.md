@@ -23,7 +23,7 @@ If you don't have MongoDB Atlas set up, go to https://www.mongodb.com/
 ```bash
 MONGODBKEY=mongodb://localhost:27017/
 ```
-2. Run the script below
+2. Run
 ```bash
 python aggregate_can_data.py
 ```
