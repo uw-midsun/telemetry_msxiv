@@ -14,12 +14,21 @@ from datetime import datetime
 import json
 import os
 import paho.mqtt.client as mqtt
+import pymongo
 
 can_bus = can.interface.Bus('vcan0', bustype='socketcan')
 db = cantools.database.load_file('system_can.dbc')
+
 broker = "broker.hivemq.com"
 port = 1883
 client = mqtt.Client()
+
+# Add key from MongoDB Atlas here
+mongodb_key = ""
+mongo_client = pymongo.MongoClient(mongodb_key)
+mongo_db = mongo_client["can_messages"]
+decoded_col = mongo_db["can_messages_decoded"]
+raw_col = mongo_db["can_messages_raw"]
 
 #Write new line and header
 with open('can_messages.csv', 'a', newline='') as csvfile:
@@ -43,23 +52,23 @@ def decode_and_send():
     message = can_bus.recv()
     decoded = db.decode_message(message.arbitration_id, message.data)
 
-    # Store data locally
     time = str(datetime.fromtimestamp(message.timestamp))
     name = db.get_message_by_frame_id(message.arbitration_id).name
     sender = db.get_message_by_frame_id(message.arbitration_id).senders[0]
-    write_to_csv(time,name,sender,decoded)
+    can_decoded_data = {'datetime':time,'name':name,'sender':sender,'data':decoded}
+    can_raw_data = {'timestamp':message.timestamp,'arbitration_id':message.arbitration_id,'data':str(message.data)}
 
-    # Send to FRED with MQTT
-    decoded['datetime'] = time
-    decoded['name'] = name
-    decoded['sender'] = sender
-    client.publish("uwmidsun/can/test", payload=json.dumps(decoded))
+    # Send data out to a CSV, FRED, and MongoDB
+    write_to_csv(can_decoded_data)
+    client.publish("uwmidsun/can/test", payload=json.dumps(can_decoded_data))
+    decoded_col.insert_one(can_decoded_data)
+    raw_col.insert_one(can_raw_data)
 
-def write_to_csv(time,name,sender,data):
+def write_to_csv(can_decoded_data):
     with open('can_messages.csv', 'a', newline='') as csvfile:
         fieldnames = ['datetime','name','sender','data']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writerow({'datetime':time,'name':name,'sender':sender,'data':data})
+        writer.writerow(can_decoded_data)
 
 def main():
     connect()
