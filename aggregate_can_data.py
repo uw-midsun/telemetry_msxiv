@@ -1,5 +1,6 @@
 # This script recieves CAN data,sends it to FRED with MQTT, and stores the data locally
 # This should be run by the RPI for the telemetry system
+# Make sure that MongoDB Atlas is set up and link the key in a .env file
 
 # If you are running this script with virtual CAN ensure that it is set up first
 # You can run the below commands
@@ -11,10 +12,13 @@ import cantools
 import can
 import csv
 from datetime import datetime
+from dotenv import load_dotenv
 import json
 import os
 import paho.mqtt.client as mqtt
 import pymongo
+
+load_dotenv()
 
 can_bus = can.interface.Bus('vcan0', bustype='socketcan')
 db = cantools.database.load_file('system_can.dbc')
@@ -23,8 +27,7 @@ broker = "broker.hivemq.com"
 port = 1883
 client = mqtt.Client()
 
-# Add key from MongoDB Atlas here
-mongodb_key = ""
+mongodb_key = os.getenv("MONGODBKEY")
 mongo_client = pymongo.MongoClient(mongodb_key)
 mongo_db = mongo_client["can_messages"]
 decoded_col = mongo_db["can_messages_decoded"]
@@ -77,4 +80,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
