@@ -23,9 +23,10 @@ load_dotenv()
 can_bus = can.interface.Bus('vcan0', bustype='socketcan')
 db = cantools.database.load_file('system_can.dbc')
 
-broker = "broker.hivemq.com"
+broker = "mqtt.sensetecnic.com"
 port = 1883
-client = mqtt.Client()
+client = mqtt.Client(client_id=os.getenv("MQTT_CLIENT_ID"))
+client.username_pw_set(username=os.getenv("MQTT_USERNAME"),password=os.getenv("MQTT_PASSWORD"))
 
 mongodb_key = os.getenv("MONGODBKEY")
 mongo_client = pymongo.MongoClient(mongodb_key)
@@ -63,7 +64,7 @@ def decode_and_send():
 
     # Send data out to a CSV, FRED, and MongoDB
     write_to_csv(can_decoded_data)
-    client.publish("uwmidsun/can/test", payload=json.dumps(can_decoded_data))
+    client.publish("accounts/midnight_sun/CAN", payload=json.dumps(can_decoded_data))
     decoded_col.insert_one(can_decoded_data)
     raw_col.insert_one(can_raw_data)
 
