@@ -18,11 +18,6 @@ client = mqtt.Client(client_id=os.getenv("MQTT_CLIENT_ID"))
 client.username_pw_set(username=os.getenv("MQTT_USERNAME"),
                        password=os.getenv("MQTT_PASSWORD"))
 
-mongodb_key = os.getenv("MONGODBKEY")
-mongo_client = pymongo.MongoClient(mongodb_key)
-mongo_db = mongo_client["gps"]
-gps_data_col = mongo_db["gps_data"]
-
 power_key = 6
 rec_buff = ''
 rec_buff2 = ''
@@ -88,7 +83,6 @@ def send_at(command, back, timeout):
                 write_to_csv(data_dict)
                 client.publish("accounts/midnight_sun/GPS",
                                payload=json.dumps(data_dict))
-                gps_data_col.insert_one(data_dict)
             return 1
     else:
         print('GPS is not ready')
