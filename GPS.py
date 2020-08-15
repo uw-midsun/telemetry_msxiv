@@ -26,7 +26,8 @@ def send_at(command,back,timeout):
 			print(command + ' back:\t' + rec_buff.decode())
 			return 0
 		else:
-			print(rec_buff.decode())
+			data = (rec_buff.decode())[24:-8].rsplit(",")
+			print(data)
 			return 1
 	else:
 		print('GPS is not ready')
@@ -69,7 +70,7 @@ def power_on(power_key):
 	print('SIM7600X is ready')
 
 def power_down(power_key):
-	print('SIM7600X is loging off:')
+	print('SIM7600X is logging off:')
 	GPIO.output(power_key,GPIO.HIGH)
 	time.sleep(3)
 	GPIO.output(power_key,GPIO.LOW)
