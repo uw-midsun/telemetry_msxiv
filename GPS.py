@@ -1,17 +1,48 @@
-#!/usr/bin/python
-# -*- coding:utf-8 -*-
+import csv
+from datetime import datetime
+from dotenv import load_dotenv
+import json
+import os
+import paho.mqtt.client as mqtt
+import pymongo
 import RPi.GPIO as GPIO
-
 import serial
 import time
 
 ser = serial.Serial('/dev/ttyS0',115200)
 ser.flushInput()
 
+broker = "mqtt.sensetecnic.com"
+port = 1883
+client = mqtt.Client(client_id=os.getenv("MQTT_CLIENT_ID"))
+client.username_pw_set(username=os.getenv("MQTT_USERNAME"),password=os.getenv("MQTT_PASSWORD"))
+
+mongodb_key = os.getenv("MONGODBKEY")
+mongo_client = pymongo.MongoClient(mongodb_key)
+mongo_db = mongo_client["gps"]
+gps_data_col = mongo_db["gps_data"]
+
 power_key = 6
 rec_buff = ''
 rec_buff2 = ''
 time_count = 0
+
+with open('gps_data.csv', 'a', newline='') as csvfile:
+    fieldnames = ['latitude','lat_direction','longitude','long_direction','utc_date','utc_time',
+		'altitude','speed','course']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writerow({
+					"latitude": '',
+					"lat_direction": '',
+					"longitude": '',
+					"long_direction": '',
+					"utc_date": '',
+					"utc_time": '',
+					"altitude": '',
+					"speed": '',
+					"course": '',
+				})
+    writer.writeheader()
 
 def send_at(command,back,timeout):
 	rec_buff = ''
@@ -39,11 +70,20 @@ def send_at(command,back,timeout):
 					"speed": data_list[7],
 					"course": data_list[8],
 				}
-				print(data_dict)
+				write_to_csv(data_dict)
+    			client.publish("accounts/midnight_sun/GPS", payload=json.dumps(data_dict))
+    			gps_data_col.insert_one(data_dict)
 			return 1
 	else:
 		print('GPS is not ready')
 		return 0
+
+def write_to_csv(data_dict):
+    with open('gps_data.csv', 'a', newline='') as csvfile:
+        fieldnames = ['latitude','lat_direction','longitude','long_direction','utc_date','utc_time',
+		'altitude','speed','course']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writerow(data_dict)
 
 def get_gps_position():
 	rec_null = True
