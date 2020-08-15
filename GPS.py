@@ -44,6 +44,17 @@ with open('gps_data.csv', 'a', newline='') as csvfile:
 				})
     writer.writeheader()
 
+def on_connect(client,userdata,flags,rc):
+    if rc==0:
+        print("Successfully connected")
+    else:
+        print("Bad connection returned code=",rc)
+
+def connect():
+    client.on_connect=on_connect
+    client.connect(broker,port,60)
+    client.loop_start()
+
 def send_at(command,back,timeout):
 	rec_buff = ''
 	ser.write((command+'\r\n').encode())
@@ -129,15 +140,20 @@ def power_down(power_key):
 	time.sleep(18)
 	print('Good bye')
 
-try:
-	power_on(power_key)
-	get_gps_position()
-	power_down(power_key)
-except:
-	if ser != None:
-		ser.close()
-	power_down(power_key)
-	GPIO.cleanup()
-if ser != None:
-		ser.close()
+def main():
+    connect()
+	try:
+		power_on(power_key)
+		get_gps_position()
+		power_down(power_key)
+	except:
+		if ser != None:
+			ser.close()
+		power_down(power_key)
 		GPIO.cleanup()
+	if ser != None:
+			ser.close()
+			GPIO.cleanup()
+    
+if __name__ == "__main__":
+    main()
