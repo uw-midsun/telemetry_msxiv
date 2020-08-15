@@ -82,8 +82,8 @@ def send_at(command,back,timeout):
 					"course": data_list[8],
 				}
 				write_to_csv(data_dict)
-    			client.publish("accounts/midnight_sun/GPS", payload=json.dumps(data_dict))
-    			gps_data_col.insert_one(data_dict)
+				client.publish("accounts/midnight_sun/GPS", payload=json.dumps(data_dict))
+				gps_data_col.insert_one(data_dict)
 			return 1
 	else:
 		print('GPS is not ready')
