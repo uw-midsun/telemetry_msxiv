@@ -26,8 +26,20 @@ def send_at(command,back,timeout):
 			print(command + ' back:\t' + rec_buff.decode())
 			return 0
 		else:
-			data = (rec_buff.decode())[24:-8].rsplit(",")
-			print(data)
+			data_list = (rec_buff.decode())[25:-8].rsplit(",")
+			if(len(data_list)==9 and data_list[0]!=''):
+				data_dict = {
+					"latitude": data_list[0],
+					"lat_direction": data_list[1],
+					"longitude": data_list[2],
+					"long_direction": data_list[3],
+					"utc_date": data_list[4],
+					"utc_time": data_list[5],
+					"altitude": data_list[6],
+					"speed": data_list[7],
+					"course": data_list[8],
+				}
+				print(data_dict)
 			return 1
 	else:
 		print('GPS is not ready')
