@@ -9,6 +9,8 @@ import RPi.GPIO as GPIO
 import serial
 import time
 
+load_dotenv()
+
 ser = serial.Serial('/dev/ttyS0', 115200)
 ser.flushInput()
 
