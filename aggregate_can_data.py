@@ -1,8 +1,10 @@
-# This script recieves CAN data,sends it to FRED with MQTT, and stores the data locally
+# This script recieves CAN data,sends it to FRED with MQTT,
+# and stores the data locally
 # This should be run by the RPI for the telemetry system
 # Make sure that MongoDB Atlas is set up and link the key in a .env file
 
-# If you are running this script with virtual CAN ensure that it is set up first
+# If you are running this script with virtual CAN
+# ensure that it is set up first
 # You can run the below commands
 # sudo modprobe vcan
 # sudo ip link add dev vcan0 type vcan

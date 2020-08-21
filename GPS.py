@@ -1,10 +1,8 @@
 import csv
-from datetime import datetime
 from dotenv import load_dotenv
 import json
 import os
 import paho.mqtt.client as mqtt
-import pymongo
 import RPi.GPIO as GPIO
 import serial
 import time
