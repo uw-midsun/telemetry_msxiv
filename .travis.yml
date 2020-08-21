@@ -1,5 +1,3 @@
-# Building pushes to all branches for time being
-
 language: python 
 python:
   - "3.8.5"
