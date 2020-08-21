@@ -26,7 +26,8 @@ db = cantools.database.load_file('system_can.dbc')
 broker = "mqtt.sensetecnic.com"
 port = 1883
 client = mqtt.Client(client_id=os.getenv("MQTT_CLIENT_ID"))
-client.username_pw_set(username=os.getenv("MQTT_USERNAME"),password=os.getenv("MQTT_PASSWORD"))
+client.username_pw_set(username=os.getenv("MQTT_USERNAME"),
+                       password=os.getenv("MQTT_PASSWORD"))
 
 mongodb_key = os.getenv("MONGODBKEY")
 mongo_client = pymongo.MongoClient(mongodb_key)
@@ -34,23 +35,26 @@ mongo_db = mongo_client["can_messages"]
 decoded_col = mongo_db["can_messages_decoded"]
 raw_col = mongo_db["can_messages_raw"]
 
-#Write new line and header
+# Write new line and header
 with open('can_messages.csv', 'a', newline='') as csvfile:
-    fieldnames = ['datetime','name','sender','data']
+    fieldnames = ['datetime', 'name', 'sender', 'data']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    writer.writerow({'datetime':'','name':'','sender':'','data':''})
+    writer.writerow({'datetime': '', 'name': '', 'sender': '', 'data': ''})
     writer.writeheader()
 
-def on_connect(client,userdata,flags,rc):
-    if rc==0:
+
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
         print("Successfully connected")
     else:
-        print("Bad connection returned code=",rc)
+        print("Bad connection returned code=", rc)
+
 
 def connect():
-    client.on_connect=on_connect
-    client.connect(broker,port,60)
+    client.on_connect = on_connect
+    client.connect(broker, port, 60)
     client.loop_start()
+
 
 def decode_and_send():
     message = can_bus.recv()
@@ -59,25 +63,34 @@ def decode_and_send():
     time = str(datetime.fromtimestamp(message.timestamp))
     name = db.get_message_by_frame_id(message.arbitration_id).name
     sender = db.get_message_by_frame_id(message.arbitration_id).senders[0]
-    can_decoded_data = {'datetime':time,'name':name,'sender':sender,'data':decoded}
-    can_raw_data = {'timestamp':message.timestamp,'arbitration_id':message.arbitration_id,'data':str(message.data)}
+    can_decoded_data = {'datetime': time, 'name': name,
+                        'sender': sender, 'data': decoded}
+    can_raw_data = {
+        'timestamp': message.timestamp,
+        'arbitration_id': message.arbitration_id,
+        'data': str(
+            message.data)}
 
     # Send data out to a CSV, FRED, and MongoDB
     write_to_csv(can_decoded_data)
-    client.publish("accounts/midnight_sun/CAN", payload=json.dumps(can_decoded_data))
+    client.publish("accounts/midnight_sun/CAN",
+                   payload=json.dumps(can_decoded_data))
     decoded_col.insert_one(can_decoded_data)
     raw_col.insert_one(can_raw_data)
 
+
 def write_to_csv(can_decoded_data):
     with open('can_messages.csv', 'a', newline='') as csvfile:
-        fieldnames = ['datetime','name','sender','data']
+        fieldnames = ['datetime', 'name', 'sender', 'data']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writerow(can_decoded_data)
+
 
 def main():
     connect()
     while(True):
         decode_and_send()
+
 
 if __name__ == "__main__":
     main()

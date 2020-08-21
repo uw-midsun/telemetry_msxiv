@@ -26,8 +26,16 @@ rec_buff2 = ''
 time_count = 0
 
 with open('gps_data.csv', 'a', newline='') as csvfile:
-    fieldnames = ['latitude', 'lat_direction', 'longitude', 'long_direction', 'utc_date', 'utc_time',
-                  'altitude', 'speed', 'course']
+    fieldnames = [
+        'latitude',
+        'lat_direction',
+        'longitude',
+        'long_direction',
+        'utc_date',
+        'utc_time',
+        'altitude',
+        'speed',
+        'course']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writerow({
         "latitude": '',
@@ -58,7 +66,7 @@ def connect():
 
 def send_at(command, back, timeout):
     rec_buff = ''
-    ser.write((command+'\r\n').encode())
+    ser.write((command + '\r\n').encode())
     time.sleep(timeout)
     if ser.inWaiting():
         time.sleep(0.01)
@@ -93,8 +101,16 @@ def send_at(command, back, timeout):
 
 def write_to_csv(data_dict):
     with open('gps_data.csv', 'a', newline='') as csvfile:
-        fieldnames = ['latitude', 'lat_direction', 'longitude', 'long_direction', 'utc_date', 'utc_time',
-                      'altitude', 'speed', 'course']
+        fieldnames = [
+            'latitude',
+            'lat_direction',
+            'longitude',
+            'long_direction',
+            'utc_date',
+            'utc_time',
+            'altitude',
+            'speed',
+            'course']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writerow(data_dict)
 
@@ -151,12 +167,12 @@ def main():
         power_on(power_key)
         get_gps_position()
         power_down(power_key)
-    except:
-        if ser != None:
+    except BaseException:
+        if ser is not None:
             ser.close()
             power_down(power_key)
             GPIO.cleanup()
-        if ser != None:
+        if ser is not None:
             ser.close()
             GPIO.cleanup()
 
