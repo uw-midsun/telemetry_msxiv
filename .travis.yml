@@ -5,7 +5,6 @@ python:
   - "3.8.5"
 cache: pip3
 install: 
-  -sudo pip3 install -r requirements.txt
+  - sudo pip3 install -r requirements.txt
 script: 
   - make lint
-  
