@@ -18,3 +18,4 @@ format:
 test:
 	@echo "Running pytest on all files"
 	@pytest
+	
