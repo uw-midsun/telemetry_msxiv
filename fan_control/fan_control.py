@@ -18,20 +18,17 @@ PI_MAX_TEMP_C = 80
 fan = gpiozero.PWMOutputDevice(FAN_PIN, active_high=True, frequency=100)
 fan.value = 0
 
-# Returns PWM duty cycle
-
 
 def pwm_curve(temp):
+    ''' Returns PWM duty cycle '''
     if(temp < FAN_ON_TEMP_C):
         return 0
     else:
         return (1 - (PI_MAX_TEMP_C - temp) / (PI_MAX_TEMP_C - FAN_ON_TEMP_C))
 
-# Check fan temp + change pwm if needed
-
 
 def fan_control():
-    # Get CPU temp
+    ''' Get CPU temp + change fan PWM as needed '''
     temp = subprocess.run(["vcgencmd", "measure_temp"], stdout=subprocess.PIPE)
 
     # Massage to get int value
@@ -43,10 +40,9 @@ def fan_control():
     fan.value = dc
     print("Changing fan duty cycle to " + str(dc))
 
-# Start, periodically call fan control
-
 
 def run():
+    ''' Start, periodically call fan control '''
     fan_control()
     time.sleep(CHECK_DELAY_S)
     run()
