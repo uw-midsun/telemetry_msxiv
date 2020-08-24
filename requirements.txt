@@ -4,4 +4,7 @@ paho-mqtt==1.5.0
 python-can==3.3.3
 python-dotenv==0.14.0
 pymongo==3.10.1
-dnspython==2.0.0
+dnspython>=1.16.0
+flake8==3.5.0
+pytest>=4.6.11
+autopep8==1.5.4
