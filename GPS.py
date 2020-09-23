@@ -1,3 +1,4 @@
+import boto3
 import csv
 from dotenv import load_dotenv
 import json
@@ -17,6 +18,9 @@ port = 1883
 client = mqtt.Client(client_id=os.getenv("MQTT_CLIENT_ID"))
 client.username_pw_set(username=os.getenv("MQTT_USERNAME"),
                        password=os.getenv("MQTT_PASSWORD"))
+
+dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
+dynamo_db_table = dynamodb.Table('GPS_Data')
 
 power_key = 6
 rec_buff = ''
@@ -91,6 +95,7 @@ def send_at(command, back, timeout):
                 write_to_csv(data_dict)
                 client.publish("accounts/midnight_sun/GPS",
                                payload=json.dumps(data_dict))
+                dynamo_db_table.put_item(data_dict)
             return 1
     else:
         print('GPS is not ready')
