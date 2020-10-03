@@ -31,8 +31,8 @@ client = mqtt.Client(client_id=os.getenv("MQTT_CLIENT_ID"))
 client.username_pw_set(username=os.getenv("MQTT_USERNAME"),
                        password=os.getenv("MQTT_PASSWORD"))
 
-dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
-dynamo_db_table = dynamodb.Table('CAN_Messages')
+dynamodb = boto3.resource('dynamodb')
+dynamo_db_table = dynamodb.Table('can_messages')
 
 # Write new line and header
 with open('can_messages.csv', 'a', newline='') as csvfile:
@@ -64,13 +64,6 @@ def decode_and_send():
     sender = db.get_message_by_frame_id(message.arbitration_id).senders[0]
     can_decoded_data = {'datetime': time, 'name': name,
                         'sender': sender, 'data': decoded}
-
-    # Currently not used, but can be stored if necessary
-    can_raw_data = {
-        'timestamp': message.timestamp,
-        'arbitration_id': message.arbitration_id,
-        'data': str(
-            message.data)}
 
     # Send data out to a CSV, FRED, and DynamoDB
     write_to_csv(can_decoded_data)
