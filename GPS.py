@@ -19,8 +19,8 @@ client = mqtt.Client(client_id=os.getenv("MQTT_CLIENT_ID"))
 client.username_pw_set(username=os.getenv("MQTT_USERNAME"),
                        password=os.getenv("MQTT_PASSWORD"))
 
-dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
-dynamo_db_table = dynamodb.Table('GPS_Data')
+dynamodb = boto3.resource('dynamodb')
+dynamo_db_table = dynamodb.Table('gps_data')
 
 power_key = 6
 rec_buff = ''
@@ -29,23 +29,21 @@ time_count = 0
 
 with open('gps_data.csv', 'a', newline='') as csvfile:
     fieldnames = [
+        'datetime'
         'latitude',
         'lat_direction',
         'longitude',
         'long_direction',
-        'utc_date',
-        'utc_time',
         'altitude',
         'speed',
         'course']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writerow({
+        'datetime':'',
         "latitude": '',
         "lat_direction": '',
         "longitude": '',
         "long_direction": '',
-        "utc_date": '',
-        "utc_time": '',
         "altitude": '',
         "speed": '',
         "course": '',
@@ -82,12 +80,11 @@ def send_at(command, back, timeout):
             data_list = (rec_buff.decode())[25:-8].rsplit(",")
             if(len(data_list) == 9 and data_list[0] != ''):
                 data_dict = {
+                    "datetime": data_list[4] + " " + data_list[5],
                     "latitude": data_list[0],
                     "lat_direction": data_list[1],
                     "longitude": data_list[2],
                     "long_direction": data_list[3],
-                    "utc_date": data_list[4],
-                    "utc_time": data_list[5],
                     "altitude": data_list[6],
                     "speed": data_list[7],
                     "course": data_list[8],
@@ -105,12 +102,11 @@ def send_at(command, back, timeout):
 def write_to_csv(data_dict):
     with open('gps_data.csv', 'a', newline='') as csvfile:
         fieldnames = [
+            'datetime'
             'latitude',
             'lat_direction',
             'longitude',
             'long_direction',
-            'utc_date',
-            'utc_time',
             'altitude',
             'speed',
             'course']
