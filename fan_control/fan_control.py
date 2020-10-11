@@ -43,9 +43,9 @@ def fan_control():
 
 def run():
     ''' Start, periodically call fan control '''
-    fan_control()
-    time.sleep(CHECK_DELAY_S)
-    run()
+    while True:
+        fan_control()
+        time.sleep(CHECK_DELAY_S)
 
 
 if(__name__ == "__main__"):
