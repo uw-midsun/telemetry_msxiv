@@ -17,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'widgets/head_lights.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+
 void main() {
   runApp(Display());
 }
@@ -47,6 +48,11 @@ class MainDisplay extends StatefulWidget {
 }
 
 class _MainDisplayState extends State<MainDisplay> {
+  // Web Socket
+  WebSocketChannel channel;
+  TextEditingController controller;
+
+  // Vehicle
   double _manualSpeed = 0;
   bool _turningLeft = false;
   bool _turningRight = false;
@@ -66,6 +72,9 @@ class _MainDisplayState extends State<MainDisplay> {
   void initState() {
     Timer.periodic(Duration(seconds: 10), (Timer t) => _getTime());
     super.initState();
+    final channel = IOWebSocketChannel.connect('ws://echo.websocket.org');
+    controller = TextEditingController();
+    channel.stream.listen((data) => setState(() => _speedChange(data)));
   }
 
   void _getTime() {
