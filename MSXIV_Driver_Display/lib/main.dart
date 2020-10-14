@@ -15,7 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'widgets/head_lights.dart';
-
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 void main() {
   runApp(Display());
 }
