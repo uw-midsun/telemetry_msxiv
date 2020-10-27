@@ -15,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'widgets/head_lights.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 void main() {
@@ -72,7 +71,7 @@ class _MainDisplayState extends State<MainDisplay> {
   void initState() {
     Timer.periodic(Duration(seconds: 10), (Timer t) => _getTime());
     super.initState();
-    final channel = IOWebSocketChannel.connect('ws://echo.websocket.org');
+    final channel = WebSocketChannel.connect(Uri.parse("ws://localhost:1234"));
     controller = TextEditingController();
     channel.stream.listen((data) => setState(() => _speedChange(data)));
   }
