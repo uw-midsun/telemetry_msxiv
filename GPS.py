@@ -39,7 +39,7 @@ with open('gps_data.csv', 'a', newline='') as csvfile:
         'course']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writerow({
-        'datetime':'',
+        'datetime': '',
         "latitude": '',
         "lat_direction": '',
         "longitude": '',
@@ -92,7 +92,7 @@ def send_at(command, back, timeout):
                 write_to_csv(data_dict)
                 client.publish("accounts/midnight_sun/GPS",
                                payload=json.dumps(data_dict))
-                dynamo_db_table.put_item(Item = data_dict)
+                dynamo_db_table.put_item(Item=data_dict)
             return 1
     else:
         print('GPS is not ready')
