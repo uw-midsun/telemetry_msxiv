@@ -10,6 +10,7 @@
 # sudo ip link add dev vcan0 type vcan
 # sudo ip link set up vcan0
 
+import asyncio
 import boto3
 import cantools
 import can
@@ -19,6 +20,7 @@ from dotenv import load_dotenv
 import json
 import os
 import paho.mqtt.client as mqtt
+import websockets
 
 load_dotenv()
 
@@ -55,7 +57,7 @@ def connect():
     client.loop_start()
 
 
-def decode_and_send():
+async def decode_and_send(websocket, path):
     message = can_bus.recv()
     decoded = db.decode_message(message.arbitration_id, message.data)
 
@@ -70,6 +72,7 @@ def decode_and_send():
     client.publish("accounts/midnight_sun/CAN",
                    payload=json.dumps(can_decoded_data))
     dynamo_db_table.put_item(Item=can_decoded_data)
+    await websocket.send(str(can_decoded_data))
 
 
 def write_to_csv(can_decoded_data):
@@ -79,10 +82,16 @@ def write_to_csv(can_decoded_data):
         writer.writerow(can_decoded_data)
 
 
-def main():
+async def loop(websocket, path):
     connect()
     while(True):
-        decode_and_send()
+        await decode_and_send(websocket, path)
+
+
+def main():
+    start_server = websockets.serve(loop, "localhost", 8765)
+    asyncio.get_event_loop().run_until_complete(start_server)
+    asyncio.get_event_loop().run_forever()
 
 
 if __name__ == "__main__":
