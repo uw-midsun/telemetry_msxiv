@@ -69,7 +69,7 @@ def decode_and_send():
     write_to_csv(can_decoded_data)
     client.publish("accounts/midnight_sun/CAN",
                    payload=json.dumps(can_decoded_data))
-    dynamo_db_table.put_item(can_decoded_data)
+    dynamo_db_table.put_item(Item = can_decoded_data)
 
 
 def write_to_csv(can_decoded_data):
