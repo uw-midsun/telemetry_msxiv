@@ -49,7 +49,7 @@ class MainDisplay extends StatefulWidget {
 class _MainDisplayState extends State<MainDisplay> {
   // Web Socket
   WebSocketChannel channel;
-  TextEditingController controller;
+  final List<String> list = [];
 
   // Vehicle
   double _manualSpeed = 0;
@@ -71,9 +71,16 @@ class _MainDisplayState extends State<MainDisplay> {
   void initState() {
     Timer.periodic(Duration(seconds: 10), (Timer t) => _getTime());
     super.initState();
-    final channel = WebSocketChannel.connect(Uri.parse("ws://localhost:1234"));
-    controller = TextEditingController();
-    channel.stream.listen((data) => setState(() => _speedChange(data)));
+    print(Uri.parse("ws://localhost:8765"));
+    final channel = WebSocketChannel.connect(Uri.parse("ws://localhost:8765"));
+    channel.stream.listen((data) => setState(() => print(data)));
+    
+  }
+
+  @override
+  void dispose() {
+    channel.sink.close();
+    super.dispose();
   }
 
   void _getTime() {
