@@ -1,10 +1,14 @@
+<<<<<<< HEAD
 asyncio==3.4.3
+=======
+awscli==1.18.152
+>>>>>>> f63c6de32de05231f8277f1ca73fce899e9d883c
 pylint==1.7.2
+boto3==1.15.11
 cantools==32.19.0
 paho-mqtt==1.5.0
 python-can==3.3.3
 python-dotenv==0.14.0
-pymongo==3.10.1
 dnspython>=1.16.0
 flake8==3.5.0
 pytest>=4.6.11
