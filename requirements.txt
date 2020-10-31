@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 asyncio==3.4.3
-=======
-awscli==1.18.152
->>>>>>> f63c6de32de05231f8277f1ca73fce899e9d883c
 pylint==1.7.2
 boto3==1.15.11
 cantools==32.19.0
