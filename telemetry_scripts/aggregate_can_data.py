@@ -68,7 +68,7 @@ def decode_and_send():
     # Send data out to a CSV, FRED, and DynamoDB
     write_to_csv(can_decoded_data)
     client.publish("accounts/midnight_sun/CAN",
-                   payload=json.dumps(can_decoded_data))
+                   payload=json.dumps(can_decoded_data),qos=2)
     dynamo_db_table.put_item(Item=can_decoded_data)
 
 
