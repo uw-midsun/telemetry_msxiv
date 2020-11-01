@@ -1,8 +1,6 @@
 import asyncio
 import cantools
 import can
-from datetime import datetime
-import json
 import websockets
 
 
@@ -13,13 +11,10 @@ async def decode_and_send(websocket, path):
     while True:
         message = can_bus.recv()
         decoded = db.decode_message(message.arbitration_id, message.data)
-
-        time = str(datetime.fromtimestamp(message.timestamp))
         name = db.get_message_by_frame_id(message.arbitration_id).name
         sender = db.get_message_by_frame_id(message.arbitration_id).senders[0]
-        can_decoded_data = {'datetime': time, 'name': name,
-                            'sender': sender, 'data': decoded}
-
+        can_decoded_data = name + '-' + sender + '-' + str(decoded)
+        print(can_decoded_data)
         await websocket.send(str(can_decoded_data))
 
 

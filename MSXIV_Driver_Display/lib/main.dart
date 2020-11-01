@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
 import 'package:MSXIV_Driver_Display/widgets/clock.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/services.dart';
 
 import 'widgets/head_lights.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+
 
 void main() {
   runApp(Display());
@@ -73,9 +75,10 @@ class _MainDisplayState extends State<MainDisplay> {
     super.initState();
     print(Uri.parse("ws://localhost:8765"));
     final channel = WebSocketChannel.connect(Uri.parse("ws://localhost:8765"));
-    channel.stream.listen((data) => setState(() => print(data)));
+    channel.stream.listen((data) => setState(() => filterMessage(data)));
     
   }
+
 
   @override
   void dispose() {
@@ -198,6 +201,35 @@ class _MainDisplayState extends State<MainDisplay> {
     });
   }
 
+
+  void filterMessage(String data) {
+    var msg = data.split('-');
+    var msg_name = msg[0];
+    var parsed_internal_data = json.decode(msg[2]);
+
+    if(msg_name == 'CRUISE_TARGET') {
+      _speedChange((parsed_internal_data['target speed']).toDouble());
+    }
+    else if(msg_name == 'BATTERY_CHANGE') {
+      batteryChange((parsed_internal_data['voltage']));
+    }
+    else if(msg_name == 'CRUISE_CONTROL_COMMAND') {
+      toggleCruise();
+    }
+    else if(msg_name == 'DRIVE_STATE'){
+      toggleDriveState();
+    } 
+    else if(msg_name == 'BPS_HEARTBEAT') {
+      
+    }
+    else if(msg_name == 'BATTERY_AGGREGATE_VC') {
+      
+    }
+    else if(msg_name == 'STATE_TRANSISTION_FAULT') {
+      
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
