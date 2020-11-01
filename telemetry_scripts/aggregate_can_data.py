@@ -70,8 +70,8 @@ async def decode_and_send(websocket, path):
     # Send data out to a CSV, FRED, and DynamoDB
     write_to_csv(can_decoded_data)
     client.publish("accounts/midnight_sun/CAN",
-                   payload=json.dumps(can_decoded_data))
-    dynamo_db_table.put_item(Item=can_decoded_data)
+                   payload=json.dumps(can_decoded_data),qos=2)
+    # dynamo_db_table.put_item(Item=can_decoded_data)
     await websocket.send(str(can_decoded_data))
 
 
@@ -83,12 +83,12 @@ def write_to_csv(can_decoded_data):
 
 
 async def loop(websocket, path):
-    connect()
     while(True):
         await decode_and_send(websocket, path)
 
 
 def main():
+    connect()
     start_server = websockets.serve(loop, "localhost", 8765)
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
