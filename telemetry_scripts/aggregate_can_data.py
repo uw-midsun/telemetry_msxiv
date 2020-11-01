@@ -11,6 +11,7 @@
 # sudo ip link set up vcan0
 
 import asyncio
+import aioboto3
 import boto3
 import cantools
 import can
@@ -72,8 +73,10 @@ async def decode_and_send(websocket, path):
         write_to_csv(can_decoded_data)
         client.publish("accounts/midnight_sun/CAN",
                     payload=json.dumps(can_decoded_data),qos=2)
-        # dynamo_db_table.put_item(Item=can_decoded_data)
         await websocket.send(str(can_decoded_data))
+        async with aioboto3.resource('dynamodb', region_name='us-east-1') as resource:
+            dynamo_db_table = await resource.Table('can_messages')
+            await dynamo_db_table.put_item(Item=can_decoded_data)
 
 
 def write_to_csv(can_decoded_data):
