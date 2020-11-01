@@ -58,21 +58,22 @@ def connect():
 
 
 async def decode_and_send(websocket, path):
-    message = can_bus.recv()
-    decoded = db.decode_message(message.arbitration_id, message.data)
+    while True:
+        message = can_bus.recv()
+        decoded = db.decode_message(message.arbitration_id, message.data)
 
-    time = str(datetime.fromtimestamp(message.timestamp))
-    name = db.get_message_by_frame_id(message.arbitration_id).name
-    sender = db.get_message_by_frame_id(message.arbitration_id).senders[0]
-    can_decoded_data = {'datetime': time, 'name': name,
-                        'sender': sender, 'data': decoded}
+        time = str(datetime.fromtimestamp(message.timestamp))
+        name = db.get_message_by_frame_id(message.arbitration_id).name
+        sender = db.get_message_by_frame_id(message.arbitration_id).senders[0]
+        can_decoded_data = {'datetime': time, 'name': name,
+                            'sender': sender, 'data': decoded}
 
-    # Send data out to a CSV, FRED, and DynamoDB
-    write_to_csv(can_decoded_data)
-    client.publish("accounts/midnight_sun/CAN",
-                   payload=json.dumps(can_decoded_data),qos=2)
-    # dynamo_db_table.put_item(Item=can_decoded_data)
-    await websocket.send(str(can_decoded_data))
+        # Send data out to a CSV, FRED, and DynamoDB
+        write_to_csv(can_decoded_data)
+        client.publish("accounts/midnight_sun/CAN",
+                    payload=json.dumps(can_decoded_data),qos=2)
+        # dynamo_db_table.put_item(Item=can_decoded_data)
+        await websocket.send(str(can_decoded_data))
 
 
 def write_to_csv(can_decoded_data):
@@ -82,14 +83,9 @@ def write_to_csv(can_decoded_data):
         writer.writerow(can_decoded_data)
 
 
-async def loop(websocket, path):
-    while(True):
-        await decode_and_send(websocket, path)
-
-
 def main():
     connect()
-    start_server = websockets.serve(loop, "localhost", 8765)
+    start_server = websockets.serve(decode_and_send, "localhost", 8765)
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
 
