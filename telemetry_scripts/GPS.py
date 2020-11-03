@@ -91,7 +91,7 @@ def send_at(command, back, timeout):
                 }
                 write_to_csv(data_dict)
                 client.publish("accounts/midnight_sun/GPS",
-                               payload=json.dumps(data_dict))
+                               payload=json.dumps(data_dict),qos=2)
                 dynamo_db_table.put_item(Item=data_dict)
             return 1
     else:

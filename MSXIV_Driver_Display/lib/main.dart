@@ -18,6 +18,23 @@ import 'package:flutter/services.dart';
 import 'widgets/head_lights.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+enum EELightType {
+  EE_LIGHT_TYPE_DRL,
+  EE_LIGHT_TYPE_BRAKES,
+  EE_LIGHT_TYPE_STROBE,
+  EE_LIGHT_TYPE_SIGNAL_RIGHT,
+  EE_LIGHT_TYPE_SIGNAL_LEFT,
+  EE_LIGHT_TYPE_SIGNAL_HAZARD,
+  EE_LIGHT_TYPE_HIGH_BEAMS,
+  EE_LIGHT_TYPE_LOW_BEAMS,
+  NUM_EE_LIGHT_TYPES,
+}
+
+enum EELightState {
+  EE_LIGHT_STATE_OFF,
+  EE_LIGHT_STATE_ON,
+  NUM_EE_LIGHT_STATES,
+}
 
 void main() {
   runApp(Display());
@@ -76,9 +93,7 @@ class _MainDisplayState extends State<MainDisplay> {
     print(Uri.parse("ws://localhost:8765"));
     final channel = WebSocketChannel.connect(Uri.parse("ws://localhost:8765"));
     channel.stream.listen((data) => setState(() => filterMessage(data)));
-    
   }
-
 
   @override
   void dispose() {
@@ -201,35 +216,32 @@ class _MainDisplayState extends State<MainDisplay> {
     });
   }
 
-
   void filterMessage(String data) {
     var msg = data.split('-');
-    var msg_name = msg[0];
-    var parsed_internal_data = json.decode(msg[2]);
+    var msgName = msg[0];
+    var parsedInternalData = json.decode(msg[2]);
 
-    if(msg_name == 'CRUISE_TARGET') {
-      _speedChange((parsed_internal_data['target speed']).toDouble());
-    }
-    else if(msg_name == 'BATTERY_CHANGE') {
-      batteryChange((parsed_internal_data['voltage']));
-    }
-    else if(msg_name == 'CRUISE_CONTROL_COMMAND') {
+    // Lights
+    const int drl = 0;
+    const int signal_right = 3;
+    const int signal_left = 4;
+    const int high_beams = 6;
+    const int low_beams = 7;
+
+    if (msgName == 'CRUISE_TARGET') {
+      _speedChange((parsedInternalData['target speed']).toDouble());
+    } else if (msgName == 'LIGHTS') {
+    } else if (msgName == 'BATTERY_CHANGE') {
+      batteryChange((parsedInternalData['voltage']));
+    } else if (msgName == 'CRUISE_CONTROL_COMMAND') {
       toggleCruise();
-    }
-    else if(msg_name == 'DRIVE_STATE'){
+    } else if (msgName == 'DRIVE_STATE') {
       toggleDriveState();
-    } 
-    else if(msg_name == 'BPS_HEARTBEAT') {
-      
-    }
-    else if(msg_name == 'BATTERY_AGGREGATE_VC') {
-      
-    }
-    else if(msg_name == 'STATE_TRANSISTION_FAULT') {
-      
-    }
+    } else if (msgName == 'BPS_HEARTBEAT') {
+    } else if (msgName == 'BATTERY_AGGREGATE_VC') {
+    } else if (msgName == 'STATE_TRANSISTION_FAULT') {}
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
