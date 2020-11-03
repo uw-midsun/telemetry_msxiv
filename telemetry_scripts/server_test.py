@@ -8,10 +8,10 @@ import websockets
 
 async def hello(websocket, path):
     while True:
-        greeting = "Hello!"
-        await websocket.send(greeting)
-        await websocket.send("hi")
-        await websocket.send("woah")
+        await websocket.send("CRUISE_TARGET,STEERING,{'target_speed': 130}")
+        await websocket.send("CRUISE_TARGET,STEERING,{'target_speed': 0}")
+        await websocket.send("LIGHTS,STEERING,{'lights_id': 3, 'state': 1}")
+        await websocket.send("LIGHTS,STEERING,{'lights_id': 3, 'state': 1}")
 
 start_server = websockets.serve(hello, "localhost", 8765)
 
