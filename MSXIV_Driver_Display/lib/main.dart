@@ -221,16 +221,18 @@ class _MainDisplayState extends State<MainDisplay> {
     var msgName = msg[0];
     var parsedInternalData = json.decode(msg[2]);
 
-    // Lights
-    const int drl = 0;
-    const int signal_right = 3;
-    const int signal_left = 4;
-    const int high_beams = 6;
-    const int low_beams = 7;
-
     if (msgName == 'CRUISE_TARGET') {
+      // This needs to be changed to be based off motor not cruise control
       _speedChange((parsedInternalData['target speed']).toDouble());
     } else if (msgName == 'LIGHTS') {
+      // Toggle lights need to be fixed so CAN message can pass in
+      if ((parsedInternalData['lights_id']) ==
+          EELightType.EE_LIGHT_TYPE_SIGNAL_RIGHT) {
+        toggleTurnRight();
+      } else if ((parsedInternalData['lights_id']) ==
+          EELightType.EE_LIGHT_TYPE_SIGNAL_LEFT) {
+        toggleTurnLeft();
+      }
     } else if (msgName == 'BATTERY_CHANGE') {
       batteryChange((parsedInternalData['voltage']));
     } else if (msgName == 'CRUISE_CONTROL_COMMAND') {
