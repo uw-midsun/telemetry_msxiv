@@ -111,14 +111,7 @@ class _MainDisplayState extends State<MainDisplay> {
 
   void _speedChange([double change]) {
     setState(() {
-      var temp = _manualSpeed + change;
-      if (temp > TOP_SPEED) {
-        _manualSpeed = TOP_SPEED;
-      } else if (temp < 0) {
-        _manualSpeed = 0;
-      } else {
-        _manualSpeed = temp;
-      }
+        _manualSpeed = change;
     });
   }
 
@@ -219,11 +212,9 @@ class _MainDisplayState extends State<MainDisplay> {
   void filterMessage(String data) {
     var msg = data.split('-');
     var msgName = msg[0];
-    var parsedInternalData = json.decode(msg[2]);
-
-    if (msgName == 'CRUISE_TARGET') {
-      // This needs to be changed to be based off motor not cruise control
-      _speedChange((parsedInternalData['target speed']).toDouble());
+    var parsedInternalData = json.decode(msg[2].replaceAll("'","\""));
+    if (msgName == 'MOTOR_VELOCITY') {
+      _speedChange((parsedInternalData['vehicle_velocity_left']).toDouble());
     } else if (msgName == 'LIGHTS') {
       // Toggle lights need to be fixed so CAN message can pass in
       if ((parsedInternalData['lights_id']) ==
