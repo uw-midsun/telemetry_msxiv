@@ -36,6 +36,14 @@ enum EELightState {
   NUM_EE_LIGHT_STATES,
 }
 
+enum EEDriveOutput{
+EE_DRIVE_OUTPUT_OFF,
+EE_DRIVE_OUTPUT_DRIVE,
+EE_DRIVE_OUTPUT_REVERSE,
+NUM_EE_DRIVE_OUTPUTS,
+}
+
+
 void main() {
   runApp(Display());
 }
@@ -177,6 +185,18 @@ class _MainDisplayState extends State<MainDisplay> {
     });
   }
 
+  void selectDriveState(EEDriveOutput state) {
+    setState(() {
+      if (state == EEDriveOutput.EE_DRIVE_OUTPUT_DRIVE) {
+        _driveState = DriveStates.Drive;
+      } else if (state == EEDriveOutput.EE_DRIVE_OUTPUT_REVERSE) {
+        _driveState = DriveStates.Reverse;
+      } else {
+        _driveState = DriveStates.Neutral;
+      }
+    });
+  }
+
   void toggleLights() {
     setState(() {
       if (_lightStatus == LightStatus.DaytimeRunning) {
@@ -216,11 +236,11 @@ class _MainDisplayState extends State<MainDisplay> {
     if (msgName == 'MOTOR_VELOCITY') {
       _speedChange((parsedInternalData['vehicle_velocity_left']).toDouble());
     } else if (msgName == 'LIGHTS') {
-      // Toggle lights need to be fixed so CAN message can pass in
-      if ((parsedInternalData['lights_id']) ==
+      // Need to make selectLight function
+      if (EELightType.values[(parsedInternalData['lights_id'])] ==
           EELightType.EE_LIGHT_TYPE_SIGNAL_RIGHT) {
         toggleTurnRight();
-      } else if ((parsedInternalData['lights_id']) ==
+      } else if (EELightType.values[(parsedInternalData['lights_id'])] ==
           EELightType.EE_LIGHT_TYPE_SIGNAL_LEFT) {
         toggleTurnLeft();
       }
@@ -229,7 +249,7 @@ class _MainDisplayState extends State<MainDisplay> {
     } else if (msgName == 'CRUISE_CONTROL_COMMAND') {
       toggleCruise();
     } else if (msgName == 'DRIVE_STATE') {
-      toggleDriveState();
+      selectDriveState(EEDriveOutput.values[parsedInternalData['drive_state']]);
     } else if (msgName == 'BPS_HEARTBEAT') {
     } else if (msgName == 'BATTERY_AGGREGATE_VC') {
     } else if (msgName == 'STATE_TRANSISTION_FAULT') {}

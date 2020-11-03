@@ -21,6 +21,20 @@ async def hello(websocket, path):
         await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-{'vehicle_velocity_left': 131, 'vehicle_velocity_right': 131}")
         await asyncio.sleep(0.5)
 
+        # Test changing states (off,drive,reverse)
+        await websocket.send("DRIVE_STATE-MOTOR_CONTROLLER-{'drive_state': 0}")
+        await asyncio.sleep(2)
+        await websocket.send("DRIVE_STATE-MOTOR_CONTROLLER-{'drive_state': 1}")
+        await asyncio.sleep(2)
+        await websocket.send("DRIVE_STATE-MOTOR_CONTROLLER-{'drive_state': 2}")
+
+        # Test left/right signal (left then right)
+        await websocket.send("LIGHTS-STEERING-{'lights_id': 4, 'state': 1}")
+        await asyncio.sleep(2)
+        await websocket.send("LIGHTS-STEERING-{'lights_id': 3, 'state': 1}")
+        await asyncio.sleep(2)
+
+
 start_server = websockets.serve(hello, "localhost", 8765)
 
 asyncio.get_event_loop().run_until_complete(start_server)
