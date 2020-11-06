@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-
-# WS server example
-
 import asyncio
 import websockets
 import time
@@ -32,6 +28,10 @@ async def hello(websocket, path):
         await websocket.send("LIGHTS-STEERING-{'lights_id': 4, 'state': 1}")
         await asyncio.sleep(2)
         await websocket.send("LIGHTS-STEERING-{'lights_id': 3, 'state': 1}")
+        await asyncio.sleep(2)
+        await websocket.send("LIGHTS-STEERING-{'lights_id': 0, 'state': 0}")
+        await asyncio.sleep(2)
+        await websocket.send("LIGHTS-STEERING-{'lights_id': 7, 'state': 1}")
         await asyncio.sleep(2)
 
 

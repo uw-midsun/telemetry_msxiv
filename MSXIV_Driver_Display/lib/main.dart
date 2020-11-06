@@ -36,13 +36,12 @@ enum EELightState {
   NUM_EE_LIGHT_STATES,
 }
 
-enum EEDriveOutput{
-EE_DRIVE_OUTPUT_OFF,
-EE_DRIVE_OUTPUT_DRIVE,
-EE_DRIVE_OUTPUT_REVERSE,
-NUM_EE_DRIVE_OUTPUTS,
+enum EEDriveOutput {
+  EE_DRIVE_OUTPUT_OFF,
+  EE_DRIVE_OUTPUT_DRIVE,
+  EE_DRIVE_OUTPUT_REVERSE,
+  NUM_EE_DRIVE_OUTPUTS,
 }
-
 
 void main() {
   runApp(Display());
@@ -119,7 +118,7 @@ class _MainDisplayState extends State<MainDisplay> {
 
   void _speedChange([double change]) {
     setState(() {
-        _manualSpeed = change;
+      _manualSpeed = change;
     });
   }
 
@@ -211,6 +210,33 @@ class _MainDisplayState extends State<MainDisplay> {
     });
   }
 
+  void selectLights(EELightType type, EELightState state) {
+    // TODO: Add more features for different types of lights
+    setState(() {
+      if (state == EELightState.EE_LIGHT_STATE_ON) {
+        if (type == EELightType.EE_LIGHT_TYPE_LOW_BEAMS) {
+          _lightStatus = LightStatus.FogLights;
+        } else if (type == EELightType.EE_LIGHT_TYPE_HIGH_BEAMS) {
+          _lightStatus = LightStatus.HighBeams;
+        } else if (type == EELightType.EE_LIGHT_TYPE_DRL) {
+          _lightStatus = LightStatus.DaytimeRunning;
+        } else if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_LEFT) {
+          _turningLeft = true;
+        } else if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_RIGHT) {
+          _turningRight = true;
+        }
+      } else {
+        if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_LEFT) {
+          _turningLeft = false;
+        } else if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_RIGHT) {
+          _turningRight = false;
+        } else {
+          _lightStatus = LightStatus.Off;
+        }
+      }
+    });
+  }
+
   void changeWarnings() {
     setState(() {
       if (_errors.length == 0)
@@ -232,18 +258,12 @@ class _MainDisplayState extends State<MainDisplay> {
   void filterMessage(String data) {
     var msg = data.split('-');
     var msgName = msg[0];
-    var parsedInternalData = json.decode(msg[2].replaceAll("'","\""));
+    var parsedInternalData = json.decode(msg[2].replaceAll("'", "\""));
     if (msgName == 'MOTOR_VELOCITY') {
       _speedChange((parsedInternalData['vehicle_velocity_left']).toDouble());
     } else if (msgName == 'LIGHTS') {
-      // Need to make selectLight function
-      if (EELightType.values[(parsedInternalData['lights_id'])] ==
-          EELightType.EE_LIGHT_TYPE_SIGNAL_RIGHT) {
-        toggleTurnRight();
-      } else if (EELightType.values[(parsedInternalData['lights_id'])] ==
-          EELightType.EE_LIGHT_TYPE_SIGNAL_LEFT) {
-        toggleTurnLeft();
-      }
+      selectLights(EELightType.values[(parsedInternalData['lights_id'])],
+          EELightState.values[(parsedInternalData['state'])]);
     } else if (msgName == 'BATTERY_CHANGE') {
       batteryChange((parsedInternalData['voltage']));
     } else if (msgName == 'CRUISE_CONTROL_COMMAND') {
