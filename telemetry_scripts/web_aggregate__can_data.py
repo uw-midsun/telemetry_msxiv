@@ -7,6 +7,7 @@ import websockets
 can_bus = can.interface.Bus('vcan0', bustype='socketcan')
 db = cantools.database.load_file('system_can.dbc')
 
+
 async def decode_and_send(websocket, path):
     while True:
         message = can_bus.recv()

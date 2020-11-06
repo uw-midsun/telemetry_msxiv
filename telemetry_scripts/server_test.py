@@ -6,15 +6,20 @@ import time
 async def hello(websocket, path):
     while True:
         # Test speed
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-{'vehicle_velocity_left': 127, 'vehicle_velocity_right': 127}")
+        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-{'vehicle_velocity_left': 127,
+                                                               'vehicle_velocity_right': 127}")
         await asyncio.sleep(0.5)
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-{'vehicle_velocity_left': 128, 'vehicle_velocity_right': 128}")
+        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-{'vehicle_velocity_left': 128,
+                                                               'vehicle_velocity_right': 128}")
         await asyncio.sleep(0.5)
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-{'vehicle_velocity_left': 129, 'vehicle_velocity_right': 129}")
+        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-{'vehicle_velocity_left': 129,
+                                                               'vehicle_velocity_right': 129}")
         await asyncio.sleep(0.5)
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-{'vehicle_velocity_left': 130, 'vehicle_velocity_right': 130}")
+        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-{'vehicle_velocity_left': 130,
+                                                               'vehicle_velocity_right': 130}")
         await asyncio.sleep(0.5)
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-{'vehicle_velocity_left': 131, 'vehicle_velocity_right': 131}")
+        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-{'vehicle_velocity_left': 131,
+                                                               'vehicle_velocity_right': 131}")
         await asyncio.sleep(0.5)
 
         # Test changing states (off,drive,reverse)
