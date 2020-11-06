@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
 import 'package:MSXIV_Driver_Display/widgets/clock.dart';
@@ -15,6 +16,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'widgets/head_lights.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+
+enum EELightType {
+  EE_LIGHT_TYPE_DRL,
+  EE_LIGHT_TYPE_BRAKES,
+  EE_LIGHT_TYPE_STROBE,
+  EE_LIGHT_TYPE_SIGNAL_RIGHT,
+  EE_LIGHT_TYPE_SIGNAL_LEFT,
+  EE_LIGHT_TYPE_SIGNAL_HAZARD,
+  EE_LIGHT_TYPE_HIGH_BEAMS,
+  EE_LIGHT_TYPE_LOW_BEAMS,
+  NUM_EE_LIGHT_TYPES,
+}
+
+enum EELightState {
+  EE_LIGHT_STATE_OFF,
+  EE_LIGHT_STATE_ON,
+  NUM_EE_LIGHT_STATES,
+}
+
+enum EEDriveOutput {
+  EE_DRIVE_OUTPUT_OFF,
+  EE_DRIVE_OUTPUT_DRIVE,
+  EE_DRIVE_OUTPUT_REVERSE,
+  NUM_EE_DRIVE_OUTPUTS,
+}
 
 void main() {
   runApp(Display());
@@ -46,6 +73,11 @@ class MainDisplay extends StatefulWidget {
 }
 
 class _MainDisplayState extends State<MainDisplay> {
+  // Web Socket
+  WebSocketChannel channel;
+  final List<String> list = [];
+
+  // Vehicle
   double _manualSpeed = 0;
   bool _turningLeft = false;
   bool _turningRight = false;
@@ -65,6 +97,15 @@ class _MainDisplayState extends State<MainDisplay> {
   void initState() {
     Timer.periodic(Duration(seconds: 10), (Timer t) => _getTime());
     super.initState();
+    print(Uri.parse("ws://localhost:8765"));
+    final channel = WebSocketChannel.connect(Uri.parse("ws://localhost:8765"));
+    channel.stream.listen((data) => setState(() => filterMessage(data)));
+  }
+
+  @override
+  void dispose() {
+    channel.sink.close();
+    super.dispose();
   }
 
   void _getTime() {
@@ -77,14 +118,7 @@ class _MainDisplayState extends State<MainDisplay> {
 
   void _speedChange([double change]) {
     setState(() {
-      var temp = _manualSpeed + change;
-      if (temp > TOP_SPEED) {
-        _manualSpeed = TOP_SPEED;
-      } else if (temp < 0) {
-        _manualSpeed = 0;
-      } else {
-        _manualSpeed = temp;
-      }
+      _manualSpeed = change;
     });
   }
 
@@ -150,6 +184,18 @@ class _MainDisplayState extends State<MainDisplay> {
     });
   }
 
+  void selectDriveState(EEDriveOutput state) {
+    setState(() {
+      if (state == EEDriveOutput.EE_DRIVE_OUTPUT_DRIVE) {
+        _driveState = DriveStates.Drive;
+      } else if (state == EEDriveOutput.EE_DRIVE_OUTPUT_REVERSE) {
+        _driveState = DriveStates.Reverse;
+      } else {
+        _driveState = DriveStates.Neutral;
+      }
+    });
+  }
+
   void toggleLights() {
     setState(() {
       if (_lightStatus == LightStatus.DaytimeRunning) {
@@ -160,6 +206,33 @@ class _MainDisplayState extends State<MainDisplay> {
         _lightStatus = LightStatus.Off;
       } else if (_lightStatus == LightStatus.Off) {
         _lightStatus = LightStatus.DaytimeRunning;
+      }
+    });
+  }
+
+  void selectLights(EELightType type, EELightState state) {
+    // TODO: Add more features for different types of lights
+    setState(() {
+      if (state == EELightState.EE_LIGHT_STATE_ON) {
+        if (type == EELightType.EE_LIGHT_TYPE_LOW_BEAMS) {
+          _lightStatus = LightStatus.FogLights;
+        } else if (type == EELightType.EE_LIGHT_TYPE_HIGH_BEAMS) {
+          _lightStatus = LightStatus.HighBeams;
+        } else if (type == EELightType.EE_LIGHT_TYPE_DRL) {
+          _lightStatus = LightStatus.DaytimeRunning;
+        } else if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_LEFT) {
+          _turningLeft = true;
+        } else if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_RIGHT) {
+          _turningRight = true;
+        }
+      } else {
+        if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_LEFT) {
+          _turningLeft = false;
+        } else if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_RIGHT) {
+          _turningRight = false;
+        } else {
+          _lightStatus = LightStatus.Off;
+        }
       }
     });
   }
@@ -180,6 +253,27 @@ class _MainDisplayState extends State<MainDisplay> {
       else
         _errors = [];
     });
+  }
+
+  void filterMessage(String data) {
+    var msg = data.split('-');
+    var msgName = msg[0];
+    var parsedInternalData = json.decode(msg[2].replaceAll("'", "\""));
+    if (msgName == 'MOTOR_VELOCITY') {
+      _speedChange((parsedInternalData['vehicle_velocity_left']).toDouble());
+    } else if (msgName == 'LIGHTS') {
+      selectLights(EELightType.values[(parsedInternalData['lights_id'])],
+          EELightState.values[(parsedInternalData['state'])]);
+    } else if (msgName == 'BATTERY_CHANGE') {
+      // TODO: Figure out voltage levels versus battery charge
+    } else if (msgName == 'CRUISE_CONTROL_COMMAND') {
+      toggleCruise();
+    } else if (msgName == 'DRIVE_STATE') {
+      selectDriveState(EEDriveOutput.values[parsedInternalData['drive_state']]);
+    } else if (msgName == 'BPS_HEARTBEAT') {
+      // TODO: Add checks for these faults
+    } else if (msgName == 'BATTERY_AGGREGATE_VC') {
+    } else if (msgName == 'STATE_TRANSISTION_FAULT') {}
   }
 
   @override

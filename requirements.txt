@@ -1,5 +1,6 @@
-awscli==1.18.152
+asyncio==3.4.3
 pylint==1.7.2
+pathlib==1.0.1
 boto3==1.15.11
 cantools==32.19.0
 paho-mqtt==1.5.0
@@ -9,3 +10,4 @@ dnspython>=1.16.0
 flake8==3.5.0
 pytest>=4.6.11
 autopep8==1.5.4
+websockets>=5.0
