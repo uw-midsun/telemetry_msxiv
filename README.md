@@ -24,11 +24,20 @@ MQTT_CLIENT_ID=''
 MQTT_USERNAME=''
 MQTT_PASSWORD=''
 ```
-2. To collect CAN data run:
+2. To run the telemetry system perform:
+```bash
+make run
+```
+The scripts below are found in the telemetry scripts file and can be run individually
+3. To collect CAN data run:
 ```bash
 python3 aggregate_can_data.py
 ```
-3. To collect GPS data run:
+4. To collect GPS data run:
 ```bash
 python3 GPS.py
+```
+5. To collect CAN data for the driver display run:
+```bash
+python3 web_aggregate_can_data.py
 ```
