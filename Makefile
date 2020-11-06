@@ -1,8 +1,14 @@
 # Allow linting on specific filepaths if needed
-FILEPATH := 
+FILEPATH :=
 
-# Issues to ignore while linting 
+# Issues to ignore while linting
 LINT_IGNORE :=
+
+.PHONY: run
+run:
+	@python3 telemetry_scripts/aggregate_can_data.py \
+	& python3 telemetry_scripts/GPS.py \
+	& python3 telemetry_scripts/web_aggregate_can_data.py
 
 .PHONY: lint
 lint:
@@ -10,7 +16,7 @@ lint:
 	@flake8 --ignore=$(LINT_IGNORE) $(FILEPATH)
 
 .PHONY: format
-format: 
+format:
 	@echo "Formatting all files using autopep8"
 	@autopep8 --in-place --recursive --aggressive --aggressive .
 
@@ -18,4 +24,3 @@ format:
 test:
 	@echo "Running pytest on all files"
 	@pytest
-	
