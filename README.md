@@ -25,6 +25,7 @@ MQTT_PASSWORD=''
 make run
 ```
 The scripts below are found in the telemetry scripts file and can be run individually
+
 3. To collect CAN data run:
 ```bash
 python3 aggregate_can_data.py
