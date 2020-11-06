@@ -1,5 +1,5 @@
 # telemetry_xiv
-This is the telemetry system for msxiv. This project logs data from our vehicle when it is running and stores it. Currently, the project gets CAN Messages/GPS data and uploads it to the cloud.
+This is the telemetry system for msxiv. This project logs data from our vehicle when it is running and stores it. Currently, the project gets CAN Messages/GPS data and writes it to a CSV, FRED, and uploads it to AWS DynamoDB.
 
 To install requirements run:
 ```bash
@@ -12,6 +12,8 @@ sudo modprobe vcan \
 && sudo ip link add dev vcan0 type vcan \
 && sudo ip link set up vcan0
 ```
+
+Make sure you go to https://github.com/uw-midsun/codegen-tooling-msxiv to generate a DBC file and move it to telemetry so that the scripts below can run properly.
 
 To read CAN messages, store them in a CSV and send them to FRED perform the following:
 1. Create a .env file and enter something similar to what is shown below.
