@@ -13,10 +13,6 @@ sudo modprobe vcan \
 && sudo ip link set up vcan0
 ```
 
-To send random CAN messages, generate a DBC file in codegen-tooling-msxiv and move it to telemetry_xiv then run:
-```bash
-python3 mock_can_data.py
-```
 To read CAN messages, store them in a CSV and send them to FRED perform the following:
 1. Create a .env file and enter something similar to what is shown below.
 ```bash
@@ -40,4 +36,8 @@ python3 GPS.py
 5. To collect CAN data for the driver display run:
 ```bash
 python3 web_aggregate_can_data.py
+```
+6. To send random CAN messages, generate a DBC file in codegen-tooling-msxiv and move it to telemetry_xiv then run:
+```bash
+python3 mock_can_data.py
 ```
