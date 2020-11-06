@@ -265,12 +265,13 @@ class _MainDisplayState extends State<MainDisplay> {
       selectLights(EELightType.values[(parsedInternalData['lights_id'])],
           EELightState.values[(parsedInternalData['state'])]);
     } else if (msgName == 'BATTERY_CHANGE') {
-      batteryChange((parsedInternalData['voltage']));
+      // TODO: Figure out voltage levels versus battery charge
     } else if (msgName == 'CRUISE_CONTROL_COMMAND') {
       toggleCruise();
     } else if (msgName == 'DRIVE_STATE') {
       selectDriveState(EEDriveOutput.values[parsedInternalData['drive_state']]);
     } else if (msgName == 'BPS_HEARTBEAT') {
+      // TODO: Add checks for these faults
     } else if (msgName == 'BATTERY_AGGREGATE_VC') {
     } else if (msgName == 'STATE_TRANSISTION_FAULT') {}
   }
