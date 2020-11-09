@@ -211,15 +211,13 @@ class _MainDisplayState extends State<MainDisplay> {
   }
 
   void selectLights(EELightType type, EELightState state) {
-    // TODO: Add more features for different types of lights
     setState(() {
       if (state == EELightState.EE_LIGHT_STATE_ON) {
-        if (type == EELightType.EE_LIGHT_TYPE_LOW_BEAMS) {
-          _lightStatus = LightStatus.FogLights;
-        } else if (type == EELightType.EE_LIGHT_TYPE_HIGH_BEAMS) {
-          _lightStatus = LightStatus.HighBeams;
-        } else if (type == EELightType.EE_LIGHT_TYPE_DRL) {
+        if (type == EELightType.EE_LIGHT_TYPE_DRL) {
           _lightStatus = LightStatus.DaytimeRunning;
+        } else if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_HAZARD) {
+          _turningLeft = true;
+          _turningRight = true;
         } else if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_LEFT) {
           _turningLeft = true;
         } else if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_RIGHT) {
@@ -229,6 +227,9 @@ class _MainDisplayState extends State<MainDisplay> {
         if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_LEFT) {
           _turningLeft = false;
         } else if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_RIGHT) {
+          _turningRight = false;
+        } else if (type == EELightType.EE_LIGHT_TYPE_SIGNAL_HAZARD) {
+          _turningLeft = false;
           _turningRight = false;
         } else {
           _lightStatus = LightStatus.Off;
