@@ -1,4 +1,5 @@
 # telemetry_xiv
+[![Build Status](https://travis-ci.com/uw-midsun/telemetry_xiv.svg?branch=master)](https://travis-ci.com/uw-midsun/telemetry_xiv)
 This is the telemetry system for msxiv. This project logs data from our vehicle when it is running and stores it. Currently, the project gets CAN Messages/GPS data and writes it to a CSV, FRED, and uploads it to AWS DynamoDB.
 
 To install requirements run:
