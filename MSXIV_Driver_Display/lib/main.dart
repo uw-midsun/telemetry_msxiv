@@ -276,10 +276,9 @@ class _MainDisplayState extends State<MainDisplay> {
       toggleCruise();
     } else if (msgName == 'DRIVE_STATE') {
       selectDriveState(EEDriveOutput.values[parsedInternalData['drive_state']]);
-    } else if (msgName == 'BPS_HEARTBEAT') {
+    } else if (msgName.contains(new RegExp(r'FAULT'))) {
       // TODO: Add checks for these faults
-    } else if (msgName == 'BATTERY_AGGREGATE_VC') {
-    } else if (msgName == 'STATE_TRANSISTION_FAULT') {}
+    }
   }
 
   @override
