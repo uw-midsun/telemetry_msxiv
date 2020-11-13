@@ -75,7 +75,6 @@ class MainDisplay extends StatefulWidget {
 class _MainDisplayState extends State<MainDisplay> {
   // Web Socket
   WebSocketChannel channel;
-  final List<String> list = [];
 
   // Vehicle
   double _manualSpeed = 0;
@@ -242,14 +241,20 @@ class _MainDisplayState extends State<MainDisplay> {
     setState(() {
       if (_errors.length == 0)
         _errors = [
-          ErrorStates.BPSKillSwitch,
+          ErrorStates.CentreConsoleFault,
         ];
       else if (_errors.length == 1)
         _errors = [
-          ErrorStates.BPSKillSwitch,
+          ErrorStates.CentreConsoleFault,
+          ErrorStates.MCIAckFailed,
+          ErrorStates.PedalACKFail,
+          ErrorStates.CentreConsoleStateTransitionFault,
+          ErrorStates.ChargerFault,
+          ErrorStates.SolarFault,
           ErrorStates.BPSACKFailed,
+          ErrorStates.BPSKillSwitch,
           ErrorStates.BMSOverVoltage,
-          ErrorStates.MCIOverTemp
+          ErrorStates.MCIOverTemp,
         ];
       else
         _errors = [];
