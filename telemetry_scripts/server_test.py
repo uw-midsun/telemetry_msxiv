@@ -39,6 +39,9 @@ async def hello(websocket, path):
         await websocket.send("LIGHTS-STEERING-{'lights_id': 5, 'state': 0}")
         await asyncio.sleep(2)
 
+        await websocket.send("CHARGER_FAULT-CHARGER-{'fault': 75}")
+        await asyncio.sleep(2)
+
 start_server = websockets.serve(hello, "localhost", 8765)
 
 
