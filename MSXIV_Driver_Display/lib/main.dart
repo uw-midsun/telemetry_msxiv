@@ -94,7 +94,8 @@ class _MainDisplayState extends State<MainDisplay> {
 
   @override
   void initState() {
-    Timer.periodic(Duration(seconds: 10), (Timer t) => _getTime());
+    Timer.periodic(Duration(seconds: 10), (Timer t1) => _getTime());
+    Timer.periodic(Duration(seconds: 300), (Timer t2) => removeWarnings());
     super.initState();
     print(Uri.parse("ws://localhost:8765"));
     final channel = WebSocketChannel.connect(Uri.parse("ws://localhost:8765"));
@@ -237,34 +238,33 @@ class _MainDisplayState extends State<MainDisplay> {
     });
   }
 
-  void changeWarnings() {
+  void removeWarnings() {
     setState(() {
-      if (_errors.length == 0)
-        _errors = [
-          ErrorStates.CentreConsoleFault,
-        ];
-      else if (_errors.length == 1)
-        _errors = [
-          ErrorStates.CentreConsoleFault,
-          ErrorStates.MCIAckFailed,
-          ErrorStates.PedalACKFail,
-          ErrorStates.CentreConsoleStateTransitionFault,
-          ErrorStates.ChargerFault,
-          ErrorStates.SolarFault,
-          ErrorStates.BPSACKFailed,
-          ErrorStates.BPSKillSwitch,
-          ErrorStates.BMSOverVoltage,
-          ErrorStates.MCIOverTemp,
-        ];
-      else
-        _errors = [];
+      _errors = [];
     });
+  }
+
+  void addWarnings(String msgName) {
+    if (msgName == 'FAULT_SEQUENCE') {
+      _errors.add(ErrorStates.CentreConsoleFault);
+    } else if (msgName == 'FAULT_SEQUENCE_ACK_FROM_MOTOR_CONTROLLER') {
+      _errors.add(ErrorStates.MCIAckFailed);
+    } else if (msgName == 'FAULT_SEQUENCE_ACK_FROM_PEDAL') {
+      _errors.add(ErrorStates.PedalACKFail);
+    } else if (msgName == 'STATE_TRANSITION_FAULT') {
+      _errors.add(ErrorStates.CentreConsoleStateTransitionFault);
+    } else if (msgName == 'CHARGER_FAULT') {
+      _errors.add(ErrorStates.ChargerFault);
+    } else if (msgName == 'SOLAR_FAULT') {
+      _errors.add(ErrorStates.SolarFault);
+    }
   }
 
   void filterMessage(String data) {
     var msg = data.split('-');
     var msgName = msg[0];
     var parsedInternalData = json.decode(msg[2].replaceAll("'", "\""));
+
     if (msgName == 'MOTOR_VELOCITY') {
       _speedChange((parsedInternalData['vehicle_velocity_left']).toDouble());
     } else if (msgName == 'LIGHTS') {
@@ -277,7 +277,7 @@ class _MainDisplayState extends State<MainDisplay> {
     } else if (msgName == 'DRIVE_STATE') {
       selectDriveState(EEDriveOutput.values[parsedInternalData['drive_state']]);
     } else if (msgName.contains(new RegExp(r'FAULT'))) {
-      // TODO: Add checks for these faults
+      addWarnings(msgName);
     }
   }
 
@@ -294,7 +294,7 @@ class _MainDisplayState extends State<MainDisplay> {
             //left arrow
             GestureDetector(
               onTap: toggleTurnLeft,
-              onDoubleTap: changeWarnings,
+              onDoubleTap: removeWarnings,
               child: LeftArrow(turningLeft: _turningLeft),
             ),
             //right arrow
@@ -327,7 +327,7 @@ class _MainDisplayState extends State<MainDisplay> {
 
             // errors
             GestureDetector(
-              onTap: changeWarnings,
+              onTap: removeWarnings,
               child: Errors(_errors),
             ),
 
