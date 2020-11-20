@@ -228,11 +228,6 @@ class _MainDisplayState extends State<MainDisplay> {
       _errors.add(ErrorStates.PedalACKFail);
     } else if (msgName == 'STATE_TRANSITION_FAULT') {
       _errors.add(ErrorStates.CentreConsoleStateTransitionFault);
-    } else if (msgName == 'CHARGER_FAULT') {
-      _errors.add(ErrorStates.ChargerFault);
-    } else if (msgName == 'SOLAR_FAULT') {
-      _errors.add(ErrorStates.SolarFault);
-    }
   }
 
   void addBatteryHeartbeatWarnings(int status) {
