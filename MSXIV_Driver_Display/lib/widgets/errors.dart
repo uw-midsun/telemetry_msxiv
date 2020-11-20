@@ -9,18 +9,6 @@ const int BPS_STATE_FAULT_RELAY = (1 << 4);
 const int BPS_STATE_FAULT_CURRENT_SENSE = (1 << 5);
 const int BPS_STATE_FAULT_ACK_TIMEOUT = (1 << 6);
 
-enum EELightType {
-  EE_LIGHT_TYPE_DRL,
-  EE_LIGHT_TYPE_BRAKES,
-  EE_LIGHT_TYPE_STROBE,
-  EE_LIGHT_TYPE_SIGNAL_RIGHT,
-  EE_LIGHT_TYPE_SIGNAL_LEFT,
-  EE_LIGHT_TYPE_SIGNAL_HAZARD,
-  EE_LIGHT_TYPE_HIGH_BEAMS,
-  EE_LIGHT_TYPE_LOW_BEAMS,
-  NUM_EE_LIGHT_TYPES,
-}
-
 enum EEChargerFault {
   EE_CHARGER_FAULT_HARDWARE_FAILURE,
   EE_CHARGER_FAULT_OVER_TEMP,
@@ -48,8 +36,20 @@ enum ErrorStates {
   MCIAckFailed,
   PedalACKFail,
   CentreConsoleStateTransitionFault,
-  ChargerFault,
-  SolarFault,
+  ChargerFaultHardwareFailure,
+  ChargerFaultOverTemperature,
+  ChargerFaultWrongVoltage,
+  ChargerFaultPolarityFailure,
+  ChargerFaultCommunicationTimeout,
+  ChargerFaultChargerOff,
+  SolarFaultMCP3427,
+  SolarFaultMPPTOverCurrent,
+  SolarFaultMPPTOverVoltage,
+  SolarFaultMPPTOverTemperature,
+  SolarFaultOvercurrent,
+  SolarFaultNegativeCurrent,
+  SolarFaultOverVoltage,
+  SolarFaultOverTemperature,
   BPSACKFailed,
   BPSKillSwitch,
   BPSAFECellFault,
@@ -83,10 +83,34 @@ class Errors extends StatelessWidget {
             ErrorItem("Pedal", "Over Voltage"),
           if (errors.contains(ErrorStates.CentreConsoleStateTransitionFault))
             ErrorItem("Centre Console", "State Transition Fault"),
-          if (errors.contains(ErrorStates.ChargerFault))
-            ErrorItem("Charger", "Fault"),
-          if (errors.contains(ErrorStates.SolarFault))
+          if (errors.contains(ErrorStates.ChargerFaultHardwareFailure))
+            ErrorItem("Charger", "Hardware Failure"),
+          if (errors.contains(ErrorStates.ChargerFaultOverTemperature))
+            ErrorItem("Charger", "Over Temperature"),
+          if (errors.contains(ErrorStates.ChargerFaultWrongVoltage))
+            ErrorItem("Charger", "Wrong Voltage"),
+          if (errors.contains(ErrorStates.ChargerFaultPolarityFailure))
+            ErrorItem("Charger", "Polarity Failure"),
+          if (errors.contains(ErrorStates.ChargerFaultCommunicationTimeout))
+            ErrorItem("Charger", "Communication Timeout"),
+          if (errors.contains(ErrorStates.ChargerFaultChargerOff))
+            ErrorItem("Charger", "Charger Off"),
+          if (errors.contains(ErrorStates.SolarFaultMCP3427))
             ErrorItem("Solar", "Fault"),
+          if (errors.contains(ErrorStates.SolarFaultMPPTOverCurrent))
+            ErrorItem("Solar", "MPPT Over Current"),
+          if (errors.contains(ErrorStates.SolarFaultMPPTOverVoltage))
+            ErrorItem("Solar", "MPPT Over Voltage"),
+          if (errors.contains(ErrorStates.SolarFaultMPPTOverTemperature))
+            ErrorItem("Solar", "MPPT Over Temperature"),
+          if (errors.contains(ErrorStates.SolarFaultOvercurrent))
+            ErrorItem("Solar", "Over Current"),
+          if (errors.contains(ErrorStates.SolarFaultNegativeCurrent))
+            ErrorItem("Solar", "Negative Current"),
+          if (errors.contains(ErrorStates.SolarFaultOverVoltage))
+            ErrorItem("Solar", "Over Voltage"),
+          if (errors.contains(ErrorStates.SolarFaultOverTemperature))
+            ErrorItem("Solar", "Over Temperature"),
           if (errors.contains(ErrorStates.BPSKillSwitch))
             ErrorItem("BPS", "Kill Switch"),
           if (errors.contains(ErrorStates.BPSACKFailed))
