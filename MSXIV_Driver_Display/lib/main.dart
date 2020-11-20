@@ -18,6 +18,14 @@ import 'package:flutter/services.dart';
 import 'widgets/head_lights.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+const int BPS_STATE_FAULT_KILLSWITCH = (1 << 0);
+const int BPS_STATE_FAULT_AFE_CELL = (1 << 1);
+const int BPS_FAULT_SOURCE_AFE_TEMP = (1 << 2);
+const int BPS_STATE_FAULT_AFE_FSM = (1 << 3);
+const int BPS_STATE_FAULT_RELAY = (1 << 4);
+const int BPS_STATE_FAULT_CURRENT_SENSE = (1 << 5);
+const int BPS_STATE_FAULT_ACK_TIMEOUT = (1 << 6);
+
 enum EELightType {
   EE_LIGHT_TYPE_DRL,
   EE_LIGHT_TYPE_BRAKES,
@@ -75,7 +83,6 @@ class MainDisplay extends StatefulWidget {
 class _MainDisplayState extends State<MainDisplay> {
   // Web Socket
   WebSocketChannel channel;
-  final List<String> list = [];
 
   // Vehicle
   double _manualSpeed = 0;
@@ -95,7 +102,8 @@ class _MainDisplayState extends State<MainDisplay> {
 
   @override
   void initState() {
-    Timer.periodic(Duration(seconds: 10), (Timer t) => _getTime());
+    Timer.periodic(Duration(seconds: 10), (Timer t1) => _getTime());
+    Timer.periodic(Duration(seconds: 300), (Timer t2) => removeWarnings());
     super.initState();
     print(Uri.parse("ws://localhost:8765"));
     final channel = WebSocketChannel.connect(Uri.parse("ws://localhost:8765"));
@@ -238,28 +246,57 @@ class _MainDisplayState extends State<MainDisplay> {
     });
   }
 
-  void changeWarnings() {
+  void removeWarnings() {
     setState(() {
-      if (_errors.length == 0)
-        _errors = [
-          ErrorStates.BPSKillSwitch,
-        ];
-      else if (_errors.length == 1)
-        _errors = [
-          ErrorStates.BPSKillSwitch,
-          ErrorStates.BPSACKFailed,
-          ErrorStates.BMSOverVoltage,
-          ErrorStates.MCIOverTemp
-        ];
-      else
-        _errors = [];
+      _errors = [];
     });
+  }
+
+  void addWarnings(String msgName) {
+    if (msgName == 'FAULT_SEQUENCE') {
+      _errors.add(ErrorStates.CentreConsoleFault);
+    } else if (msgName == 'FAULT_SEQUENCE_ACK_FROM_MOTOR_CONTROLLER') {
+      _errors.add(ErrorStates.MCIAckFailed);
+    } else if (msgName == 'FAULT_SEQUENCE_ACK_FROM_PEDAL') {
+      _errors.add(ErrorStates.PedalACKFail);
+    } else if (msgName == 'STATE_TRANSITION_FAULT') {
+      _errors.add(ErrorStates.CentreConsoleStateTransitionFault);
+    } else if (msgName == 'CHARGER_FAULT') {
+      _errors.add(ErrorStates.ChargerFault);
+    } else if (msgName == 'SOLAR_FAULT') {
+      _errors.add(ErrorStates.SolarFault);
+    }
+  }
+
+  void addBatteryHeartbeatWarnings(int status) {
+    if ((status & BPS_STATE_FAULT_KILLSWITCH) == 1) {
+      _errors.add(ErrorStates.BPSKillSwitch);
+    }
+    if ((status & BPS_STATE_FAULT_AFE_CELL) >= 1) {
+      _errors.add(ErrorStates.BPSAFECellFault);
+    }
+    if ((status & BPS_FAULT_SOURCE_AFE_TEMP) >= 1) {
+      _errors.add(ErrorStates.BPSAFETempFault);
+    }
+    if ((status & BPS_STATE_FAULT_AFE_FSM) >= 1) {
+      _errors.add(ErrorStates.BPSAFEFSMFault);
+    }
+    if ((status & BPS_STATE_FAULT_RELAY) >= 1) {
+      _errors.add(ErrorStates.BPSRelayFault);
+    }
+    if ((status & BPS_STATE_FAULT_CURRENT_SENSE) >= 1) {
+      _errors.add(ErrorStates.BPSCurrentSenseFault);
+    }
+    if ((status & BPS_STATE_FAULT_ACK_TIMEOUT) >= 1) {
+      _errors.add(ErrorStates.BPSACKFailed);
+    }
   }
 
   void filterMessage(String data) {
     var msg = data.split('-');
     var msgName = msg[0];
     var parsedInternalData = json.decode(msg[2].replaceAll("'", "\""));
+
     if (msgName == 'MOTOR_VELOCITY') {
       _speedChange((parsedInternalData['vehicle_velocity_left']).toDouble());
     } else if (msgName == 'LIGHTS') {
@@ -272,9 +309,10 @@ class _MainDisplayState extends State<MainDisplay> {
     } else if (msgName == 'DRIVE_STATE') {
       selectDriveState(EEDriveOutput.values[parsedInternalData['drive_state']]);
     } else if (msgName == 'BPS_HEARTBEAT') {
-      // TODO: Add checks for these faults
-    } else if (msgName == 'BATTERY_AGGREGATE_VC') {
-    } else if (msgName == 'STATE_TRANSISTION_FAULT') {}
+      addBatteryHeartbeatWarnings(parsedInternalData['status']);
+    } else if (msgName.contains(new RegExp(r'FAULT'))) {
+      addWarnings(msgName);
+    }
   }
 
   @override
@@ -290,7 +328,7 @@ class _MainDisplayState extends State<MainDisplay> {
             //left arrow
             GestureDetector(
               onTap: toggleTurnLeft,
-              onDoubleTap: changeWarnings,
+              onDoubleTap: removeWarnings,
               child: LeftArrow(turningLeft: _turningLeft),
             ),
             //right arrow
@@ -323,7 +361,7 @@ class _MainDisplayState extends State<MainDisplay> {
 
             // errors
             GestureDetector(
-              onTap: changeWarnings,
+              onTap: removeWarnings,
               child: Errors(_errors),
             ),
 
