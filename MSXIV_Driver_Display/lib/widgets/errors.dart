@@ -9,13 +9,13 @@ enum ErrorStates {
   ChargerFault,
   SolarFault,
   BPSACKFailed,
-  // TODO: Figure out the limits for these values
   BPSKillSwitch,
   BPSAFECellFault,
   BPSAFETempFault,
   BPSAFEFSMFault,
   BPSRelayFault,
   BPSCurrentSenseFault,
+  // TODO: Implement BMSOvervoltage and MCIOverTemp
   BMSOverVoltage,
   MCIOverTemp,
 }
