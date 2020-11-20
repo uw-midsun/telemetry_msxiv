@@ -46,7 +46,7 @@ class Errors extends StatelessWidget {
           if (errors.contains(ErrorStates.SolarFault))
             ErrorItem("Solar", "Fault"),
           if (errors.contains(ErrorStates.BPSKillSwitch))
-            ErrorItem("BPS", "BPS Kill Switch"),
+            ErrorItem("BPS", "Kill Switch"),
           if (errors.contains(ErrorStates.BPSACKFailed))
             ErrorItem("BPS", "ACK Failed"),
           if (errors.contains(ErrorStates.BPSAFECellFault))
