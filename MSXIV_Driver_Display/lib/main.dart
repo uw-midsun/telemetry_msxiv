@@ -18,6 +18,14 @@ import 'package:flutter/services.dart';
 import 'widgets/head_lights.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+const int BPS_STATE_FAULT_KILLSWITCH = (1 << 0);
+const int BPS_STATE_FAULT_AFE_CELL = (1 << 1);
+const int BPS_FAULT_SOURCE_AFE_TEMP = (1 << 2);
+const int BPS_STATE_FAULT_AFE_FSM = (1 << 3);
+const int BPS_STATE_FAULT_RELAY = (1 << 4);
+const int BPS_STATE_FAULT_CURRENT_SENSE = (1 << 5);
+const int BPS_STATE_FAULT_ACK_TIMEOUT = (1 << 6);
+
 enum EELightType {
   EE_LIGHT_TYPE_DRL,
   EE_LIGHT_TYPE_BRAKES,
@@ -260,6 +268,30 @@ class _MainDisplayState extends State<MainDisplay> {
     }
   }
 
+  void addBatteryHeartbeatWarnings(int status) {
+    if ((status & BPS_STATE_FAULT_KILLSWITCH) == 1) {
+      _errors.add(ErrorStates.BPSKillSwitch);
+    }
+    if ((status & BPS_STATE_FAULT_AFE_CELL) >= 1) {
+      _errors.add(ErrorStates.BPSAFECellFault);
+    }
+    if ((status & BPS_FAULT_SOURCE_AFE_TEMP) >= 1) {
+      _errors.add(ErrorStates.BPSAFETempFault);
+    }
+    if ((status & BPS_STATE_FAULT_AFE_FSM) >= 1) {
+      _errors.add(ErrorStates.BPSAFEFSMFault);
+    }
+    if ((status & BPS_STATE_FAULT_RELAY) >= 1) {
+      _errors.add(ErrorStates.BPSRelayFault);
+    }
+    if ((status & BPS_STATE_FAULT_CURRENT_SENSE) >= 1) {
+      _errors.add(ErrorStates.BPSCurrentSenseFault);
+    }
+    if ((status & BPS_STATE_FAULT_ACK_TIMEOUT) >= 1) {
+      _errors.add(ErrorStates.BPSACKFailed);
+    }
+  }
+
   void filterMessage(String data) {
     var msg = data.split('-');
     var msgName = msg[0];
@@ -276,6 +308,8 @@ class _MainDisplayState extends State<MainDisplay> {
       toggleCruise();
     } else if (msgName == 'DRIVE_STATE') {
       selectDriveState(EEDriveOutput.values[parsedInternalData['drive_state']]);
+    } else if (msgName == 'BPS_HEARTBEAT') {
+      addBatteryHeartbeatWarnings(parsedInternalData['status']);
     } else if (msgName.contains(new RegExp(r'FAULT'))) {
       addWarnings(msgName);
     }

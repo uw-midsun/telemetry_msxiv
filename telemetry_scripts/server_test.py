@@ -5,6 +5,12 @@ import websockets
 
 async def hello(websocket, path):
     while True:
+        # Test faults
+        await websocket.send("BPS_HEARTBEAT-BMS_CARRIER-{'status': 127}")
+        await asyncio.sleep(2)
+        await websocket.send("CHARGER_FAULT-CHARGER-{'fault': 1}")
+        await asyncio.sleep(2)
+
         # Test speed
         await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-\
         {'vehicle_velocity_left': 127,'vehicle_velocity_right': 127}")
@@ -39,8 +45,6 @@ async def hello(websocket, path):
         await websocket.send("LIGHTS-STEERING-{'lights_id': 5, 'state': 0}")
         await asyncio.sleep(2)
 
-        await websocket.send("CHARGER_FAULT-CHARGER-{'fault': 75}")
-        await asyncio.sleep(2)
 
 start_server = websockets.serve(hello, "localhost", 8765)
 

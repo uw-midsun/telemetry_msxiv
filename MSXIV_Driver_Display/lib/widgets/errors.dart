@@ -11,6 +11,11 @@ enum ErrorStates {
   BPSACKFailed,
   // TODO: Figure out the limits for these values
   BPSKillSwitch,
+  BPSAFECellFault,
+  BPSAFETempFault,
+  BPSAFEFSMFault,
+  BPSRelayFault,
+  BPSCurrentSenseFault,
   BMSOverVoltage,
   MCIOverTemp,
 }
@@ -40,10 +45,20 @@ class Errors extends StatelessWidget {
             ErrorItem("Charger", "Fault"),
           if (errors.contains(ErrorStates.SolarFault))
             ErrorItem("Solar", "Fault"),
+          if (errors.contains(ErrorStates.BPSKillSwitch))
+            ErrorItem("BPS", "BPS Kill Switch"),
           if (errors.contains(ErrorStates.BPSACKFailed))
             ErrorItem("BPS", "ACK Failed"),
-          if (errors.contains(ErrorStates.BPSKillSwitch))
-            ErrorItem("BPS", "Kill Switch"),
+          if (errors.contains(ErrorStates.BPSAFECellFault))
+            ErrorItem("BPS", "Cell Fault"),
+          if (errors.contains(ErrorStates.BPSAFETempFault))
+            ErrorItem("BPS", "AFE Temp Fault"),
+          if (errors.contains(ErrorStates.BPSAFEFSMFault))
+            ErrorItem("BPS", "FSM Fault"),
+          if (errors.contains(ErrorStates.BPSRelayFault))
+            ErrorItem("BPS", "Relay Fault"),
+          if (errors.contains(ErrorStates.BPSCurrentSenseFault))
+            ErrorItem("BPS", "Current Sense Fault"),
           if (errors.contains(ErrorStates.BMSOverVoltage))
             ErrorItem("BMS", "Over Voltage"),
           if (errors.contains(ErrorStates.MCIOverTemp))
