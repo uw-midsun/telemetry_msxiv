@@ -18,39 +18,6 @@ import 'package:flutter/services.dart';
 import 'widgets/head_lights.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-const int BPS_STATE_FAULT_KILLSWITCH = (1 << 0);
-const int BPS_STATE_FAULT_AFE_CELL = (1 << 1);
-const int BPS_FAULT_SOURCE_AFE_TEMP = (1 << 2);
-const int BPS_STATE_FAULT_AFE_FSM = (1 << 3);
-const int BPS_STATE_FAULT_RELAY = (1 << 4);
-const int BPS_STATE_FAULT_CURRENT_SENSE = (1 << 5);
-const int BPS_STATE_FAULT_ACK_TIMEOUT = (1 << 6);
-
-enum EELightType {
-  EE_LIGHT_TYPE_DRL,
-  EE_LIGHT_TYPE_BRAKES,
-  EE_LIGHT_TYPE_STROBE,
-  EE_LIGHT_TYPE_SIGNAL_RIGHT,
-  EE_LIGHT_TYPE_SIGNAL_LEFT,
-  EE_LIGHT_TYPE_SIGNAL_HAZARD,
-  EE_LIGHT_TYPE_HIGH_BEAMS,
-  EE_LIGHT_TYPE_LOW_BEAMS,
-  NUM_EE_LIGHT_TYPES,
-}
-
-enum EELightState {
-  EE_LIGHT_STATE_OFF,
-  EE_LIGHT_STATE_ON,
-  NUM_EE_LIGHT_STATES,
-}
-
-enum EEDriveOutput {
-  EE_DRIVE_OUTPUT_OFF,
-  EE_DRIVE_OUTPUT_DRIVE,
-  EE_DRIVE_OUTPUT_REVERSE,
-  NUM_EE_DRIVE_OUTPUTS,
-}
-
 void main() {
   runApp(Display());
 }
