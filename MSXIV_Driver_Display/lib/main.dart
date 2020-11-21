@@ -18,39 +18,6 @@ import 'package:flutter/services.dart';
 import 'widgets/head_lights.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-const int BPS_STATE_FAULT_KILLSWITCH = (1 << 0);
-const int BPS_STATE_FAULT_AFE_CELL = (1 << 1);
-const int BPS_FAULT_SOURCE_AFE_TEMP = (1 << 2);
-const int BPS_STATE_FAULT_AFE_FSM = (1 << 3);
-const int BPS_STATE_FAULT_RELAY = (1 << 4);
-const int BPS_STATE_FAULT_CURRENT_SENSE = (1 << 5);
-const int BPS_STATE_FAULT_ACK_TIMEOUT = (1 << 6);
-
-enum EELightType {
-  EE_LIGHT_TYPE_DRL,
-  EE_LIGHT_TYPE_BRAKES,
-  EE_LIGHT_TYPE_STROBE,
-  EE_LIGHT_TYPE_SIGNAL_RIGHT,
-  EE_LIGHT_TYPE_SIGNAL_LEFT,
-  EE_LIGHT_TYPE_SIGNAL_HAZARD,
-  EE_LIGHT_TYPE_HIGH_BEAMS,
-  EE_LIGHT_TYPE_LOW_BEAMS,
-  NUM_EE_LIGHT_TYPES,
-}
-
-enum EELightState {
-  EE_LIGHT_STATE_OFF,
-  EE_LIGHT_STATE_ON,
-  NUM_EE_LIGHT_STATES,
-}
-
-enum EEDriveOutput {
-  EE_DRIVE_OUTPUT_OFF,
-  EE_DRIVE_OUTPUT_DRIVE,
-  EE_DRIVE_OUTPUT_REVERSE,
-  NUM_EE_DRIVE_OUTPUTS,
-}
-
 void main() {
   runApp(Display());
 }
@@ -261,10 +228,42 @@ class _MainDisplayState extends State<MainDisplay> {
       _errors.add(ErrorStates.PedalACKFail);
     } else if (msgName == 'STATE_TRANSITION_FAULT') {
       _errors.add(ErrorStates.CentreConsoleStateTransitionFault);
-    } else if (msgName == 'CHARGER_FAULT') {
-      _errors.add(ErrorStates.ChargerFault);
-    } else if (msgName == 'SOLAR_FAULT') {
-      _errors.add(ErrorStates.SolarFault);
+    }
+  }
+
+  void addChargerWarnings(EEChargerFault fault) {
+    if (fault == EEChargerFault.EE_CHARGER_FAULT_HARDWARE_FAILURE) {
+      _errors.add(ErrorStates.ChargerFaultHardwareFailure);
+    } else if (fault == EEChargerFault.EE_CHARGER_FAULT_OVER_TEMP) {
+      _errors.add(ErrorStates.ChargerFaultOverTemperature);
+    } else if (fault == EEChargerFault.EE_CHARGER_FAULT_WRONG_VOLTAGE) {
+      _errors.add(ErrorStates.ChargerFaultWrongVoltage);
+    } else if (fault == EEChargerFault.EE_CHARGER_FAULT_POLARITY_FAILURE) {
+      _errors.add(ErrorStates.ChargerFaultPolarityFailure);
+    } else if (fault == EEChargerFault.EE_CHARGER_FAULT_COMMUNICATION_TIMEOUT) {
+      _errors.add(ErrorStates.ChargerFaultCommunicationTimeout);
+    } else if (fault == EEChargerFault.EE_CHARGER_FAULT_CHARGER_OFF) {
+      _errors.add(ErrorStates.ChargerFaultChargerOff);
+    }
+  }
+
+  void addSolarWarnings(EESolarFault fault) {
+    if (fault == EESolarFault.EE_SOLAR_FAULT_MCP3427) {
+      _errors.add(ErrorStates.SolarFaultMCP3427);
+    } else if (fault == EESolarFault.EE_SOLAR_FAULT_MPPT_OVERCURRENT) {
+      _errors.add(ErrorStates.SolarFaultMPPTOverCurrent);
+    } else if (fault == EESolarFault.EE_SOLAR_FAULT_MPPT_OVERVOLTAGE) {
+      _errors.add(ErrorStates.SolarFaultMPPTOverVoltage);
+    } else if (fault == EESolarFault.EE_SOLAR_FAULT_MPPT_OVERTEMPERATURE) {
+      _errors.add(ErrorStates.SolarFaultMPPTOverTemperature);
+    } else if (fault == EESolarFault.EE_SOLAR_FAULT_OVERCURRENT) {
+      _errors.add(ErrorStates.SolarFaultOverCurrent);
+    } else if (fault == EESolarFault.EE_SOLAR_FAULT_NEGATIVE_CURRENT) {
+      _errors.add(ErrorStates.SolarFaultNegativeCurrent);
+    } else if (fault == EESolarFault.EE_SOLAR_FAULT_OVERVOLTAGE) {
+      _errors.add(ErrorStates.SolarFaultOverVoltage);
+    } else if (fault == EESolarFault.EE_SOLAR_FAULT_OVERTEMPERATURE) {
+      _errors.add(ErrorStates.SolarFaultOverTemperature);
     }
   }
 
@@ -310,6 +309,10 @@ class _MainDisplayState extends State<MainDisplay> {
       selectDriveState(EEDriveOutput.values[parsedInternalData['drive_state']]);
     } else if (msgName == 'BPS_HEARTBEAT') {
       addBatteryHeartbeatWarnings(parsedInternalData['status']);
+    } else if (msgName == "CHARGER_FAULT") {
+      addChargerWarnings(EEChargerFault.values[parsedInternalData['fault']]);
+    } else if (msgName == "SOLAR_FAULT") {
+      addSolarWarnings(EESolarFault.values[parsedInternalData['fault']]);
     } else if (msgName.contains(new RegExp(r'FAULT'))) {
       addWarnings(msgName);
     }
