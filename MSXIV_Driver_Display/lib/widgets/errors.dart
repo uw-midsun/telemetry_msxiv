@@ -46,7 +46,7 @@ enum ErrorStates {
   SolarFaultMPPTOverCurrent,
   SolarFaultMPPTOverVoltage,
   SolarFaultMPPTOverTemperature,
-  SolarFaultOvercurrent,
+  SolarFaultOverCurrent,
   SolarFaultNegativeCurrent,
   SolarFaultOverVoltage,
   SolarFaultOverTemperature,
@@ -103,7 +103,7 @@ class Errors extends StatelessWidget {
             ErrorItem("Solar", "MPPT Over Voltage"),
           if (errors.contains(ErrorStates.SolarFaultMPPTOverTemperature))
             ErrorItem("Solar", "MPPT Over Temperature"),
-          if (errors.contains(ErrorStates.SolarFaultOvercurrent))
+          if (errors.contains(ErrorStates.SolarFaultOverCurrent))
             ErrorItem("Solar", "Over Current"),
           if (errors.contains(ErrorStates.SolarFaultNegativeCurrent))
             ErrorItem("Solar", "Negative Current"),

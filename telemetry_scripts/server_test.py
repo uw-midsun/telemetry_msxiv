@@ -6,9 +6,13 @@ import websockets
 async def hello(websocket, path):
     while True:
         # Test faults
-        await websocket.send("BPS_HEARTBEAT-BMS_CARRIER-{'status': 127}")
+        await websocket.send("BPS_HEARTBEAT-BMS_CARRIER-{'status': 1}")
         await asyncio.sleep(2)
         await websocket.send("CHARGER_FAULT-CHARGER-{'fault': 1}")
+        await asyncio.sleep(2)
+        await websocket.send("CHARGER_FAULT-CHARGER-{'fault': 3}")
+        await asyncio.sleep(2)
+        await websocket.send("SOLAR_FAULT-CHARGER-{'fault': 5}")
         await asyncio.sleep(2)
 
         # Test speed
