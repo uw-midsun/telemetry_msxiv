@@ -1,7 +1,6 @@
 # This script recieves CAN data,sends it to FRED with MQTT,
 # and stores the data locally
 # This should be run by the RPI for the telemetry system
-# Make sure that DynamoDB is set up and link the key in a .env file
 
 # If you are running this script with virtual CAN
 # ensure that it is set up first
@@ -10,7 +9,6 @@
 # sudo ip link add dev vcan0 type vcan
 # sudo ip link set up vcan0
 
-import boto3
 import cantools
 import can
 import csv
@@ -30,9 +28,6 @@ port = 1883
 client = mqtt.Client(client_id=os.getenv("MQTT_CLIENT_ID"))
 client.username_pw_set(username=os.getenv("MQTT_USERNAME"),
                        password=os.getenv("MQTT_PASSWORD"))
-
-dynamodb = boto3.resource('dynamodb')
-dynamo_db_table = dynamodb.Table('can_messages')
 
 # Write new line and header
 with open('can_messages.csv', 'a', newline='') as csvfile:
@@ -65,11 +60,10 @@ def decode_and_send():
     can_decoded_data = {'datetime': time, 'name': name,
                         'sender': sender, 'data': decoded}
 
-    # Send data out to a CSV, FRED, and DynamoDB
+    # Send data out to a CSV file and FRED
     write_to_csv(can_decoded_data)
     client.publish("accounts/midnight_sun/CAN",
                    payload=json.dumps(can_decoded_data), qos=2)
-    dynamo_db_table.put_item(Item=can_decoded_data)
 
 
 def write_to_csv(can_decoded_data):
