@@ -10,12 +10,19 @@ pip3 install -r requirements.txt
 
 To set up virtual CAN run:
 ```bash
-sudo modprobe vcan \
-&& sudo ip link add dev vcan0 type vcan \
-&& sudo ip link set up vcan0
+sudo modprobe vcan
+sudo ip link add dev vcan0 type vcan
+sudo ip link set up vcan0
 ```
 
-Make sure you go to https://github.com/uw-midsun/codegen-tooling-msxiv to generate a DBC file and move it to telemetry so that the scripts below can run properly.
+To configure the telemetry system to run on startup run:
+```bash
+chmod +x startup.sh
+sudo ./startup.sh
+```
+Warning: If you have anything in the /etc/rc.local file this will overwrite it
+
+Make sure you go to https://github.com/uw-midsun/codegen-tooling-msxiv to generate a DBC file and move it to the telemetry repo so that the scripts below can run properly.
 
 To read CAN messages, store them in a CSV and send them to FRED perform the following:
 1. Create a .env file and enter something similar to what is shown below.
