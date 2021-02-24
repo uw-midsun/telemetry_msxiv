@@ -4,11 +4,22 @@ FILEPATH :=
 # Issues to ignore while linting
 LINT_IGNORE :=
 
-.PHONY: run
-run:
-	@python3 telemetry_scripts/aggregate_can_data.py \
-	& python3 telemetry_scripts/GPS.py \
-	& python3 telemetry_scripts/web_aggregate_can_data.py
+# Location of platform
+PLATFORMS_DIR := platform
+PLATFORM ?= rpi
+PLATFORM_DIR := $(PLATFORMS_DIR)/$(PLATFORM)
+
+# Includes platform-specific configurations
+include $(PLATFORMS_DIR)/$(PLATFORM)/platform.mk
+
+.PHONY: socketcan
+socketcan:
+	@sudo modprobe can
+	@sudo modprobe can_raw
+	@sudo modprobe vcan
+	@sudo ip link add dev vcan0 type vcan || true
+	@sudo ip link set up vcan0 || true
+	@ip link show vcan0
 
 .PHONY: lint
 lint:

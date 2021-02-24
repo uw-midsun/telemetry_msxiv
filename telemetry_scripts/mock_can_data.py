@@ -16,6 +16,10 @@ import cantools
 import can
 import time
 import random
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # A negative value for num_messages will cause the script to send CAN
 # messages forever
@@ -24,10 +28,10 @@ sleep_time_s = 1
 can_messages = []
 
 try:
-    db = cantools.database.load_file('system_can.dbc')
+    db = cantools.database.load_file(os.getenv("DBC_PATH"))
 except BaseException:
     print("Must generate DBC file first")
-    print("Run make gen && make gen-dbc")
+    print("Ensure that you have specified the path of the DBC file in .env")
 
 # This can be edited depending on the CAN interface
 can_bus = can.interface.Bus('vcan0', bustype='socketcan')
