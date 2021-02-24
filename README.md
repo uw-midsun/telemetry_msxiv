@@ -3,6 +3,12 @@
 
 This is the telemetry system for msxiv. This project logs data from our vehicle when it is running and stores it. Currently, the project gets CAN Messages/GPS data and writes it to a CSV, FRED, and uploads it to AWS DynamoDB.
 
+Clone this repository on your system.
+For the Midsun VM (x86), this should be cloned in the shared folder.
+For the RPI, this should be cloned under the desktop.
+
+Make sure you go to https://github.com/uw-midsun/codegen-tooling-msxiv to generate a DBC file and move it to the telemetry repo so that the scripts below can run properly.
+
 To install requirements run:
 ```bash
 pip3 install -r requirements.txt
@@ -10,9 +16,7 @@ pip3 install -r requirements.txt
 
 To set up virtual CAN run:
 ```bash
-sudo modprobe vcan
-sudo ip link add dev vcan0 type vcan
-sudo ip link set up vcan0
+make socketcan
 ```
 
 To configure the telemetry system to run on startup run:
@@ -22,18 +26,22 @@ sudo ./startup.sh
 ```
 Warning: If you have anything in the /etc/rc.local file this will overwrite it
 
-Make sure you go to https://github.com/uw-midsun/codegen-tooling-msxiv to generate a DBC file and move it to the telemetry repo so that the scripts below can run properly.
-
 To read CAN messages, store them in a CSV and send them to FRED perform the following:
 1. Create a .env file and enter something similar to what is shown below.
 ```bash
-MQTT_CLIENT_ID=''
-MQTT_USERNAME=''
-MQTT_PASSWORD=''
+MQTT_CLIENT_ID=my_client_id
+MQTT_USERNAME=my_username
+MQTT_PASSWORD=my_password
+DBC_PATH=/home/vagrant/shared/telemetry_xiv/system_can.dbc
 ```
 2. To run the telemetry system perform:
 ```bash
-make run
+# For the Raspberry Pi
+make run PLATFORM=rpi
+# Alternative for testing
+make run PLATFORM=x86
+# To kill the scripts
+pkill python
 ```
 The scripts below are found in the telemetry scripts file and can be run individually
 

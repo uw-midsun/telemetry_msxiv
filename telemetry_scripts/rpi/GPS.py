@@ -25,7 +25,7 @@ time_count = 0
 
 with open('gps_data.csv', 'a', newline='') as csvfile:
     fieldnames = [
-        'datetime'
+        'datetime',
         'latitude',
         'lat_direction',
         'longitude',
@@ -97,7 +97,7 @@ def send_at(command, back, timeout):
 def write_to_csv(data_dict):
     with open('gps_data.csv', 'a', newline='') as csvfile:
         fieldnames = [
-            'datetime'
+            'datetime',
             'latitude',
             'lat_direction',
             'longitude',

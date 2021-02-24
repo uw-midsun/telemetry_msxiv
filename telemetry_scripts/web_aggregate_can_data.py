@@ -2,10 +2,16 @@ import asyncio
 import cantools
 import can
 import websockets
-
+from dotenv import load_dotenv
+import os
 
 can_bus = can.interface.Bus('vcan0', bustype='socketcan')
-db = cantools.database.load_file('system_can.dbc')
+load_dotenv()
+try:
+    db = cantools.database.load_file(os.getenv("DBC_PATH"))
+except BaseException:
+    print("Must generate DBC file first")
+    print("Ensure that you have specified the path of the DBC file in .env")
 
 
 async def decode_and_send(websocket, path):

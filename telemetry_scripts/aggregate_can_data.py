@@ -21,7 +21,12 @@ import paho.mqtt.client as mqtt
 load_dotenv()
 
 can_bus = can.interface.Bus('vcan0', bustype='socketcan')
-db = cantools.database.load_file('system_can.dbc')
+
+try:
+    db = cantools.database.load_file(os.getenv("DBC_PATH"))
+except BaseException:
+    print("Must generate DBC file first")
+    print("Ensure that you have specified the path of the DBC file in .env")
 
 broker = "mqtt.sensetecnic.com"
 port = 1883
