@@ -7,7 +7,7 @@ Clone this repository on your system.
 For the Midsun VM (x86), this should be cloned in the shared folder.
 For the RPI, this should be cloned under the desktop.
 
-Make sure you go to https://github.com/uw-midsun/codegen-tooling-msxiv to generate a DBC file and move it to the telemetry repo so that the scripts below can run properly.
+Make sure you go to https://github.com/uw-midsun/firmware_xiv and run `make codegen_dbc` to generate a DBC file, then move it to the telemetry repo so that the scripts below can run properly.
 
 To install requirements run:
 ```bash
