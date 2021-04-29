@@ -8,9 +8,9 @@ enum Units { Kmh, MPH }
 extension on Units {
   String get value {
     if (this == Units.Kmh)
-      return "Km/h";
+      return "km/h";
     else
-      return "MPH";
+      return "mph";
   }
 
   double get kmFactor {
@@ -35,18 +35,27 @@ class Speedometer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      physics: NeverScrollableScrollPhysics(),
-      children: <Widget>[
-        SizedBox(height: 100),
-        Container(
-          width: MediaQuery.of(context).size.width * 0.6666,
-          height: MediaQuery.of(context).size.width * 0.6666,
+    return Align(
+        alignment: Alignment(0.0, 0.5),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: MediaQuery.of(context).size.height * 0.8,
           child: CustomPaint(
             painter: SpeedometerPainter(speed, unit.kmFactor, unit.secFactor),
           ),
-        ),
-      ],
-    );
+        ));
   }
+  //   return ListView(
+  //     physics: NeverScrollableScrollPhysics(),
+  //     children: <Widget>[
+  //       Container(
+  //         width: MediaQuery.of(context).size.width * 0.6666,
+  //         height: MediaQuery.of(context).size.width * 0.6666,
+  //         child: CustomPaint(
+  //           painter: SpeedometerPainter(speed, unit.kmFactor, unit.secFactor),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 }

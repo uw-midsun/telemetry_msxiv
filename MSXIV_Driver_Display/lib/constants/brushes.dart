@@ -3,10 +3,24 @@ import 'package:flutter/material.dart';
 
 class Brushes {
   static final outlineBrush = Paint()
-    ..color = Color.fromRGBO(250, 250, 250, 1)
+    ..color = Color.fromRGBO(18, 82, 172, 0.4)
     ..style = PaintingStyle.stroke
-    ..strokeWidth = 6
+    ..strokeWidth = 2
     ..strokeCap = StrokeCap.square;
+  static Paint getGradientBrush(Offset center, double radius) {
+    var boundingRect = Rect.fromCircle(center: center, radius: radius);
+    const List<Color> colors = [
+      Color.fromRGBO(12, 18, 38, 0),
+      Color.fromRGBO(112, 254, 255, 0.17)
+    ];
+    const List<double> stops = [0.6458, 1.0];
+
+    return Paint()
+      ..style = PaintingStyle.fill
+      ..shader = RadialGradient(colors: colors, stops: stops)
+          .createShader(boundingRect)
+      ..strokeCap = StrokeCap.square;
+  }
 
   static final twentyTick = Paint()
     ..color = Colors.white
@@ -34,7 +48,7 @@ class Brushes {
     ..color = Colors.grey
     ..style = PaintingStyle.stroke
     ..strokeWidth = 4
-    ..strokeCap = StrokeCap.square; 
+    ..strokeCap = StrokeCap.square;
 
   static Paint getNeedleBrush(Offset center, double radius) {
     return Paint()

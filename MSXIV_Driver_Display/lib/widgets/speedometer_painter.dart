@@ -18,13 +18,20 @@ class SpeedometerPainter extends CustomPainter {
     var centerX = size.width / 2;
     var centerY = size.height / 2;
     var center = Offset(centerX, centerY);
-    var arcLength = 8 * pi / 6;
-    var startAngle = 5 * pi / 6;
+
+    const arcLength = 6 * pi / 4;
+    const startAngle = 3 * pi / 4;
     double radius = min(centerX, centerY);
 
+    Rect boudingRect = Rect.fromCircle(center: center, radius: radius);
+
     // dial outline
-    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), startAngle,
-        arcLength, false, Brushes.outlineBrush);
+    canvas.drawArc(
+        boudingRect, startAngle, arcLength, false, Brushes.outlineBrush);
+
+    // dial gradient
+    canvas.drawArc(boudingRect, startAngle, arcLength, true,
+        Brushes.getGradientBrush(center, radius));
 
     //primary dial
     for (double speedIncr = 0;
@@ -64,8 +71,11 @@ class SpeedometerPainter extends CustomPainter {
       // 20 speed labels
       if (speedIncr % 10 == 0) {
         final textStyle = ui.TextStyle(
-          color: Colors.white.withOpacity(
-              primUnitFactor == 1 ? speedIncr % 20 == 0 ? 1 : 0 : 1),
+          color: Colors.white.withOpacity(primUnitFactor == 1
+              ? speedIncr % 20 == 0
+                  ? 1
+                  : 0
+              : 1),
           fontSize: speedIncr % 20 == 0 ? 28 : 24,
           fontWeight: FontWeight.bold,
         );
@@ -96,53 +106,53 @@ class SpeedometerPainter extends CustomPainter {
     }
 
     //secondary dial
-    for (double speedIncr = 0;
-        speedIncr <= TOP_SPEED * secUnitFactor;
-        speedIncr += primUnitFactor == 1 ? 10 : 20) {
-      var innerScale = 0.95;
-      var scale = radius * 0.45;
-      var brush = Brushes.innerTicks;
+    // for (double speedIncr = 0;
+    //     speedIncr <= TOP_SPEED * secUnitFactor;
+    //     speedIncr += primUnitFactor == 1 ? 10 : 20) {
+    //   var innerScale = 0.95;
+    //   var scale = radius * 0.45;
+    //   var brush = Brushes.innerTicks;
 
-      var outerX = scale *
-          cos(startAngle + arcLength / (TOP_SPEED * secUnitFactor) * speedIncr);
-      var outerY = scale *
-          sin(startAngle + arcLength / (TOP_SPEED * secUnitFactor) * speedIncr);
+    //   var outerX = scale *
+    //       cos(startAngle + arcLength / (TOP_SPEED * secUnitFactor) * speedIncr);
+    //   var outerY = scale *
+    //       sin(startAngle + arcLength / (TOP_SPEED * secUnitFactor) * speedIncr);
 
-      var innerX = innerScale * outerX;
-      var innerY = innerScale * outerY;
+    //   var innerX = innerScale * outerX;
+    //   var innerY = innerScale * outerY;
 
-      //secondary dial ticks
-      canvas.drawLine(Offset(innerX, innerY) + center,
-          Offset(outerX, outerY) + center, brush);
+    //   //secondary dial ticks
+    //   canvas.drawLine(Offset(innerX, innerY) + center,
+    //       Offset(outerX, outerY) + center, brush);
 
-      final textStyle = ui.TextStyle(
-        color: Colors.grey,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      );
+    //   final textStyle = ui.TextStyle(
+    //     color: Colors.grey,
+    //     fontSize: 20,
+    //     fontWeight: FontWeight.bold,
+    //   );
 
-      final paragraphBuilder = ui.ParagraphBuilder(ui.ParagraphStyle())
-        ..pushStyle(textStyle)
-        ..addText(speedIncr.round().toString());
-      final constraints = ui.ParagraphConstraints(width: 300);
-      final paragraph = paragraphBuilder.build();
-      paragraph.layout(constraints);
+    //   final paragraphBuilder = ui.ParagraphBuilder(ui.ParagraphStyle())
+    //     ..pushStyle(textStyle)
+    //     ..addText(speedIncr.round().toString());
+    //   final constraints = ui.ParagraphConstraints(width: 300);
+    //   final paragraph = paragraphBuilder.build();
+    //   paragraph.layout(constraints);
 
-      var textX = centerX +
-          radius *
-              .52 *
-              cos(startAngle +
-                  arcLength / (TOP_SPEED * secUnitFactor) * speedIncr);
+    //   var textX = centerX +
+    //       radius *
+    //           .52 *
+    //           cos(startAngle +
+    //               arcLength / (TOP_SPEED * secUnitFactor) * speedIncr);
 
-      var textY = centerY +
-          radius *
-              0.52 *
-              sin(startAngle +
-                  arcLength / (TOP_SPEED * secUnitFactor) * speedIncr);
+    //   var textY = centerY +
+    //       radius *
+    //           0.52 *
+    //           sin(startAngle +
+    //               arcLength / (TOP_SPEED * secUnitFactor) * speedIncr);
 
-      final offset = Offset(textX - 11, textY - 11);
-      canvas.drawParagraph(paragraph, offset);
-    }
+    //   final offset = Offset(textX - 11, textY - 11);
+    //   canvas.drawParagraph(paragraph, offset);
+    // }
 
     //secondar unit label in bottom left
     final textStyle = ui.TextStyle(

@@ -321,7 +321,7 @@ class _MainDisplayState extends State<MainDisplay> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Color.fromRGBO(12, 18, 38, 1),
       body: SafeArea(
         top: false,
         child: Stack(
