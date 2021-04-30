@@ -33,13 +33,13 @@ class HeadLights extends StatelessWidget {
       child: lightStatus == LightStatus.Off
           ? Text(
               "Lights Off",
-              style: TextStyle(fontSize: 24, color: stdColors.reverseState),
+              style: TextStyle(fontSize: 24, color: StdColors.reverseState),
             )
           : Image(
               height: 50,
               image: AssetImage(
                   'assets/images/HeadLights${lightStatus.toString().split('.')[1]}.png'),
-              color: stdColors.reverseState,
+              color: StdColors.reverseState,
             ),
     );
   }

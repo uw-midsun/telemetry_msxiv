@@ -8,9 +8,8 @@ import 'package:MSXIV_Driver_Display/widgets/head_lights.dart';
 import 'package:MSXIV_Driver_Display/widgets/left_arrow.dart';
 import 'package:MSXIV_Driver_Display/widgets/right_arrow.dart';
 import 'package:MSXIV_Driver_Display/widgets/soc.dart';
-import 'package:MSXIV_Driver_Display/widgets/speedometer.dart';
+import 'package:MSXIV_Driver_Display/widgets/speedometer/speedometer.dart';
 import 'package:MSXIV_Driver_Display/widgets/cruise_control.dart';
-import 'package:MSXIV_Driver_Display/widgets/digital_speed.dart';
 import 'package:MSXIV_Driver_Display/widgets/drive_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,7 +30,7 @@ class Display extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'MSXIV Driver Display',
       theme: ThemeData(
-        backgroundColor: stdColors.background,
+        backgroundColor: StdColors.background,
       ),
       home: MainDisplay(title: 'Main Display'),
     );
@@ -321,14 +320,20 @@ class _MainDisplayState extends State<MainDisplay> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Color.fromRGBO(12, 18, 38, 1),
       body: SafeArea(
         top: false,
         child: Stack(
           children: [
             //speed analog
-            Speedometer(_manualSpeed, units),
-            //left arrow
+            GestureDetector(
+              onPanUpdate: (details) {
+                _speedChange(details.delta.dx / 5);
+              },
+              onTap: toggleUnits,
+              child: Speedometer(_manualSpeed, units),
+            ),
+             ////left arrow
             GestureDetector(
               onTap: toggleTurnLeft,
               onDoubleTap: removeWarnings,
@@ -340,13 +345,6 @@ class _MainDisplayState extends State<MainDisplay> {
               child: RightArrow(turningRight: _turningRight),
             ),
             //speed digital
-            GestureDetector(
-              onPanUpdate: (details) {
-                _speedChange(details.delta.dx / 5);
-              },
-              onTap: toggleUnits,
-              child: DigitalSpeed(_manualSpeed, units),
-            ),
             //battery info
             GestureDetector(
               onPanUpdate: (details) {
