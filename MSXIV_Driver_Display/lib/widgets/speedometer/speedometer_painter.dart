@@ -15,24 +15,33 @@ class SpeedometerPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    var centerX = size.width / 2;
-    var centerY = size.height / 2;
-    var center = Offset(centerX, centerY);
+    const startAngle = 2.23;
+    const arcLength = 2 * (3 * pi / 2 - startAngle);
 
-    const arcLength = 6 * pi / 4;
-    const startAngle = 3 * pi / 4;
-    double radius = min(centerX, centerY);
+    double outerRadius = size.width / 2;
+    double innerRadius = outerRadius * 0.56;
 
-    Rect boudingRect = Rect.fromCircle(center: center, radius: radius);
+    var center = Offset(size.width / 2, size.height / 2);
 
-    // dial outline
-    canvas.drawArc(
-        boudingRect, startAngle, arcLength, false, Brushes.outlineBrush);
+    // bounding rectanges for the speedometer arcs
+    Rect outerBoundingRect =
+        Rect.fromCircle(center: center, radius: outerRadius);
+    Rect innerBoundingRect =
+        Rect.fromCircle(center: center, radius: innerRadius);
+
+    // outer dial outline
+    canvas.drawArc(outerBoundingRect, startAngle, arcLength, false,
+        Brushes.outerOutlineBrush);
+
+    // inner dial outline - shading needs to be adjusted according to speed
+    canvas.drawArc(innerBoundingRect, startAngle, arcLength, false,
+        Brushes.innerOutlineBrush);
 
     // dial gradient
-    canvas.drawArc(boudingRect, startAngle, arcLength, true,
-        Brushes.getGradientBrush(center, radius));
+    canvas.drawArc(outerBoundingRect, startAngle, arcLength, true,
+        Brushes.getGradientBrush(center, outerRadius));
 
+    const Map<int, double> tickWidths = {20: 5, 10: 4, 5: 3, 1: 2};
     //primary dial
     for (double speedIncr = 0;
         speedIncr <= TOP_SPEED * primUnitFactor;
@@ -42,18 +51,18 @@ class SpeedometerPainter extends CustomPainter {
 
       if (speedIncr % 20 == 0) {
         innerScale = 0.92;
-        brush = Brushes.twentyTick;
+        brush = Brushes.getTickBrush(tickWidths[20]);
       } else if (speedIncr % 10 == 0) {
         innerScale = 0.94;
-        brush = Brushes.tenTick;
+        brush = Brushes.getTickBrush(tickWidths[10]);
       } else if (speedIncr % 5 == 0) {
         innerScale = 0.96;
-        brush = Brushes.fiveTick;
+        brush = Brushes.getTickBrush(tickWidths[5]);
       } else {
         innerScale = 0.995;
-        brush = Brushes.oneTick;
+        brush = Brushes.getTickBrush(tickWidths[1]);
       }
-      var scale = radius * 0.97;
+      var scale = outerRadius * 0.97;
 
       var outerX = scale *
           cos(startAngle +
@@ -87,13 +96,13 @@ class SpeedometerPainter extends CustomPainter {
         final paragraph = paragraphBuilder.build();
         paragraph.layout(constraints);
 
-        var textX = radius *
+        var textX = outerRadius *
             0.76 *
             (speedIncr % 20 == 0 ? 1 : 1.04) *
             cos(startAngle +
                 arcLength / (TOP_SPEED * primUnitFactor) * speedIncr);
 
-        var textY = radius *
+        var textY = outerRadius *
             0.82 *
             (speedIncr % 20 == 0 ? 1 : 1.04) *
             sin(startAngle +
@@ -169,12 +178,12 @@ class SpeedometerPainter extends CustomPainter {
     paragraph.layout(constraints);
     canvas.drawParagraph(
         paragraph,
-        Offset(radius * 0.57 * cos(startAngle),
-                radius * 0.57 * sin(startAngle - 0.1)) +
+        Offset(outerRadius * 0.57 * cos(startAngle),
+                outerRadius * 0.57 * sin(startAngle - 0.1)) +
             center);
 
-    var xComp = radius * cos(startAngle + arcLength / TOP_SPEED * speed);
-    var yComp = radius * sin(startAngle + arcLength / TOP_SPEED * speed);
+    var xComp = outerRadius * cos(startAngle + arcLength / TOP_SPEED * speed);
+    var yComp = outerRadius * sin(startAngle + arcLength / TOP_SPEED * speed);
 
     var innerX = 0.36 * xComp;
     var innerY = 0.36 * yComp;
@@ -185,7 +194,7 @@ class SpeedometerPainter extends CustomPainter {
     canvas.drawLine(
         Offset(innerX, innerY) + center,
         Offset(speedX, speedY) + center,
-        Brushes.getNeedleBrush(center, radius));
+        Brushes.getNeedleBrush(center, outerRadius));
   }
 
   @override
