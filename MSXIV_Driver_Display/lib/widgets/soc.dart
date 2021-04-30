@@ -114,13 +114,13 @@ class SOCBar extends StatelessWidget {
             width: WIDTH * chargePercent,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6),
-              color: chargePercent > LOW_CHARGE ? stdColors.green : stdColors.error,
+              color: chargePercent > LOW_CHARGE ? StdColors.green : StdColors.error,
             )),
         Container(
           width: WIDTH,
           decoration: BoxDecoration(
               border: Border.all(
-                color: chargePercent > LOW_CHARGE ? stdColors.green : stdColors.error,
+                color: chargePercent > LOW_CHARGE ? StdColors.green : StdColors.error,
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(6)),
@@ -145,7 +145,7 @@ class ChargingIcon extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
       child: Image.asset(
         icon,
-        color: chargePercent > LOW_CHARGE ? stdColors.green : stdColors.error,
+        color: chargePercent > LOW_CHARGE ? StdColors.green : StdColors.error,
       ),
     );
   }

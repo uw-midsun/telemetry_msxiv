@@ -30,7 +30,7 @@ class Display extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'MSXIV Driver Display',
       theme: ThemeData(
-        backgroundColor: stdColors.background,
+        backgroundColor: StdColors.background,
       ),
       home: MainDisplay(title: 'Main Display'),
     );

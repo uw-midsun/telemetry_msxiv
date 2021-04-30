@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class stdColors {
+class StdColors {
   static const Color background = Color.fromRGBO(27, 27, 27, 1);
   static const Color parkState = Color.fromRGBO(255, 103, 20, 1);
   static const Color reverseState = Color.fromRGBO(255, 199, 0, 1);

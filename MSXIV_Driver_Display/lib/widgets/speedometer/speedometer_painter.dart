@@ -1,39 +1,43 @@
 import 'dart:math';
-import 'dart:ui' as ui;
+import './speedometer.dart' show Units;
 
 import 'package:MSXIV_Driver_Display/constants/brushes.dart';
+import 'package:MSXIV_Driver_Display/constants/stdFonts.dart';
 import 'package:flutter/material.dart';
 
+// in km/h
 const TOP_SPEED = 150;
 
 class SpeedometerPainter extends CustomPainter {
   double speed;
-  double primUnitFactor;
-  double secUnitFactor;
+  double unitFactor;
+  Units units;
 
-  SpeedometerPainter(this.speed, this.primUnitFactor, this.secUnitFactor);
-
+  SpeedometerPainter(this.speed, this.units);
+  
   @override
   void paint(Canvas canvas, Size size) {
+    // factor from km -> specified unit
+    unitFactor = this.units == Units.Kmh ? 1 : 0.621371;
+
+    // startAngle measured from positive x-axis, clockwise direction
     const startAngle = 2.23;
     const arcLength = 2 * (3 * pi / 2 - startAngle);
 
     double outerRadius = size.width / 2;
     double innerRadius = outerRadius * 0.56;
 
-    var center = Offset(size.width / 2, size.height / 2);
+    final center = Offset(size.width / 2, size.height / 2);
 
     // bounding rectanges for the speedometer arcs
     Rect outerBoundingRect =
         Rect.fromCircle(center: center, radius: outerRadius);
+    Rect outerBorderRect =
+        Rect.fromCircle(center: center, radius: outerRadius - 5);
     Rect innerBoundingRect =
         Rect.fromCircle(center: center, radius: innerRadius);
 
-    // outer dial outline
-    canvas.drawArc(outerBoundingRect, startAngle, arcLength, false,
-        Brushes.outerOutlineBrush);
-
-    // inner dial outline - shading needs to be adjusted according to speed
+    // inner dial outline - TODO: shading needs to be adjusted according to speed
     canvas.drawArc(innerBoundingRect, startAngle, arcLength, false,
         Brushes.innerOutlineBrush);
 
@@ -41,35 +45,38 @@ class SpeedometerPainter extends CustomPainter {
     canvas.drawArc(outerBoundingRect, startAngle, arcLength, true,
         Brushes.getGradientBrush(center, outerRadius));
 
-    const Map<int, double> tickWidths = {20: 5, 10: 4, 5: 3, 1: 2};
+    // thick outer border
+    canvas.drawArc(outerBorderRect, startAngle, arcLength, false,
+        Brushes.outerBorderBrush);
+
+    // outer dial outline
+    canvas.drawArc(outerBoundingRect, startAngle, arcLength, false,
+        Brushes.outerOutlineBrush);
+
+    const tickWidth = 3.0;
+
     //primary dial
     for (double speedIncr = 0;
-        speedIncr <= TOP_SPEED * primUnitFactor;
-        speedIncr++) {
+        speedIncr <= TOP_SPEED * unitFactor;
+        speedIncr += 2) {
       var innerScale;
       var brush;
 
-      if (speedIncr % 20 == 0) {
-        innerScale = 0.92;
-        brush = Brushes.getTickBrush(tickWidths[20]);
-      } else if (speedIncr % 10 == 0) {
-        innerScale = 0.94;
-        brush = Brushes.getTickBrush(tickWidths[10]);
-      } else if (speedIncr % 5 == 0) {
-        innerScale = 0.96;
-        brush = Brushes.getTickBrush(tickWidths[5]);
+      if (speedIncr % 10 == 0) {
+        innerScale = 0.97;
+        brush = Brushes.getTickBrush(tickWidth, false);
       } else {
         innerScale = 0.995;
-        brush = Brushes.getTickBrush(tickWidths[1]);
+        brush = Brushes.getTickBrush(tickWidth, false);
       }
-      var scale = outerRadius * 0.97;
+      final scale = outerRadius * 0.92;
 
       var outerX = scale *
           cos(startAngle +
-              arcLength / (TOP_SPEED * primUnitFactor) * speedIncr);
+              arcLength / (TOP_SPEED * unitFactor) * speedIncr);
       var outerY = scale *
           sin(startAngle +
-              arcLength / (TOP_SPEED * primUnitFactor) * speedIncr);
+              arcLength / (TOP_SPEED * unitFactor) * speedIncr);
 
       var innerX = innerScale * outerX;
       var innerY = innerScale * outerY;
@@ -79,108 +86,31 @@ class SpeedometerPainter extends CustomPainter {
 
       // 20 speed labels
       if (speedIncr % 10 == 0) {
-        final textStyle = ui.TextStyle(
-          color: Colors.white.withOpacity(primUnitFactor == 1
-              ? speedIncr % 20 == 0
-                  ? 1
-                  : 0
-              : 1),
-          fontSize: speedIncr % 20 == 0 ? 28 : 24,
-          fontWeight: FontWeight.bold,
-        );
+        // Initialize textpainter object with style + text
+        final tickLabelStyle = Fonts.sh1;
+        final tickLabelSpan =
+            TextSpan(text: speedIncr.round().toString(), style: tickLabelStyle);
+        final labelPainter =
+            TextPainter(text: tickLabelSpan, textDirection: TextDirection.ltr);
+        labelPainter.layout();
 
-        final paragraphBuilder = ui.ParagraphBuilder(ui.ParagraphStyle())
-          ..pushStyle(textStyle)
-          ..addText(speedIncr.round().toString());
-        final constraints = ui.ParagraphConstraints(width: 300);
-        final paragraph = paragraphBuilder.build();
-        paragraph.layout(constraints);
-
+        // calculate the x,y position of the tick label
         var textX = outerRadius *
-            0.76 *
-            (speedIncr % 20 == 0 ? 1 : 1.04) *
-            cos(startAngle +
-                arcLength / (TOP_SPEED * primUnitFactor) * speedIncr);
+                0.76 *
+                cos(startAngle +
+                    arcLength / (TOP_SPEED * unitFactor) * speedIncr) +
+            10;
 
         var textY = outerRadius *
             0.82 *
-            (speedIncr % 20 == 0 ? 1 : 1.04) *
             sin(startAngle +
-                arcLength / (TOP_SPEED * primUnitFactor) * speedIncr);
+                arcLength / (TOP_SPEED * unitFactor) * speedIncr);
 
         final offset =
-            Offset(textX - (25 * primUnitFactor), textY - 12) + center;
-        canvas.drawParagraph(paragraph, offset);
+            Offset(textX - (25 * unitFactor), textY - 12) + center;
+        labelPainter.paint(canvas, offset);
       }
     }
-
-    //secondary dial
-    // for (double speedIncr = 0;
-    //     speedIncr <= TOP_SPEED * secUnitFactor;
-    //     speedIncr += primUnitFactor == 1 ? 10 : 20) {
-    //   var innerScale = 0.95;
-    //   var scale = radius * 0.45;
-    //   var brush = Brushes.innerTicks;
-
-    //   var outerX = scale *
-    //       cos(startAngle + arcLength / (TOP_SPEED * secUnitFactor) * speedIncr);
-    //   var outerY = scale *
-    //       sin(startAngle + arcLength / (TOP_SPEED * secUnitFactor) * speedIncr);
-
-    //   var innerX = innerScale * outerX;
-    //   var innerY = innerScale * outerY;
-
-    //   //secondary dial ticks
-    //   canvas.drawLine(Offset(innerX, innerY) + center,
-    //       Offset(outerX, outerY) + center, brush);
-
-    //   final textStyle = ui.TextStyle(
-    //     color: Colors.grey,
-    //     fontSize: 20,
-    //     fontWeight: FontWeight.bold,
-    //   );
-
-    //   final paragraphBuilder = ui.ParagraphBuilder(ui.ParagraphStyle())
-    //     ..pushStyle(textStyle)
-    //     ..addText(speedIncr.round().toString());
-    //   final constraints = ui.ParagraphConstraints(width: 300);
-    //   final paragraph = paragraphBuilder.build();
-    //   paragraph.layout(constraints);
-
-    //   var textX = centerX +
-    //       radius *
-    //           .52 *
-    //           cos(startAngle +
-    //               arcLength / (TOP_SPEED * secUnitFactor) * speedIncr);
-
-    //   var textY = centerY +
-    //       radius *
-    //           0.52 *
-    //           sin(startAngle +
-    //               arcLength / (TOP_SPEED * secUnitFactor) * speedIncr);
-
-    //   final offset = Offset(textX - 11, textY - 11);
-    //   canvas.drawParagraph(paragraph, offset);
-    // }
-
-    //secondar unit label in bottom left
-    final textStyle = ui.TextStyle(
-      color: Colors.grey,
-      fontSize: 15,
-      fontWeight: FontWeight.bold,
-    );
-
-    final paragraphBuilder = ui.ParagraphBuilder(ui.ParagraphStyle())
-      ..pushStyle(textStyle)
-      ..addText(primUnitFactor == 1 ? "MPH" : "Km/h");
-    final constraints = ui.ParagraphConstraints(width: 40);
-    final paragraph = paragraphBuilder.build();
-    paragraph.layout(constraints);
-    canvas.drawParagraph(
-        paragraph,
-        Offset(outerRadius * 0.57 * cos(startAngle),
-                outerRadius * 0.57 * sin(startAngle - 0.1)) +
-            center);
 
     var xComp = outerRadius * cos(startAngle + arcLength / TOP_SPEED * speed);
     var yComp = outerRadius * sin(startAngle + arcLength / TOP_SPEED * speed);

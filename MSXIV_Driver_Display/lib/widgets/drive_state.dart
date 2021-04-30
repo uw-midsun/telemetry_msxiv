@@ -16,13 +16,13 @@ extension on DriveStates {
   Color get color {
     switch (this) {
       case (DriveStates.Reverse):
-        return stdColors.reverseState;
+        return StdColors.reverseState;
       case (DriveStates.Neutral):
-        return stdColors.error;
+        return StdColors.error;
       case (DriveStates.Drive):
-        return stdColors.green;
+        return StdColors.green;
       default:
-        return stdColors.parkState;
+        return StdColors.parkState;
     }
   }
 

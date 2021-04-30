@@ -153,10 +153,10 @@ class ErrorItem extends StatelessWidget {
               style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: stdColors.error)),
+                  color: StdColors.error)),
           Text(
             name,
-            style: TextStyle(color: stdColors.error),
+            style: TextStyle(color: StdColors.error),
           )
         ],
         mainAxisAlignment: MainAxisAlignment.start,

@@ -8,22 +8,6 @@ const TOP_SPEED = 150.0;
 
 enum Units { Kmh, MPH }
 
-extension on Units {
-  double get kmFactor {
-    if (this == Units.Kmh)
-      return 1.0;
-    else
-      return 0.621371;
-  }
-
-  double get secFactor {
-    if (this == Units.MPH)
-      return 1.0;
-    else
-      return 0.621371;
-  }
-}
-
 class Speedometer extends StatelessWidget {
   final double speed;
   final Units unit;
@@ -44,7 +28,7 @@ class Speedometer extends StatelessWidget {
           width: minDimension,
           height: minDimension,
           child: CustomPaint(
-            painter: SpeedometerPainter(speed, unit.kmFactor, unit.secFactor),
+            painter: SpeedometerPainter(speed, unit),
           ),
         ),
       ),

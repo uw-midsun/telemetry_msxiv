@@ -1,3 +1,4 @@
+import 'package:MSXIV_Driver_Display/constants/stdFonts.dart';
 import 'package:flutter/material.dart';
 
 import './speedometer.dart';
@@ -19,28 +20,29 @@ extension on Units {
 }
 
 class DigitalSpeed extends StatelessWidget {
-  double speed;
-  final Units units;
-  DigitalSpeed(this.speed, this.units, {Key key}) : super(key: key);
+  final double speed;
+  final Units unit;
+  DigitalSpeed(this.speed, this.unit, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    speed = speed * units.kmFactor;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Text(
-          speed.round().toString(),
-          style: TextStyle(
-              fontSize: 96,
-              color: Colors.white,
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.bold,
-              height: 1.5),
+          (speed * unit.kmFactor).round().toString(),
+          style: Fonts.h1,
         ),
+        //   style: TextStyle(
+        //       fontSize: 96,
+        //       color: Colors.white,
+        //       fontFamily: 'Roboto',
+        //       fontWeight: FontWeight.bold,
+        //       height: 1.5),
+        // ),
         Text(
-          units.value,
+          unit.value,
           style: TextStyle(
               fontSize: 16, color: Colors.white, fontFamily: 'din1451'),
         ),

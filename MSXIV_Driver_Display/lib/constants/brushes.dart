@@ -8,6 +8,12 @@ class Brushes {
     ..strokeWidth = 2
     ..strokeCap = StrokeCap.square;
 
+  static final outerBorderBrush = Paint()
+    ..color = Color.fromRGBO(34, 55, 89, 1)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 10 
+    ..strokeCap = StrokeCap.square;
+
   static final innerOutlineBrush = Paint()
     ..color = Color.fromRGBO(34, 55, 89, 0.4)
     ..style = PaintingStyle.stroke
@@ -29,17 +35,19 @@ class Brushes {
       ..strokeCap = StrokeCap.square;
   }
 
-  static Paint getTickBrush(double strokeWidth) {
+  static Paint getTickBrush(double strokeWidth, bool isLit) {
+    var opacity = isLit ? 1.0 : 0.5;
+
     return Paint()
-      ..color = Colors.white
+      ..color = Color.fromRGBO(255, 255, 255, opacity)
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.square;
+      ..strokeCap = StrokeCap.round;
   }
 
   static Paint getNeedleBrush(Offset center, double radius) {
     return Paint()
-      ..shader = RadialGradient(colors: [Colors.white, stdColors.needle])
+      ..shader = RadialGradient(colors: [Colors.white, StdColors.needle])
           .createShader(Rect.fromCircle(center: center, radius: radius))
       ..style = PaintingStyle.stroke
       ..strokeWidth = 6
