@@ -110,15 +110,23 @@ class SpeedometerPainter extends CustomPainter {
         false,
         Brushes.getOuterGradientBrush(startAngle, speedAngle, outerBorderRect));
 
+    // dial gradient
+    canvas.drawArc(outerBoundingRect, startAngle, speedAngle - startAngle, true,
+        Brushes.getActiveGradientBrush(center, outerRadius));
+
     // inner border with gradient
-    canvas.drawArc(innerBoundingRect, startAngle, arcLength, false,
-        Brushes.getInnerBrush(startAngle, speedAngle, innerBoundingRect));
+    canvas.drawArc(
+        innerBoundingRect,
+        startAngle,
+        arcLength,
+        false,
+        Brushes.getInnerOutlineBrush(
+            startAngle, speedAngle, innerBoundingRect));
 
     // needle
     Offset needleOuter =
         Offset(cos(speedAngle), sin(speedAngle)) * (outerRadius - 2);
-    Offset needleInner =
-        Offset(cos(speedAngle), sin(speedAngle)) * innerRadius;
+    Offset needleInner = Offset(cos(speedAngle), sin(speedAngle)) * innerRadius;
     canvas.drawLine(needleInner + center, needleOuter + center,
         Brushes.getNeedleBrush(center, outerRadius));
   }

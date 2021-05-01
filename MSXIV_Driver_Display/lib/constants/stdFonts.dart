@@ -6,7 +6,7 @@ class Fonts {
       color: Colors.white,
       fontFamily: "Roboto",
       fontSize: 96,
-      height: 1.50,
+      height: 1.5,
       fontWeight: FontWeight.bold);
 
   // recommended speed
@@ -34,7 +34,7 @@ class Fonts {
       fontWeight: FontWeight.bold);
 
   static final sh1Light = TextStyle(
-      color: Color.fromRGBO(255, 255, 255, 0.4),
+      color: Color.fromRGBO(255, 255, 255, 0.5),
       fontFamily: "Roboto",
       fontSize: 18,
       height: 1.40,

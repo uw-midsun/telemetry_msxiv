@@ -17,6 +17,11 @@ class StdColors {
     Color.fromRGBO(28, 38, 12, 0.15),
     Color.fromRGBO(112, 254, 255, 0.0255)
   ];
+  static const List<Color> spdActiveGradient = [
+    Color.fromRGBO(0, 0, 0, 0),
+    Color.fromRGBO(16, 24, 49, 0.35),
+    Color.fromRGBO(0, 120, 232, 0.35)
+  ];
   static const List<Color> spdBorderGradient = [
     Color.fromRGBO(30, 122, 251, 1),
     Color.fromRGBO(255, 255, 255, 1),

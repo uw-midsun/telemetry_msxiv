@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class Brushes {
+  // Thin outer outline of speedometer
   static Paint getOuterOutlineBrush() {
     return Paint()
       ..color = StdColors.spdOuterOutline
@@ -11,6 +12,7 @@ class Brushes {
       ..strokeCap = StrokeCap.butt;
   }
 
+  // Thick outer border of speedometer
   static Paint getOuterBorderBrush() {
     return Paint()
       ..color = StdColors.spdOuterBorder
@@ -19,6 +21,7 @@ class Brushes {
       ..strokeCap = StrokeCap.butt;
   }
 
+  // Subtle background gradient of speedometer
   static Paint getBgGradientBrush(Offset center, double radius) {
     var boundingRect = Rect.fromCircle(center: center, radius: radius);
     const List<Color> colors = StdColors.spdBgGradient;
@@ -31,6 +34,20 @@ class Brushes {
       ..strokeCap = StrokeCap.square;
   }
 
+  // Active region gradient brush
+  static Paint getActiveGradientBrush(Offset center, double radius) {
+    var boundingRect = Rect.fromCircle(center: center, radius: radius);
+    const List<Color> colors = StdColors.spdActiveGradient;
+    const List<double> stops = [0.56, 0.6354, 1.0];
+
+    return Paint()
+      ..style = PaintingStyle.fill
+      ..shader = RadialGradient(colors: colors, stops: stops)
+          .createShader(boundingRect)
+      ..strokeCap = StrokeCap.square;
+  }
+
+  // Brush for ticks
   static Paint getTickBrush(double strokeWidth, bool isLit) {
     var opacity = isLit ? 1.0 : 0.4;
 
@@ -40,7 +57,8 @@ class Brushes {
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
   }
-
+  
+  // brush for speedometer needle
   static Paint getNeedleBrush(Offset center, double radius) {
     return Paint()
       ..color = Colors.white
@@ -50,7 +68,7 @@ class Brushes {
   }
 
   // angle for needle gradient stops
-  static const double gradientAngle = pi / 3;
+  static const double gradientAngle = pi / 4;
 
   static Paint getOuterGradientBrush(
       double startAngle, double endAngle, Rect boundingRect) {
@@ -74,7 +92,8 @@ class Brushes {
       ..strokeCap = StrokeCap.butt;
   }
 
-  static Paint getInnerBrush(
+  // inner outline of speedometer
+  static Paint getInnerOutlineBrush(
       double startAngle, double endAngle, Rect boundingRect) {
     final List<Color> colors = StdColors.spdInnerGradient;
     final List<double> stops = [
@@ -94,7 +113,7 @@ class Brushes {
           .createShader(boundingRect)
       ..color = Colors.white
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 4
+      ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;
   }
 }
