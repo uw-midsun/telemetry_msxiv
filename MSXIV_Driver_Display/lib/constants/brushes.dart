@@ -19,15 +19,7 @@ class Brushes {
       ..strokeCap = StrokeCap.butt;
   }
 
-  static Paint getInnerOutlineBrush() {
-    return Paint()
-      ..color = StdColors.spdInnerOutline
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
-  }
-
-  static Paint getGradientBrush(Offset center, double radius) {
+  static Paint getBgGradientBrush(Offset center, double radius) {
     var boundingRect = Rect.fromCircle(center: center, radius: radius);
     const List<Color> colors = StdColors.spdBgGradient;
     const List<double> stops = [0.56, 0.6458, 1.0];
@@ -58,9 +50,9 @@ class Brushes {
   }
 
   // angle for needle gradient stops
-  static const double gradientAngle = pi / 4;
+  static const double gradientAngle = pi / 3;
 
-  static Paint getNeedleBorderBrush(
+  static Paint getOuterGradientBrush(
       double startAngle, double endAngle, Rect boundingRect) {
     final List<Color> colors = StdColors.spdBorderGradient;
     final List<double> stops = [
@@ -82,7 +74,7 @@ class Brushes {
       ..strokeCap = StrokeCap.butt;
   }
 
-  static Paint getInnerNeedleBrush(
+  static Paint getInnerBrush(
       double startAngle, double endAngle, Rect boundingRect) {
     final List<Color> colors = StdColors.spdInnerGradient;
     final List<double> stops = [

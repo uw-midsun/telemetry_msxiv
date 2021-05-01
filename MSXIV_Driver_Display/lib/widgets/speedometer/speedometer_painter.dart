@@ -43,42 +43,37 @@ class SpeedometerPainter extends CustomPainter {
 
     // dial gradient
     canvas.drawArc(outerBoundingRect, startAngle, arcLength, true,
-        Brushes.getGradientBrush(center, outerRadius));
+        Brushes.getBgGradientBrush(center, outerRadius));
 
     // outer dial outline
     canvas.drawArc(outerBoundingRect, startAngle, arcLength, false,
         Brushes.getOuterOutlineBrush());
 
-    const tickWidth = 3.0;
-    const tickOffsetFromEdge = 16.0;
+    // offset -> distance between edge of speedometer and tick
+    const tickOffsetFromEdge = 16.0, tickWidth = 3.0;
 
     // paint each tick
-    for (double speedIncr = 0;
-        speedIncr <= TOP_SPEED * unitFactor;
-        speedIncr += 2) {
-      var tickLength;
-      var brush;
+    for (double spdIncr = 0; spdIncr <= TOP_SPEED * unitFactor; spdIncr += 2) {
       final tickAngle =
-          startAngle + arcLength / (TOP_SPEED * unitFactor) * speedIncr;
+          startAngle + arcLength / (TOP_SPEED * unitFactor) * spdIncr;
 
-      // set tick lengths according to the speed
-      if (speedIncr % 10 == 0) {
-        tickLength = 16;
-        brush = Brushes.getTickBrush(tickWidth, speedIncr < speed);
-      } else {
-        tickLength = 8;
-        brush = Brushes.getTickBrush(tickWidth, false);
-      }
+      // determine whether the label/tick should be active
+      final bool isActive =
+          (spdIncr / unitFactor) <= speed && spdIncr % 10 == 0;
+
+      // set tick style according to the speed
+      final double tickLength = spdIncr % 10 == 0 ? 12 : 4;
+      Paint brush = Brushes.getTickBrush(tickWidth, isActive);
 
       // calculate x,y coordinates for endpoints of each tick
       final scale = (outerRadius - tickOffsetFromEdge) / outerRadius;
 
-      var tickOuterX = scale * outerRadius * cos(tickAngle);
-      var tickOuterY = scale * outerRadius * sin(tickAngle);
+      double tickOuterX = scale * outerRadius * cos(tickAngle);
+      double tickOuterY = scale * outerRadius * sin(tickAngle);
 
-      var tickInnerX =
+      double tickInnerX =
           (1 - (tickLength) / (outerRadius - tickOffsetFromEdge)) * tickOuterX;
-      var tickInnerY =
+      double tickInnerY =
           (1 - (tickLength) / (outerRadius - tickOffsetFromEdge)) * tickOuterY;
 
       // paint tick using calculated coordinates
@@ -86,11 +81,11 @@ class SpeedometerPainter extends CustomPainter {
           Offset(tickOuterX, tickOuterY) + center, brush);
 
       // Tick Labels every 20 units
-      if (speedIncr % 20 == 0) {
+      if (spdIncr % 20 == 0 || (spdIncr % 10 == 0 && units == Units.MPH)) {
         // Initialize textpainter object with style + text
+        final labelStyle = isActive ? Fonts.sh1 : Fonts.sh1Light;
         final labelPainter = TextPainter(
-            text:
-                TextSpan(text: speedIncr.round().toString(), style: Fonts.sh1),
+            text: TextSpan(text: spdIncr.round().toString(), style: labelStyle),
             textDirection: TextDirection.ltr);
         labelPainter.layout();
 
@@ -106,33 +101,23 @@ class SpeedometerPainter extends CustomPainter {
       }
     }
     final speedAngle = startAngle + arcLength / TOP_SPEED * speed;
-     
+
     // thick outer border with gradient
     canvas.drawArc(
         outerBorderRect,
         startAngle,
         (speedAngle - startAngle) % (2 * pi),
         false,
-        Brushes.getNeedleBorderBrush(startAngle, speedAngle, outerBorderRect));
+        Brushes.getOuterGradientBrush(startAngle, speedAngle, outerBorderRect));
 
     // inner border with gradient
-    canvas.drawArc(
-        innerBoundingRect,
-        startAngle,
-        arcLength,
-        false,
-        Brushes.getInnerNeedleBrush(startAngle, speedAngle, innerBoundingRect));
+    canvas.drawArc(innerBoundingRect, startAngle, arcLength, false,
+        Brushes.getInnerBrush(startAngle, speedAngle, innerBoundingRect));
 
     // needle
-
-    var innerX = outerRadius * cos(speedAngle);
-    var innerY = outerRadius * sin(speedAngle);
-    var speedX = innerRadius * cos(speedAngle);
-    var speedY = innerRadius * sin(speedAngle);
-
-    canvas.drawLine(
-        Offset(innerX, innerY) + center,
-        Offset(speedX, speedY) + center,
+    Offset needleInner = Offset(cos(speedAngle), sin(speedAngle)) * outerRadius;
+    Offset needleOuter = Offset(cos(speedAngle), sin(speedAngle)) * innerRadius;
+    canvas.drawLine(needleInner + center, needleOuter + center,
         Brushes.getNeedleBrush(center, outerRadius));
   }
 
