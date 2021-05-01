@@ -115,8 +115,10 @@ class SpeedometerPainter extends CustomPainter {
         Brushes.getInnerBrush(startAngle, speedAngle, innerBoundingRect));
 
     // needle
-    Offset needleInner = Offset(cos(speedAngle), sin(speedAngle)) * outerRadius;
-    Offset needleOuter = Offset(cos(speedAngle), sin(speedAngle)) * innerRadius;
+    Offset needleOuter =
+        Offset(cos(speedAngle), sin(speedAngle)) * (outerRadius - 2);
+    Offset needleInner =
+        Offset(cos(speedAngle), sin(speedAngle)) * innerRadius;
     canvas.drawLine(needleInner + center, needleOuter + center,
         Brushes.getNeedleBrush(center, outerRadius));
   }

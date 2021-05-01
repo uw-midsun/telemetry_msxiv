@@ -46,7 +46,7 @@ class Brushes {
       ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4
-      ..strokeCap = StrokeCap.butt;
+      ..strokeCap = StrokeCap.round;
   }
 
   // angle for needle gradient stops
