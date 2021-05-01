@@ -1,32 +1,28 @@
 import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 class Brushes {
-  static final outerOutlineBrush = Paint()
-    ..color = Color.fromRGBO(18, 82, 172, 0.3)
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 2
-    ..strokeCap = StrokeCap.square;
+  static Paint getOuterOutlineBrush() {
+    return Paint()
+      ..color = StdColors.spdOuterOutline
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.butt;
+  }
 
-  static final outerBorderBrush = Paint()
-    ..color = Color.fromRGBO(34, 55, 89, 1)
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 10 
-    ..strokeCap = StrokeCap.square;
+  static Paint getOuterBorderBrush() {
+    return Paint()
+      ..color = StdColors.spdOuterBorder
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10
+      ..strokeCap = StrokeCap.butt;
+  }
 
-  static final innerOutlineBrush = Paint()
-    ..color = Color.fromRGBO(34, 55, 89, 0.4)
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 3
-    ..strokeCap = StrokeCap.round;
-
-  static Paint getGradientBrush(Offset center, double radius) {
+  static Paint getBgGradientBrush(Offset center, double radius) {
     var boundingRect = Rect.fromCircle(center: center, radius: radius);
-    const List<Color> colors = [
-      Color.fromRGBO(12, 18, 38, 0),
-      Color.fromRGBO(112, 254, 255, 0.17)
-    ];
-    const List<double> stops = [0.6458, 1.0];
+    const List<Color> colors = StdColors.spdBgGradient;
+    const List<double> stops = [0.56, 0.6458, 1.0];
 
     return Paint()
       ..style = PaintingStyle.fill
@@ -36,7 +32,7 @@ class Brushes {
   }
 
   static Paint getTickBrush(double strokeWidth, bool isLit) {
-    var opacity = isLit ? 1.0 : 0.5;
+    var opacity = isLit ? 1.0 : 0.4;
 
     return Paint()
       ..color = Color.fromRGBO(255, 255, 255, opacity)
@@ -47,10 +43,58 @@ class Brushes {
 
   static Paint getNeedleBrush(Offset center, double radius) {
     return Paint()
-      ..shader = RadialGradient(colors: [Colors.white, StdColors.needle])
-          .createShader(Rect.fromCircle(center: center, radius: radius))
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 6
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.butt;
+  }
+
+  // angle for needle gradient stops
+  static const double gradientAngle = pi / 3;
+
+  static Paint getOuterGradientBrush(
+      double startAngle, double endAngle, Rect boundingRect) {
+    final List<Color> colors = StdColors.spdBorderGradient;
+    final List<double> stops = [
+      (endAngle - gradientAngle - startAngle) / (2 * pi),
+      (endAngle - startAngle) / (2 * pi)
+    ];
+
+    return Paint()
+      ..shader = SweepGradient(
+              colors: colors,
+              stops: stops,
+              startAngle: startAngle - 0.01,
+              endAngle: startAngle + 2 * pi,
+              tileMode: TileMode.repeated)
+          .createShader(boundingRect)
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10
+      ..strokeCap = StrokeCap.butt;
+  }
+
+  static Paint getInnerBrush(
+      double startAngle, double endAngle, Rect boundingRect) {
+    final List<Color> colors = StdColors.spdInnerGradient;
+    final List<double> stops = [
+      (endAngle - gradientAngle - startAngle) / (2 * pi),
+      (endAngle - startAngle) / (2 * pi),
+      (endAngle + gradientAngle - startAngle) / (2 * pi)
+    ];
+    print(stops);
+
+    return Paint()
+      ..shader = SweepGradient(
+              colors: colors,
+              stops: stops,
+              startAngle: startAngle - 0.01,
+              endAngle: startAngle + 2 * pi,
+              tileMode: TileMode.repeated)
+          .createShader(boundingRect)
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4
       ..strokeCap = StrokeCap.round;
   }
 }

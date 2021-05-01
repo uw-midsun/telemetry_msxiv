@@ -33,6 +33,13 @@ class Fonts {
       height: 1.40,
       fontWeight: FontWeight.bold);
 
+  static final sh1Light = TextStyle(
+      color: Color.fromRGBO(255, 255, 255, 0.4),
+      fontFamily: "Roboto",
+      fontSize: 18,
+      height: 1.40,
+      fontWeight: FontWeight.bold);
+
   // Time, range, hazards
   static final sh2 = TextStyle(
       color: Colors.white,
