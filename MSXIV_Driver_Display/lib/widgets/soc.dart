@@ -2,7 +2,7 @@ import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
 import 'package:flutter/material.dart';
 
 const LOW_CHARGE = 0.3;
-const double WIDTH = 325;
+const double WIDTH = 50;
 const double MAX_DISTANCE = 1000.0;
 const double TIME_TO_FULL = 3.0;
 
@@ -17,15 +17,16 @@ class SOC extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+    return SizedBox.expand(
+        child: Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         Container(
           height: 20,
-          width: WIDTH +130,
-          margin: EdgeInsets.only(top: 12, bottom: 20),
+          width: 200,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -60,7 +61,7 @@ class SOC extends StatelessWidget {
                 "km Left",
               )
       ],
-    );
+    ));
   }
 }
 
@@ -114,13 +115,17 @@ class SOCBar extends StatelessWidget {
             width: WIDTH * chargePercent,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6),
-              color: chargePercent > LOW_CHARGE ? StdColors.green : StdColors.error,
+              color: chargePercent > LOW_CHARGE
+                  ? StdColors.green
+                  : StdColors.error,
             )),
         Container(
           width: WIDTH,
           decoration: BoxDecoration(
               border: Border.all(
-                color: chargePercent > LOW_CHARGE ? StdColors.green : StdColors.error,
+                color: chargePercent > LOW_CHARGE
+                    ? StdColors.green
+                    : StdColors.error,
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(6)),

@@ -20,9 +20,10 @@ class SpeedometerPainter extends CustomPainter {
     // factor from km -> specified unit
     unitFactor = this.units == Units.Kmh ? 1 : 0.621371;
 
-    // startAngle measured from positive x-axis, clockwise direction
+    // angles measured from positive x-axis, clockwise direction
     const startAngle = 2.23;
     const arcLength = 2 * (3 * pi / 2 - startAngle);
+    final speedAngle = startAngle + arcLength / TOP_SPEED * speed;
 
     final outerRadius = size.width / 2;
     final innerRadius = outerRadius * 0.56;
@@ -44,6 +45,10 @@ class SpeedometerPainter extends CustomPainter {
     // dial gradient
     canvas.drawArc(outerBoundingRect, startAngle, arcLength, true,
         Brushes.getBgGradientBrush(center, outerRadius));
+
+    // dial gradient
+    canvas.drawArc(outerBoundingRect, startAngle, speedAngle - startAngle, true,
+        Brushes.getActiveGradientBrush(center, outerRadius));
 
     // outer dial outline
     canvas.drawArc(outerBoundingRect, startAngle, arcLength, false,
@@ -100,7 +105,7 @@ class SpeedometerPainter extends CustomPainter {
         labelPainter.paint(canvas, Offset(textOffsetX, textOffsetY) + center);
       }
     }
-    final speedAngle = startAngle + arcLength / TOP_SPEED * speed;
+
 
     // thick outer border with gradient
     canvas.drawArc(
@@ -111,12 +116,18 @@ class SpeedometerPainter extends CustomPainter {
         Brushes.getOuterGradientBrush(startAngle, speedAngle, outerBorderRect));
 
     // inner border with gradient
-    canvas.drawArc(innerBoundingRect, startAngle, arcLength, false,
-        Brushes.getInnerBrush(startAngle, speedAngle, innerBoundingRect));
+    canvas.drawArc(
+        innerBoundingRect,
+        startAngle,
+        arcLength,
+        false,
+        Brushes.getInnerOutlineBrush(
+            startAngle, speedAngle, innerBoundingRect));
 
     // needle
-    Offset needleInner = Offset(cos(speedAngle), sin(speedAngle)) * outerRadius;
-    Offset needleOuter = Offset(cos(speedAngle), sin(speedAngle)) * innerRadius;
+    Offset needleOuter =
+        Offset(cos(speedAngle), sin(speedAngle)) * (outerRadius - 2);
+    Offset needleInner = Offset(cos(speedAngle), sin(speedAngle)) * innerRadius;
     canvas.drawLine(needleInner + center, needleOuter + center,
         Brushes.getNeedleBrush(center, outerRadius));
   }

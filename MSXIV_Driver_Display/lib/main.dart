@@ -64,7 +64,7 @@ class _MainDisplayState extends State<MainDisplay> {
   bool _charging = false;
   Units units = Units.Kmh;
   String _timeString =
-      "${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}";
+      "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";
 
   @override
   void initState() {
@@ -84,7 +84,7 @@ class _MainDisplayState extends State<MainDisplay> {
 
   void _getTime() {
     final String formattedDateTime =
-        "${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}";
+        "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";
     setState(() {
       _timeString = formattedDateTime;
     });
@@ -319,13 +319,14 @@ class _MainDisplayState extends State<MainDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.of(context).size);
     return Scaffold(
       backgroundColor: StdColors.background,
       body: SafeArea(
         top: false,
         child: Stack(
           children: [
-            //speed analog
+            // Speedometer
             GestureDetector(
               onPanUpdate: (details) {
                 _speedChange(details.delta.dx / 5);
@@ -333,7 +334,7 @@ class _MainDisplayState extends State<MainDisplay> {
               onTap: toggleUnits,
               child: Speedometer(_manualSpeed, units),
             ),
-             ////left arrow
+            ////left arrow
             GestureDetector(
               onTap: toggleTurnLeft,
               onDoubleTap: removeWarnings,
@@ -344,7 +345,6 @@ class _MainDisplayState extends State<MainDisplay> {
               onTap: toggleTurnRight,
               child: RightArrow(turningRight: _turningRight),
             ),
-            //speed digital
             //battery info
             GestureDetector(
               onPanUpdate: (details) {
