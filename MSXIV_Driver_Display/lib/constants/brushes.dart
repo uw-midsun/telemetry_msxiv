@@ -77,7 +77,6 @@ class Brushes {
       (endAngle - gradientAngle - startAngle) / (2 * pi),
       (endAngle - startAngle) / (2 * pi)
     ];
-    print(stops);
 
     return Paint()
       ..shader = SweepGradient(
