@@ -102,6 +102,10 @@ class SpeedometerPainter extends CustomPainter {
     }
     final speedAngle = startAngle + arcLength / TOP_SPEED * speed;
 
+    // dial gradient
+    canvas.drawArc(outerBoundingRect, startAngle, speedAngle - startAngle, true,
+        Brushes.getActiveGradientBrush(center, outerRadius));
+
     // thick outer border with gradient
     canvas.drawArc(
         outerBorderRect,
@@ -109,10 +113,6 @@ class SpeedometerPainter extends CustomPainter {
         (speedAngle - startAngle) % (2 * pi),
         false,
         Brushes.getOuterGradientBrush(startAngle, speedAngle, outerBorderRect));
-
-    // dial gradient
-    canvas.drawArc(outerBoundingRect, startAngle, speedAngle - startAngle, true,
-        Brushes.getActiveGradientBrush(center, outerRadius));
 
     // inner border with gradient
     canvas.drawArc(

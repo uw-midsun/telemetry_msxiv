@@ -57,7 +57,7 @@ class Brushes {
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
   }
-  
+
   // brush for speedometer needle
   static Paint getNeedleBrush(Offset center, double radius) {
     return Paint()
@@ -77,6 +77,7 @@ class Brushes {
       (endAngle - gradientAngle - startAngle) / (2 * pi),
       (endAngle - startAngle) / (2 * pi)
     ];
+    print(stops);
 
     return Paint()
       ..shader = SweepGradient(
@@ -101,7 +102,6 @@ class Brushes {
       (endAngle - startAngle) / (2 * pi),
       (endAngle + gradientAngle - startAngle) / (2 * pi)
     ];
-    print(stops);
 
     return Paint()
       ..shader = SweepGradient(
