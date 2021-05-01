@@ -34,17 +34,9 @@ class DigitalSpeed extends StatelessWidget {
           (speed * unit.kmFactor).round().toString(),
           style: Fonts.h1,
         ),
-        //   style: TextStyle(
-        //       fontSize: 96,
-        //       color: Colors.white,
-        //       fontFamily: 'Roboto',
-        //       fontWeight: FontWeight.bold,
-        //       height: 1.5),
-        // ),
         Text(
           unit.value,
-          style: TextStyle(
-              fontSize: 16, color: Colors.white, fontFamily: 'din1451'),
+          style: Fonts.body,
         ),
       ],
     );

@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 
 class Brushes {
   static final outerOutlineBrush = Paint()
-    ..color = Color.fromRGBO(18, 82, 172, 0.3)
+    ..color = Color.fromRGBO(18, 82, 172, 0.2)
     ..style = PaintingStyle.stroke
     ..strokeWidth = 2
-    ..strokeCap = StrokeCap.square;
+    ..strokeCap = StrokeCap.butt;
 
   static final outerBorderBrush = Paint()
-    ..color = Color.fromRGBO(34, 55, 89, 1)
+    ..color = Color.fromRGBO(34, 55, 89, 0.1)
     ..style = PaintingStyle.stroke
-    ..strokeWidth = 10 
-    ..strokeCap = StrokeCap.square;
+    ..strokeWidth = 10
+    ..strokeCap = StrokeCap.butt;
 
   static final innerOutlineBrush = Paint()
     ..color = Color.fromRGBO(34, 55, 89, 0.4)
@@ -23,8 +23,8 @@ class Brushes {
   static Paint getGradientBrush(Offset center, double radius) {
     var boundingRect = Rect.fromCircle(center: center, radius: radius);
     const List<Color> colors = [
-      Color.fromRGBO(12, 18, 38, 0),
-      Color.fromRGBO(112, 254, 255, 0.17)
+      Color.fromRGBO(28, 38, 12, 0.15),
+      Color.fromRGBO(112, 254, 255, 0.0255)
     ];
     const List<double> stops = [0.6458, 1.0];
 

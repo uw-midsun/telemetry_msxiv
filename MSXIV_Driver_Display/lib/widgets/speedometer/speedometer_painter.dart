@@ -14,7 +14,7 @@ class SpeedometerPainter extends CustomPainter {
   Units units;
 
   SpeedometerPainter(this.speed, this.units);
-  
+
   @override
   void paint(Canvas canvas, Size size) {
     // factor from km -> specified unit
@@ -41,45 +41,50 @@ class SpeedometerPainter extends CustomPainter {
     canvas.drawArc(innerBoundingRect, startAngle, arcLength, false,
         Brushes.innerOutlineBrush);
 
-    // dial gradient
-    canvas.drawArc(outerBoundingRect, startAngle, arcLength, true,
-        Brushes.getGradientBrush(center, outerRadius));
-
     // thick outer border
     canvas.drawArc(outerBorderRect, startAngle, arcLength, false,
         Brushes.outerBorderBrush);
+
+    // dial gradient
+    canvas.drawArc(outerBoundingRect, startAngle, arcLength, true,
+        Brushes.getGradientBrush(center, outerRadius));
 
     // outer dial outline
     canvas.drawArc(outerBoundingRect, startAngle, arcLength, false,
         Brushes.outerOutlineBrush);
 
     const tickWidth = 3.0;
+    const tickOffsetFromEdge = 16.0;
 
     //primary dial
     for (double speedIncr = 0;
         speedIncr <= TOP_SPEED * unitFactor;
         speedIncr += 2) {
-      var innerScale;
+      var tickLength;
       var brush;
 
+      // set tick lengths according to their position
       if (speedIncr % 10 == 0) {
-        innerScale = 0.97;
+        tickLength = 16;
         brush = Brushes.getTickBrush(tickWidth, false);
       } else {
-        innerScale = 0.995;
+        tickLength = 8;
         brush = Brushes.getTickBrush(tickWidth, false);
       }
-      final scale = outerRadius * 0.92;
+
+      final scale = (outerRadius - tickOffsetFromEdge) / outerRadius;
 
       var outerX = scale *
-          cos(startAngle +
-              arcLength / (TOP_SPEED * unitFactor) * speedIncr);
+          outerRadius *
+          cos(startAngle + arcLength / (TOP_SPEED * unitFactor) * speedIncr);
       var outerY = scale *
-          sin(startAngle +
-              arcLength / (TOP_SPEED * unitFactor) * speedIncr);
+          outerRadius *
+          sin(startAngle + arcLength / (TOP_SPEED * unitFactor) * speedIncr);
 
-      var innerX = innerScale * outerX;
-      var innerY = innerScale * outerY;
+      var innerX =
+          (1 - (tickLength) / (outerRadius - tickOffsetFromEdge)) * outerX;
+      var innerY =
+          (1 - (tickLength) / (outerRadius - tickOffsetFromEdge)) * outerY;
 
       canvas.drawLine(Offset(innerX, innerY) + center,
           Offset(outerX, outerY) + center, brush);
@@ -103,11 +108,9 @@ class SpeedometerPainter extends CustomPainter {
 
         var textY = outerRadius *
             0.82 *
-            sin(startAngle +
-                arcLength / (TOP_SPEED * unitFactor) * speedIncr);
+            sin(startAngle + arcLength / (TOP_SPEED * unitFactor) * speedIncr);
 
-        final offset =
-            Offset(textX - (25 * unitFactor), textY - 12) + center;
+        final offset = Offset(textX - (25 * unitFactor), textY - 12) + center;
         labelPainter.paint(canvas, offset);
       }
     }
