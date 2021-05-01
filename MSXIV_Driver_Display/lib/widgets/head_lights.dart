@@ -28,8 +28,8 @@ class HeadLights extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      alignment: Alignment.bottomRight,
-      padding: EdgeInsets.only(right: 30, bottom: 5),
+      alignment: Alignment.topLeft,
+      margin: EdgeInsets.all(24),
       child: lightStatus == LightStatus.Off
           ? Text(
               "Lights Off",
