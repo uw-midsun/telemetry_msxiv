@@ -13,12 +13,12 @@ class RightArrow extends StatelessWidget {
           ? Image(
               height: 60,
               image: AssetImage('assets/images/RightTurnArrow.png'),
-              color: stdColors.green,
+              color: StdColors.green,
             )
           : Image(
               height: 60,
               image: AssetImage('assets/images/RightTurnArrowOutline.png'),
-              color: stdColors.green.withOpacity(0.1),
+              color: StdColors.green.withOpacity(0.1),
             ),
       margin: EdgeInsets.only(top: 90, right: 15),
     );

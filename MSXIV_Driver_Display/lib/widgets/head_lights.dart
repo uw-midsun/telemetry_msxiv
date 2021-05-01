@@ -28,18 +28,18 @@ class HeadLights extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      alignment: Alignment.bottomRight,
-      padding: EdgeInsets.only(right: 30, bottom: 5),
+      alignment: Alignment.topLeft,
+      margin: EdgeInsets.all(24),
       child: lightStatus == LightStatus.Off
           ? Text(
               "Lights Off",
-              style: TextStyle(fontSize: 24, color: stdColors.reverseState),
+              style: TextStyle(fontSize: 24, color: StdColors.reverseState),
             )
           : Image(
               height: 50,
               image: AssetImage(
                   'assets/images/HeadLights${lightStatus.toString().split('.')[1]}.png'),
-              color: stdColors.reverseState,
+              color: StdColors.reverseState,
             ),
     );
   }
