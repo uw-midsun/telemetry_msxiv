@@ -28,7 +28,7 @@ class CruiseControl extends StatelessWidget {
             decoration: BoxDecoration(
                 border: Border.all(
                     color: cruiseControl
-                        ? stdColors.green
+                        ? StdColors.green
                         : Color.fromRGBO(140, 50, 0, 1),
                     width: 3),
                 borderRadius: BorderRadius.circular(5)),
@@ -38,7 +38,7 @@ class CruiseControl extends StatelessWidget {
               style: TextStyle(
                   fontSize: 30,
                   color: cruiseControl
-                      ? stdColors.green
+                      ? StdColors.green
                       : Color.fromRGBO(140, 50, 0, 1),
                   fontWeight: FontWeight.bold),
             ),
