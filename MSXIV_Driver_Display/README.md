@@ -17,3 +17,8 @@ Refer to resources below to understand how to run the program:
 For help getting started with Flutter see,
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Testing
+
++ Run the test server script (`../test_scripts/server_test.py`) - should be able to run it as a normal Python script using terminal/command prompt. Can stop using `ctrl + C`. It will send websockets events to be received by our client, the Flutter app. 
++ Then run the Flutter app as normal, and it should receive the above events and respond with visual changes to the interface.
