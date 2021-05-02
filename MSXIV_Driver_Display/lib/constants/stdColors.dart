@@ -7,6 +7,11 @@ class StdColors {
   static const Color green = Color.fromRGBO(68, 214, 0, 1);
   static const Color error = Color.fromRGBO(255, 77, 77, 1);
 
+  static const List<Color> backgroundGradient = [
+    Color.fromRGBO(14, 21, 45, 0.45),
+    Color.fromRGBO(37, 56, 85, 0.45),
+  ];
+
   // speedometer
   static const Color needle = Color.fromRGBO(93, 179, 255, 1);
   static const Color spdOuterOutline = Color.fromRGBO(18, 82, 172, 0.2);

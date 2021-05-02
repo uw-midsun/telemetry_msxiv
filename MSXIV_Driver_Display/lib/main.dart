@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
+import 'package:MSXIV_Driver_Display/widgets/bg_gradient.dart';
 import 'package:MSXIV_Driver_Display/widgets/clock.dart';
 import 'package:MSXIV_Driver_Display/widgets/errors.dart';
 import 'package:MSXIV_Driver_Display/widgets/head_lights.dart';
@@ -52,6 +53,7 @@ class _MainDisplayState extends State<MainDisplay> {
 
   // Vehicle
   double _manualSpeed = 0;
+  double _recSpeed = 0;
   bool _turningLeft = false;
   bool _turningRight = false;
   LightStatus _lightStatus = LightStatus.DaytimeRunning;
@@ -93,6 +95,12 @@ class _MainDisplayState extends State<MainDisplay> {
   void _speedChange([double change]) {
     setState(() {
       _manualSpeed = change;
+    });
+  }
+
+  void _recSpeedChange([double change]) {
+    setState(() {
+      _recSpeed = change;
     });
   }
 
@@ -315,6 +323,8 @@ class _MainDisplayState extends State<MainDisplay> {
     } else if (msgName.contains(new RegExp(r'FAULT'))) {
       addWarnings(msgName);
     }
+
+    // TODO: handle recommeded speed message (?)
   }
 
   @override
@@ -326,6 +336,7 @@ class _MainDisplayState extends State<MainDisplay> {
         top: false,
         child: Stack(
           children: [
+            BgGradient(),
             // Speedometer
             GestureDetector(
               onPanUpdate: (details) {
