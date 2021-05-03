@@ -1,7 +1,7 @@
-import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
+import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 import 'package:flutter/material.dart';
 
-import '../constants/stdColors.dart';
+import '../constants/std_colors.dart';
 
 enum EEDriveOutput {
   EE_DRIVE_OUTPUT_OFF,

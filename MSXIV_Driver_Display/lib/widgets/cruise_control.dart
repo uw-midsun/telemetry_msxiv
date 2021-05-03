@@ -1,4 +1,4 @@
-import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
+import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 import 'package:flutter/material.dart';
 
 class CruiseControl extends StatelessWidget {

@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
+import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
+import 'package:MSXIV_Driver_Display/widgets/bg_gradient.dart';
 import 'package:MSXIV_Driver_Display/widgets/clock.dart';
 import 'package:MSXIV_Driver_Display/widgets/errors.dart';
 import 'package:MSXIV_Driver_Display/widgets/head_lights.dart';
 import 'package:MSXIV_Driver_Display/widgets/left_arrow.dart';
+import 'package:MSXIV_Driver_Display/widgets/rec_speed.dart';
 import 'package:MSXIV_Driver_Display/widgets/right_arrow.dart';
 import 'package:MSXIV_Driver_Display/widgets/soc.dart';
 import 'package:MSXIV_Driver_Display/widgets/speedometer/speedometer.dart';
 import 'package:MSXIV_Driver_Display/widgets/cruise_control.dart';
 import 'package:MSXIV_Driver_Display/widgets/drive_state.dart';
+import 'package:MSXIV_Driver_Display/utils/units.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -52,6 +55,7 @@ class _MainDisplayState extends State<MainDisplay> {
 
   // Vehicle
   double _manualSpeed = 0;
+  double _recSpeed = 65;
   bool _turningLeft = false;
   bool _turningRight = false;
   LightStatus _lightStatus = LightStatus.DaytimeRunning;
@@ -93,6 +97,12 @@ class _MainDisplayState extends State<MainDisplay> {
   void _speedChange([double change]) {
     setState(() {
       _manualSpeed = change;
+    });
+  }
+
+  void _recSpeedChange([double change]) {
+    setState(() {
+      _recSpeed = change;
     });
   }
 
@@ -315,17 +325,20 @@ class _MainDisplayState extends State<MainDisplay> {
     } else if (msgName.contains(new RegExp(r'FAULT'))) {
       addWarnings(msgName);
     }
+
+    // TODO: Handle recommeded speed message (?)
   }
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size);
     return Scaffold(
       backgroundColor: StdColors.background,
       body: SafeArea(
         top: false,
         child: Stack(
           children: [
+            BgGradient(),
+
             // Speedometer
             GestureDetector(
               onPanUpdate: (details) {
@@ -334,18 +347,26 @@ class _MainDisplayState extends State<MainDisplay> {
               onTap: toggleUnits,
               child: Speedometer(_manualSpeed, units),
             ),
-            ////left arrow
+
+            // Recommended Speed
+            GestureDetector(
+                onTap: () => _recSpeedChange(_recSpeed + 5),
+                child: RecSpeed(_recSpeed, units)),
+
+            // Left Arrow
             GestureDetector(
               onTap: toggleTurnLeft,
               onDoubleTap: removeWarnings,
               child: LeftArrow(turningLeft: _turningLeft),
             ),
-            //right arrow
+
+            // Right Arrow
             GestureDetector(
               onTap: toggleTurnRight,
               child: RightArrow(turningRight: _turningRight),
             ),
-            //battery info
+
+            // Battery Info
             GestureDetector(
               onPanUpdate: (details) {
                 batteryChange(details.delta.dx / 400);
@@ -354,30 +375,31 @@ class _MainDisplayState extends State<MainDisplay> {
                   distanceToEmpty: _distanceToEmpty, timeToFull: _timeToFull),
             ),
 
-            //headlights
+            // Headlights
             GestureDetector(
               onTap: toggleLights,
               child: HeadLights(_lightStatus),
             ),
 
-            // errors
+            // Errors
             GestureDetector(
               onTap: removeWarnings,
               child: Errors(_errors),
             ),
 
-            //cruise control
+            // Cruise Control
             GestureDetector(
               onTap: toggleCruise,
               child: CruiseControl(_cruiseControlOn),
             ),
-            //Drive States
+
+            // Drive States
             GestureDetector(
               onTap: toggleDriveState,
               child: DriveState(_driveState),
             ),
 
-            //Clock
+            // Clock
             Clock(_timeString)
           ],
         ),

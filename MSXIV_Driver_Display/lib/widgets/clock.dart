@@ -1,4 +1,4 @@
-import 'package:MSXIV_Driver_Display/constants/stdFonts.dart';
+import 'package:MSXIV_Driver_Display/constants/std_fonts.dart';
 import 'package:flutter/material.dart';
 
 class Clock extends StatelessWidget {
