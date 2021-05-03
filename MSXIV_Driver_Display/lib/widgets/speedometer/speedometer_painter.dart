@@ -17,10 +17,9 @@ class SpeedometerPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // factor from km -> specified unit
-    unitFactor = this.units == Units.Kmh ? 1 : 0.621371;
+    final unitFactor = units.kmFactor;
 
-    // angles measured from positive x-axis, clockwise direction
+    // Angles measured from positive x-axis, clockwise direction.
     const startAngle = 2.23;
     const arcLength = 2 * (3 * pi / 2 - startAngle);
     final speedAngle = startAngle + arcLength / TOP_SPEED * speed;
@@ -30,7 +29,7 @@ class SpeedometerPainter extends CustomPainter {
 
     final center = Offset(size.width / 2, size.height / 2);
 
-    // bounding rectanges for the speedometer arcs
+    // Bounding rectanges for the speedometer arcs.
     Rect outerBoundingRect =
         Rect.fromCircle(center: center, radius: outerRadius);
     Rect outerBorderRect =
@@ -38,39 +37,39 @@ class SpeedometerPainter extends CustomPainter {
     Rect innerBoundingRect =
         Rect.fromCircle(center: center, radius: innerRadius);
 
-    // thick outer border
+    // Thick outer border.
     canvas.drawArc(outerBorderRect, startAngle, arcLength, false,
         Brushes.getOuterBorderBrush());
 
-    // dial gradient
+    // Inactive dial gradient.
     canvas.drawArc(outerBoundingRect, startAngle, arcLength, true,
         Brushes.getBgGradientBrush(center, outerRadius));
 
-    // dial gradient
+    // Active dial gradient.
     canvas.drawArc(outerBoundingRect, startAngle, speedAngle - startAngle, true,
         Brushes.getActiveGradientBrush(center, outerRadius));
 
-    // outer dial outline
+    // Outer dial outline.
     canvas.drawArc(outerBoundingRect, startAngle, arcLength, false,
         Brushes.getOuterOutlineBrush());
 
-    // offset -> distance between edge of speedometer and tick
+    // Offset is distance between edge of speedometer and tick.
     const tickOffsetFromEdge = 16.0, tickWidth = 3.0;
 
-    // paint each tick
+    // Paint each tick.
     for (double spdIncr = 0; spdIncr <= TOP_SPEED * unitFactor; spdIncr += 2) {
       final tickAngle =
           startAngle + arcLength / (TOP_SPEED * unitFactor) * spdIncr;
 
-      // determine whether the label/tick should be active
+      // Determine whether the label/tick should be active.
       final bool isActive =
           (spdIncr / unitFactor) <= speed && spdIncr % 10 == 0;
 
-      // set tick style according to the speed
+      // Set tick style according to the speed.
       final double tickLength = spdIncr % 10 == 0 ? 12 : 4;
       Paint brush = Brushes.getTickBrush(tickWidth, isActive);
 
-      // calculate x,y coordinates for endpoints of each tick
+      // Calculate x,y coordinates for endpoints of each tick.
       final scale = (outerRadius - tickOffsetFromEdge) / outerRadius;
 
       double tickOuterX = scale * outerRadius * cos(tickAngle);
@@ -81,32 +80,32 @@ class SpeedometerPainter extends CustomPainter {
       double tickInnerY =
           (1 - (tickLength) / (outerRadius - tickOffsetFromEdge)) * tickOuterY;
 
-      // paint tick using calculated coordinates
+      // Paint tick using calculated coordinates.
       canvas.drawLine(Offset(tickInnerX, tickInnerY) + center,
           Offset(tickOuterX, tickOuterY) + center, brush);
 
-      // Tick Labels every 20 units
+      // Tick Labels every 20 units.
       if (spdIncr % 20 == 0 || (spdIncr % 10 == 0 && units == Units.MPH)) {
-        // Initialize textpainter object with style + text
+        // Initialize textpainter object with style + text.
         final labelStyle = isActive ? Fonts.sh1 : Fonts.sh1Light;
         final labelPainter = TextPainter(
             text: TextSpan(text: spdIncr.round().toString(), style: labelStyle),
             textDirection: TextDirection.ltr);
         labelPainter.layout();
 
-        // relative distance (0.0, 1.0) to inner vertex of tick (guesstimate)
+        // Relative distance (0.0, 1.0) to inner vertex of tick (guesstimate).
         const double scaleDistance = 0.87;
 
-        // Find position for each label, taking into account the size of text
+        // Find position for each label, taking into account the size of text.
         var textOffsetX = tickInnerX * scaleDistance - labelPainter.width / 2;
         var textOffsetY = tickInnerY * scaleDistance - labelPainter.height / 2;
 
-        // display the tick label
+        // Display the tick label.
         labelPainter.paint(canvas, Offset(textOffsetX, textOffsetY) + center);
       }
     }
 
-    // thick outer border with gradient
+    // Thick outer border with gradient.
     canvas.drawArc(
         outerBorderRect,
         startAngle,
@@ -114,7 +113,7 @@ class SpeedometerPainter extends CustomPainter {
         false,
         Brushes.getOuterGradientBrush(startAngle, speedAngle, outerBorderRect));
 
-    // inner border with gradient
+    // Inner border with gradient.
     canvas.drawArc(
         innerBoundingRect,
         startAngle,
@@ -123,7 +122,7 @@ class SpeedometerPainter extends CustomPainter {
         Brushes.getInnerOutlineBrush(
             startAngle, speedAngle, innerBoundingRect));
 
-    // needle
+    // Needle. Offset on radii required since Flutter's rounded stroke cap will extend too far.
     Offset needleOuter =
         Offset(cos(speedAngle), sin(speedAngle)) * (outerRadius - 2);
     Offset needleInner =

@@ -326,7 +326,7 @@ class _MainDisplayState extends State<MainDisplay> {
       addWarnings(msgName);
     }
 
-    // TODO: handle recommeded speed message (?)
+    // TODO: Handle recommeded speed message (?)
   }
 
   @override
@@ -353,19 +353,20 @@ class _MainDisplayState extends State<MainDisplay> {
                 onTap: () => _recSpeedChange(_recSpeed + 5),
                 child: RecSpeed(_recSpeed, units)),
 
-            // left arrow
+            // Left Arrow
             GestureDetector(
               onTap: toggleTurnLeft,
               onDoubleTap: removeWarnings,
               child: LeftArrow(turningLeft: _turningLeft),
             ),
 
+            // Right Arrow
             GestureDetector(
               onTap: toggleTurnRight,
               child: RightArrow(turningRight: _turningRight),
             ),
 
-            //battery info
+            // Battery Info
             GestureDetector(
               onPanUpdate: (details) {
                 batteryChange(details.delta.dx / 400);
@@ -374,31 +375,31 @@ class _MainDisplayState extends State<MainDisplay> {
                   distanceToEmpty: _distanceToEmpty, timeToFull: _timeToFull),
             ),
 
-            //headlights
+            // Headlights
             GestureDetector(
               onTap: toggleLights,
               child: HeadLights(_lightStatus),
             ),
 
-            // errors
+            // Errors
             GestureDetector(
               onTap: removeWarnings,
               child: Errors(_errors),
             ),
 
-            //cruise control
+            // Cruise Control
             GestureDetector(
               onTap: toggleCruise,
               child: CruiseControl(_cruiseControlOn),
             ),
 
-            //Drive States
+            // Drive States
             GestureDetector(
               onTap: toggleDriveState,
               child: DriveState(_driveState),
             ),
 
-            //Clock
+            // Clock
             Clock(_timeString)
           ],
         ),

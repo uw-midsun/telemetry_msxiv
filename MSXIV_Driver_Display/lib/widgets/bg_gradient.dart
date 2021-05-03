@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 
-// gradient for bottom of display
+// Gradient for bottom of display.
 class BgGradient extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
