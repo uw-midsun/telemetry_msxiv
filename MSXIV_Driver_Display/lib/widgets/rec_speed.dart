@@ -4,21 +4,23 @@ import 'package:MSXIV_Driver_Display/utils/units.dart';
 import 'package:flutter/material.dart';
 
 class RecSpeed extends StatefulWidget {
-  final double _speed;
+  /// Displays the recommended speed of the vehicle.
+  final double _speedKm;
   final Units _units;
   @override
-  RecSpeed(this._speed, this._units);
+  RecSpeed(this._speedKm, this._units);
   _RecSpeedState createState() => _RecSpeedState();
 }
 
-// Time for border to animate from color 1 -> color 2 (ms)
+// Time for border to animate from color 1 -> color 2 in ms.
 const animationDuration = 500;
 
 class _RecSpeedState extends State<RecSpeed>
     with SingleTickerProviderStateMixin {
+  /// Handles animation logic for the recommended speed widget.
   AnimationController _controller;
   Animation<Color> _colorAnimation;
-  double _speed = 0;
+  double _speedKm = 0;
 
   @override
   void initState() {
@@ -34,18 +36,19 @@ class _RecSpeedState extends State<RecSpeed>
         .animate(_controller);
   }
 
+  // Update speed and trigger border animation.
   void updateSpeed(double speed) {
-    if (speed.round() != _speed.round()) {
-      // Begin the animation
+    // Check if speed needs to be updated.
+    if (speed.round() != _speedKm.round()) {
       TickerFuture tickerFuture = _controller.repeat(reverse: true);
 
-      // Stop the animation after one cycle
+      // Stop the animation after one period.
       tickerFuture.timeout(Duration(milliseconds: animationDuration * 2),
           onTimeout: () {
         _controller.reset();
       });
       setState(() {
-        _speed = speed;
+        _speedKm = speed;
       });
     }
   }
@@ -56,21 +59,21 @@ class _RecSpeedState extends State<RecSpeed>
     const BorderRadius radius =
         BorderRadius.all(Radius.circular(containerWidth));
     const double borderWidth = 2.0;
-    updateSpeed(widget._speed);
-    final displaySpeed = (_speed * widget._units.kmFactor).round().toString();
+    updateSpeed(widget._speedKm);
+    final displaySpeed = (_speedKm * widget._units.kmFactor).round().toString();
     return Container(
-        // set overall margin and alignment
         alignment: Alignment.topRight,
         margin: EdgeInsets.all(24),
         child: Container(
-            // use container as outer border
+            // Outer border created with nested containers - not good semantically.
             height: containerWidth,
             width: containerWidth,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                   colors: [_colorAnimation.value, Colors.white],
-                  begin: Alignment(0.0, 1.0),
-                  end: Alignment(0.0, -1.0)),
+                  stops: [0.3, 1.0],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter),
               borderRadius: radius,
             ),
             child: Container(

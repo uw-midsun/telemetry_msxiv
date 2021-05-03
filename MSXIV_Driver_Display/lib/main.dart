@@ -338,6 +338,7 @@ class _MainDisplayState extends State<MainDisplay> {
         child: Stack(
           children: [
             BgGradient(),
+
             // Speedometer
             GestureDetector(
               onPanUpdate: (details) {
@@ -347,18 +348,23 @@ class _MainDisplayState extends State<MainDisplay> {
               child: Speedometer(_manualSpeed, units),
             ),
 
-            RecSpeed(_manualSpeed, units),
-            ////left arrow
+            // Recommended Speed
+            GestureDetector(
+                onTap: () => _recSpeedChange(_recSpeed + 5),
+                child: RecSpeed(_recSpeed, units)),
+
+            // left arrow
             GestureDetector(
               onTap: toggleTurnLeft,
               onDoubleTap: removeWarnings,
               child: LeftArrow(turningLeft: _turningLeft),
             ),
-            //right arrow
+
             GestureDetector(
               onTap: toggleTurnRight,
               child: RightArrow(turningRight: _turningRight),
             ),
+
             //battery info
             GestureDetector(
               onPanUpdate: (details) {
@@ -385,6 +391,7 @@ class _MainDisplayState extends State<MainDisplay> {
               onTap: toggleCruise,
               child: CruiseControl(_cruiseControlOn),
             ),
+
             //Drive States
             GestureDetector(
               onTap: toggleDriveState,
