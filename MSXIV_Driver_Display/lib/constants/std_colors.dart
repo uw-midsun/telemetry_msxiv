@@ -6,6 +6,7 @@ class StdColors {
   static const Color reverseState = Color.fromRGBO(255, 199, 0, 1);
   static const Color green = Color.fromRGBO(68, 214, 0, 1);
   static const Color error = Color.fromRGBO(255, 77, 77, 1);
+  static const Color brightBlue = Color.fromRGBO(30, 122, 251, 1);
 
   static const List<Color> backgroundGradient = [
     Color.fromRGBO(14, 21, 45, 0.45),
@@ -26,14 +27,5 @@ class StdColors {
     Color.fromRGBO(0, 0, 0, 0),
     Color.fromRGBO(16, 24, 49, 0.35),
     Color.fromRGBO(0, 120, 232, 0.35)
-  ];
-  static const List<Color> spdBorderGradient = [
-    Color.fromRGBO(30, 122, 251, 1),
-    Color.fromRGBO(255, 255, 255, 1),
-  ];
-  static const List<Color> spdInnerGradient = [
-    spdInnerOutline,
-    Color.fromRGBO(255, 255, 255, 1),
-    spdInnerOutline
   ];
 }

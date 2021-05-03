@@ -1,8 +1,8 @@
 import 'dart:math';
-import './speedometer.dart' show Units;
+import 'package:MSXIV_Driver_Display/utils/units.dart';
 
 import 'package:MSXIV_Driver_Display/constants/brushes.dart';
-import 'package:MSXIV_Driver_Display/constants/stdFonts.dart';
+import 'package:MSXIV_Driver_Display/constants/std_Fonts.dart';
 import 'package:flutter/material.dart';
 
 // in km/h
@@ -106,7 +106,6 @@ class SpeedometerPainter extends CustomPainter {
       }
     }
 
-
     // thick outer border with gradient
     canvas.drawArc(
         outerBorderRect,
@@ -127,7 +126,8 @@ class SpeedometerPainter extends CustomPainter {
     // needle
     Offset needleOuter =
         Offset(cos(speedAngle), sin(speedAngle)) * (outerRadius - 2);
-    Offset needleInner = Offset(cos(speedAngle), sin(speedAngle)) * innerRadius;
+    Offset needleInner =
+        Offset(cos(speedAngle), sin(speedAngle)) * (innerRadius + 0.5);
     canvas.drawLine(needleInner + center, needleOuter + center,
         Brushes.getNeedleBrush(center, outerRadius));
   }

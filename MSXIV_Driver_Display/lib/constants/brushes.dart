@@ -1,4 +1,4 @@
-import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
+import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -72,7 +72,7 @@ class Brushes {
 
   static Paint getOuterGradientBrush(
       double startAngle, double endAngle, Rect boundingRect) {
-    final List<Color> colors = StdColors.spdBorderGradient;
+    final List<Color> colors = [StdColors.brightBlue, Colors.white];
     final List<double> stops = [
       (endAngle - gradientAngle - startAngle) / (2 * pi),
       (endAngle - startAngle) / (2 * pi)
@@ -95,7 +95,11 @@ class Brushes {
   // inner outline of speedometer
   static Paint getInnerOutlineBrush(
       double startAngle, double endAngle, Rect boundingRect) {
-    final List<Color> colors = StdColors.spdInnerGradient;
+    final List<Color> colors = [
+      StdColors.spdInnerOutline,
+      Colors.white,
+      StdColors.spdInnerOutline
+    ];
     final List<double> stops = [
       (endAngle - gradientAngle - startAngle) / (2 * pi),
       (endAngle - startAngle) / (2 * pi),

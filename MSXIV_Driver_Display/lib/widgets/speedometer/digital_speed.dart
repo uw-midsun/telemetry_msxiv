@@ -1,23 +1,6 @@
-import 'package:MSXIV_Driver_Display/constants/stdFonts.dart';
+import 'package:MSXIV_Driver_Display/constants/std_fonts.dart';
 import 'package:flutter/material.dart';
-
-import './speedometer.dart';
-
-extension on Units {
-  String get value {
-    if (this == Units.Kmh)
-      return "km/h";
-    else
-      return "mph";
-  }
-
-  double get kmFactor {
-    if (this == Units.Kmh)
-      return 1.0;
-    else
-      return 0.621371;
-  }
-}
+import 'package:MSXIV_Driver_Display/utils/units.dart';
 
 class DigitalSpeed extends StatelessWidget {
   final double speed;
