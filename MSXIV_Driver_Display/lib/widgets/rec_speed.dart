@@ -36,6 +36,12 @@ class _RecSpeedState extends State<RecSpeed>
         .animate(_controller);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
   // Update speed and trigger border animation.
   void updateSpeed(double speed) {
     // Check if speed needs to be updated.
