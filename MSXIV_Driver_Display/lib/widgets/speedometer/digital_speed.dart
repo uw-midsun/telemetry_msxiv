@@ -1,6 +1,6 @@
 import 'package:MSXIV_Driver_Display/constants/std_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:MSXIV_Driver_Display/utils/units.dart';
+import 'package:MSXIV_Driver_Display/utils/enums.dart';
 
 class DigitalSpeed extends StatelessWidget {
   final double speed;

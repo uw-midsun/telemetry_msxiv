@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:MSXIV_Driver_Display/utils/units.dart';
+import 'package:MSXIV_Driver_Display/utils/enums.dart';
 
 import './speedometer_painter.dart';
 import './digital_speed.dart';
 
 const TOP_SPEED = 150.0;
-
 
 class Speedometer extends StatelessWidget {
   final double speed;
