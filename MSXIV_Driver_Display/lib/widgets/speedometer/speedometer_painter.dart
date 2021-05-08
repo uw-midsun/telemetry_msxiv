@@ -37,19 +37,13 @@ class SpeedometerPainter extends CustomPainter {
     Rect innerBoundingRect =
         Rect.fromCircle(center: center, radius: innerRadius);
 
-    // Thick outer border.
+    // Draw basic arcs. 
     canvas.drawArc(outerBorderRect, startAngle, arcLength, false,
         Brushes.getOuterBorderBrush());
-
-    // Inactive dial gradient.
     canvas.drawArc(outerBoundingRect, startAngle, arcLength, true,
         Brushes.getBgGradientBrush(center, outerRadius));
-
-    // Active dial gradient.
     canvas.drawArc(outerBoundingRect, startAngle, speedAngle - startAngle, true,
         Brushes.getActiveGradientBrush(center, outerRadius));
-
-    // Outer dial outline.
     canvas.drawArc(outerBoundingRect, startAngle, arcLength, false,
         Brushes.getOuterOutlineBrush());
 
@@ -66,27 +60,24 @@ class SpeedometerPainter extends CustomPainter {
           (spdIncr / unitFactor) <= speed && spdIncr % 10 == 0;
 
       // Set tick style according to the speed.
-      final double tickLength = spdIncr % 10 == 0 ? 12 : 4;
+      final double tickLength = spdIncr % 10 == 0 ? 13 : 4;
       Paint brush = Brushes.getTickBrush(tickWidth, isActive);
 
       // Calculate x,y coordinates for endpoints of each tick.
-      final scale = (outerRadius - tickOffsetFromEdge) / outerRadius;
+      final scale = (outerRadius - tickOffsetFromEdge - tickWidth / 2) / outerRadius;
 
       double tickOuterX = scale * outerRadius * cos(tickAngle);
       double tickOuterY = scale * outerRadius * sin(tickAngle);
-
       double tickInnerX =
-          (1 - (tickLength) / (outerRadius - tickOffsetFromEdge)) * tickOuterX;
+          (1 - (tickLength) / (outerRadius - tickOffsetFromEdge - tickWidth)) * tickOuterX;
       double tickInnerY =
-          (1 - (tickLength) / (outerRadius - tickOffsetFromEdge)) * tickOuterY;
+          (1 - (tickLength) / (outerRadius - tickOffsetFromEdge - tickWidth)) * tickOuterY;
 
-      // Paint tick using calculated coordinates.
       canvas.drawLine(Offset(tickInnerX, tickInnerY) + center,
           Offset(tickOuterX, tickOuterY) + center, brush);
 
       // Tick Labels every 20 units.
       if (spdIncr % 20 == 0 || (spdIncr % 10 == 0 && units == Units.MPH)) {
-        // Initialize textpainter object with style + text.
         final labelStyle = isActive ? Fonts.sh1 : Fonts.sh1Light;
         final labelPainter = TextPainter(
             text: TextSpan(text: spdIncr.round().toString(), style: labelStyle),
@@ -100,7 +91,6 @@ class SpeedometerPainter extends CustomPainter {
         var textOffsetX = tickInnerX * scaleDistance - labelPainter.width / 2;
         var textOffsetY = tickInnerY * scaleDistance - labelPainter.height / 2;
 
-        // Display the tick label.
         labelPainter.paint(canvas, Offset(textOffsetX, textOffsetY) + center);
       }
     }
