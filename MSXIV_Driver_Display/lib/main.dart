@@ -65,7 +65,7 @@ class _MainDisplayState extends State<MainDisplay> {
   double _chargePercent = 0.25;
   double _timeToFull = 3.0;
   double _distanceToEmpty = 862.2;
-  ChargeType _charging = ChargeType.solar;
+  ChargeType _charging = ChargeType.grid;
   Units units = Units.Kmh;
   String _timeString =
       "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";

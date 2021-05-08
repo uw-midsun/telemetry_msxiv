@@ -8,7 +8,9 @@ const LOW_CHARGE = 0.2;
 const double WIDTH = 50;
 const double MAX_DISTANCE = 1000.0;
 const double TIME_TO_FULL = 3.0;
+const int PRECISION = 1;
 
+/// Parent state of charge widget.
 class SOC extends StatelessWidget {
   final double chargePercent;
   final double timeToFull;
@@ -28,7 +30,7 @@ class SOC extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              SOCBar(
+              BatterySymbol(
                 chargePercent: chargePercent,
                 charging: chargeType,
               ),
@@ -42,6 +44,7 @@ class SOC extends StatelessWidget {
   }
 }
 
+/// Renders the distance remaining and units as text.
 class SOCText extends StatelessWidget {
   const SOCText(this.distance, this.units);
 
@@ -51,7 +54,7 @@ class SOCText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String unitStr = units == Units.Kmh ? " km" : " mi";
-    String distStr = distance.toStringAsFixed(1);
+    String distStr = distance.toStringAsFixed(PRECISION);
     return Row(
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.ideographic,
@@ -62,8 +65,9 @@ class SOCText extends StatelessWidget {
   }
 }
 
-class SOCBar extends StatelessWidget {
-  const SOCBar({
+/// Renders the Battery Symbol based on charge left in battery,
+class BatterySymbol extends StatelessWidget {
+  const BatterySymbol({
     @required this.chargePercent,
     @required this.charging,
   });
@@ -74,7 +78,6 @@ class SOCBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int chargeRounded = (chargePercent * 5).ceil() * 20;
-    print(chargePercent);
 
     String svgUrl = charging == ChargeType.grid
         ? 'assets/images/battery/chrg$chargeRounded.svg'
@@ -85,6 +88,7 @@ class SOCBar extends StatelessWidget {
   }
 }
 
+/// Renders solar charging icon.
 class ChargingIcon extends StatelessWidget {
   const ChargingIcon({
     @required this.icon,
