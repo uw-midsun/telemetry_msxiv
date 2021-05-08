@@ -38,7 +38,7 @@ class HeadLights extends StatelessWidget {
           : Image(
               height: 50,
               image: AssetImage(
-                  'assets/images/HeadLights${lightStatus.toString().split('.')[1]}.png'),
+                  'assets/images/old/HeadLights${lightStatus.toString().split('.')[1]}.png'),
               color: StdColors.reverseState,
             ),
     );

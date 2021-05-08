@@ -1,5 +1,6 @@
 import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 const LOW_CHARGE = 0.3;
 const double WIDTH = 50;
@@ -33,11 +34,11 @@ class SOC extends StatelessWidget {
                 children: <Widget>[
                   charging
                       ? ChargingIcon(
-                          icon: "assets/images/plug-high.png",
+                          icon: "assets/images/old/plug-high.png",
                           chargePercent: chargePercent)
                       : Container(),
                   ChargingIcon(
-                      icon: 'assets/images/sun-high.png',
+                      icon: 'assets/images/old/sun-high.png',
                       chargePercent: chargePercent),
                 ],
               ),
@@ -109,29 +110,30 @@ class SOCBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Container(
-            width: WIDTH * chargePercent,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              color: chargePercent > LOW_CHARGE
-                  ? StdColors.green
-                  : StdColors.error,
-            )),
-        Container(
-          width: WIDTH,
-          decoration: BoxDecoration(
-              border: Border.all(
-                color: chargePercent > LOW_CHARGE
-                    ? StdColors.green
-                    : StdColors.error,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(6)),
-        ),
-      ],
-    );
+    return SvgPicture.asset("assets/images/battery/chrg40.svg");
+    // return Stack(
+    //   children: <Widget>[
+    //     Container(
+    //         width: WIDTH * chargePercent,
+    //         decoration: BoxDecoration(
+    //           borderRadius: BorderRadius.circular(6),
+    //           color: chargePercent > LOW_CHARGE
+    //               ? StdColors.green
+    //               : StdColors.error,
+    //         )),
+    //     Container(
+    //       width: WIDTH,
+    //       decoration: BoxDecoration(
+    //           border: Border.all(
+    //             color: chargePercent > LOW_CHARGE
+    //                 ? StdColors.green
+    //                 : StdColors.error,
+    //             width: 2,
+    //           ),
+    //           borderRadius: BorderRadius.circular(6)),
+    //     ),
+    //   ],
+    // );
   }
 }
 
