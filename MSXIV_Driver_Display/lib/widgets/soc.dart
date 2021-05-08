@@ -22,7 +22,7 @@ class SOC extends StatelessWidget {
       children: <Widget>[
         Container(
           height: 20,
-          width: WIDTH +130,
+          width: WIDTH + 130,
           margin: EdgeInsets.only(top: 12, bottom: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -114,13 +114,17 @@ class SOCBar extends StatelessWidget {
             width: WIDTH * chargePercent,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6),
-              color: chargePercent > LOW_CHARGE ? stdColors.green : stdColors.error,
+              color: chargePercent > LOW_CHARGE
+                  ? stdColors.green
+                  : stdColors.error,
             )),
         Container(
           width: WIDTH,
           decoration: BoxDecoration(
               border: Border.all(
-                color: chargePercent > LOW_CHARGE ? stdColors.green : stdColors.error,
+                color: chargePercent > LOW_CHARGE
+                    ? stdColors.green
+                    : stdColors.error,
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(6)),

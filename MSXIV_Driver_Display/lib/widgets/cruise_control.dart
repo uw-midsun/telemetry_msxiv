@@ -13,12 +13,12 @@ class CruiseControl extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Text('Cruise',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 18, color: Colors.white)),
-              Text('Control',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 18, color: Colors.white)),
+              Text('CRUISE',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 30,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -28,26 +28,26 @@ class CruiseControl extends StatelessWidget {
             decoration: BoxDecoration(
                 border: Border.all(
                     color: cruiseControl
-                        ? stdColors.green
-                        : Color.fromRGBO(140, 50, 0, 1),
-                    width: 3),
-                borderRadius: BorderRadius.circular(5)),
+                        ? Color.fromRGBO(255, 255, 255, 0)
+                        : Color.fromRGBO(255, 255, 255, 0),
+                    width: 0),
+                borderRadius: BorderRadius.circular(10)),
             child: Text(
               cruiseControl ? "ON" : "OFF",
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 30,
                   color: cruiseControl
-                      ? stdColors.green
-                      : Color.fromRGBO(140, 50, 0, 1),
+                      ? stdColors.white
+                      : Color.fromRGBO(255, 255, 255, 1),
                   fontWeight: FontWeight.bold),
             ),
             margin: EdgeInsets.fromLTRB(5, 5, 0, 5),
           ),
         )
       ]),
-      alignment: Alignment.topRight,
-      margin: EdgeInsets.fromLTRB(0, 190, 22, 0),
+      alignment: Alignment.topCenter,
+      margin: EdgeInsets.fromLTRB(0, 50, 1000, 0),
     );
   }
 }

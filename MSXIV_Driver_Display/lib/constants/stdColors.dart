@@ -7,4 +7,5 @@ class stdColors {
   static const Color green = Color.fromRGBO(68, 214, 0, 1);
   static const Color error = Color.fromRGBO(255, 77, 77, 1);
   static const Color needle = Color.fromRGBO(93, 179, 255, 1);
+  static const Color white = Color.fromRGBO(255, 255, 255, 1);
 }
