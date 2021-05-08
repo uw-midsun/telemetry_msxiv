@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:MSXIV_Driver_Display/utils/units.dart';
+import 'package:MSXIV_Driver_Display/utils/enums.dart';
 
 import 'package:MSXIV_Driver_Display/constants/brushes.dart';
 import 'package:MSXIV_Driver_Display/constants/std_Fonts.dart';
@@ -37,7 +37,7 @@ class SpeedometerPainter extends CustomPainter {
     Rect innerBoundingRect =
         Rect.fromCircle(center: center, radius: innerRadius);
 
-    // Draw basic arcs. 
+    // Draw basic arcs.
     canvas.drawArc(outerBorderRect, startAngle, arcLength, false,
         Brushes.getOuterBorderBrush());
     canvas.drawArc(outerBoundingRect, startAngle, arcLength, true,
@@ -64,14 +64,17 @@ class SpeedometerPainter extends CustomPainter {
       Paint brush = Brushes.getTickBrush(tickWidth, isActive);
 
       // Calculate x,y coordinates for endpoints of each tick.
-      final scale = (outerRadius - tickOffsetFromEdge - tickWidth / 2) / outerRadius;
+      final scale =
+          (outerRadius - tickOffsetFromEdge - tickWidth / 2) / outerRadius;
 
       double tickOuterX = scale * outerRadius * cos(tickAngle);
       double tickOuterY = scale * outerRadius * sin(tickAngle);
       double tickInnerX =
-          (1 - (tickLength) / (outerRadius - tickOffsetFromEdge - tickWidth)) * tickOuterX;
+          (1 - (tickLength) / (outerRadius - tickOffsetFromEdge - tickWidth)) *
+              tickOuterX;
       double tickInnerY =
-          (1 - (tickLength) / (outerRadius - tickOffsetFromEdge - tickWidth)) * tickOuterY;
+          (1 - (tickLength) / (outerRadius - tickOffsetFromEdge - tickWidth)) *
+              tickOuterY;
 
       canvas.drawLine(Offset(tickInnerX, tickInnerY) + center,
           Offset(tickOuterX, tickOuterY) + center, brush);

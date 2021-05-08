@@ -14,7 +14,7 @@ class StdColors {
   static const Color brightBlue = Color.fromRGBO(30, 122, 251, 1);
   static const List<Color> backgroundGradient = [
     Color.fromRGBO(14, 21, 45, 0.45),
-    Color.fromRGBO(37, 56, 85, 0.45),
+    Color.fromRGBO(37, 56, 100, 0.45),
   ];
 
   // Colors for speedometer.

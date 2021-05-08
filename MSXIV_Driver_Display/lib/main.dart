@@ -13,7 +13,7 @@ import 'package:MSXIV_Driver_Display/widgets/soc.dart';
 import 'package:MSXIV_Driver_Display/widgets/speedometer/speedometer.dart';
 import 'package:MSXIV_Driver_Display/widgets/cruise_control.dart';
 import 'package:MSXIV_Driver_Display/widgets/drive_state.dart';
-import 'package:MSXIV_Driver_Display/utils/units.dart';
+import 'package:MSXIV_Driver_Display/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -62,10 +62,10 @@ class _MainDisplayState extends State<MainDisplay> {
   DriveStates _driveState = DriveStates.Park;
   bool _cruiseControlOn = false;
   List<ErrorStates> _errors = [];
-  double _chargePercent = 1.00;
+  double _chargePercent = 0.25;
   double _timeToFull = 3.0;
-  double _distanceToEmpty = 1000;
-  bool _charging = false;
+  double _distanceToEmpty = 862.2;
+  ChargeType _charging = ChargeType.solar;
   Units units = Units.Kmh;
   String _timeString =
       "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";
@@ -130,10 +130,10 @@ class _MainDisplayState extends State<MainDisplay> {
       }
       if (change > 0) {
         _timeToFull = TIME_TO_FULL * (1 - _chargePercent);
-        _charging = true;
+        _charging = ChargeType.solar;
       } else {
         _distanceToEmpty = MAX_DISTANCE * _chargePercent;
-        _charging = false;
+        _charging = ChargeType.none;
       }
     });
   }
@@ -326,7 +326,8 @@ class _MainDisplayState extends State<MainDisplay> {
       addWarnings(msgName);
     }
 
-    // TODO: Handle recommeded speed message (?)
+    // TODO: Handle recommended speed message
+    // TODO: Determine charging type - solar or grid
   }
 
   @override
@@ -372,7 +373,9 @@ class _MainDisplayState extends State<MainDisplay> {
                 batteryChange(details.delta.dx / 400);
               },
               child: SOC(_chargePercent, _charging,
-                  distanceToEmpty: _distanceToEmpty, timeToFull: _timeToFull),
+                  distanceToEmpty: _distanceToEmpty,
+                  timeToFull: _timeToFull,
+                  units: units),
             ),
 
             // Headlights
