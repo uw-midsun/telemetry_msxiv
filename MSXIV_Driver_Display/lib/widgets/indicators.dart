@@ -1,5 +1,7 @@
 import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:MSXIV_Driver_Display/utils/enums.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 enum EELightType {
   EE_LIGHT_TYPE_DRL,
@@ -19,7 +21,26 @@ enum EELightState {
   NUM_EE_LIGHT_STATES,
 }
 
-enum LightStatus { Off, LowBeam, HighBeams, FogLights, DaytimeRunning }
+class Indicators extends StatelessWidget {
+  final LightStatus lightStatus;
+  final BrakeStatus brakeStatus;
+  Indicators(this.lightStatus, this.brakeStatus, {Key key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.topLeft,
+      margin: EdgeInsets.all(24),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          HeadLights(lightStatus),
+          Brakes(brakeStatus),
+        ],
+      ),
+    );
+  }
+}
 
 class HeadLights extends StatelessWidget {
   final LightStatus lightStatus;
@@ -27,20 +48,28 @@ class HeadLights extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final svgURI = lightStatus == LightStatus.DaytimeRunning
+        ? "assets/images/drl/drl_on.svg"
+        : "assets/images/drl/drl_off.svg";
     return Container(
-      alignment: Alignment.topLeft,
-      margin: EdgeInsets.all(24),
-      child: lightStatus == LightStatus.Off
-          ? Text(
-              "Lights Off",
-              style: TextStyle(fontSize: 24, color: StdColors.reverseState),
-            )
-          : Image(
-              height: 50,
-              image: AssetImage(
-                  'assets/images/old/HeadLights${lightStatus.toString().split('.')[1]}.png'),
-              color: StdColors.reverseState,
-            ),
+      margin: EdgeInsets.only(right: 24),
+      child: SvgPicture.asset(svgURI),
     );
+  }
+}
+
+class Brakes extends StatelessWidget {
+  final BrakeStatus brakeStatus;
+  Brakes(this.brakeStatus, {Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    String svgURI = "assets/images/rbs/rbs_warning.svg";
+    if (brakeStatus == BrakeStatus.On) {
+      svgURI = "assets/images/rbs/rbs_active.svg";
+    } else if (brakeStatus == BrakeStatus.Off) {
+      svgURI = "assets/images/rbs/rbs_off.svg";
+    }
+    return Container(child: SvgPicture.asset(svgURI, height: 32, width: 32));
   }
 }

@@ -36,3 +36,9 @@ enum EEDriveOutput {
   EE_DRIVE_OUTPUT_REVERSE,
   NUM_EE_DRIVE_OUTPUTS,
 }
+
+/// HeadLight status.
+enum LightStatus { Off, LowBeam, HighBeams, FogLights, DaytimeRunning }
+
+/// Braking status.
+enum BrakeStatus { On, Off, Warning }

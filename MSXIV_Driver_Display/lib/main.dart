@@ -58,6 +58,7 @@ class _MainDisplayState extends State<MainDisplay> {
   bool _turningLeft = false;
   bool _turningRight = false;
   LightStatus _lightStatus = LightStatus.DaytimeRunning;
+  BrakeStatus _brakeStatus = BrakeStatus.Off;
   DriveStates _driveState = DriveStates.Neutral;
   bool _cruiseControlOn = false;
   List<ErrorStates> _errors = [];
@@ -323,8 +324,9 @@ class _MainDisplayState extends State<MainDisplay> {
       addWarnings(msgName);
     }
 
-    // TODO: Handle recommended speed message
-    // TODO: Determine charging type - solar or grid
+    // TODO: Determine recommended speed
+    // TODO: Determine charging type - solar, grid, off
+    // TODO: Determine braking status - on, off, warning
   }
 
   @override
@@ -378,7 +380,7 @@ class _MainDisplayState extends State<MainDisplay> {
             // Headlights
             GestureDetector(
               onTap: toggleLights,
-              child: HeadLights(_lightStatus),
+              child: Indicators(_lightStatus, _brakeStatus),
             ),
 
             // Errors
