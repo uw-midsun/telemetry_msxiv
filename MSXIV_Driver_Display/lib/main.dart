@@ -5,7 +5,7 @@ import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 import 'package:MSXIV_Driver_Display/widgets/bg_gradient.dart';
 import 'package:MSXIV_Driver_Display/widgets/clock.dart';
 import 'package:MSXIV_Driver_Display/widgets/errors.dart';
-import 'package:MSXIV_Driver_Display/widgets/head_lights.dart';
+import 'package:MSXIV_Driver_Display/widgets/indicators.dart';
 import 'package:MSXIV_Driver_Display/widgets/left_arrow.dart';
 import 'package:MSXIV_Driver_Display/widgets/rec_speed.dart';
 import 'package:MSXIV_Driver_Display/widgets/right_arrow.dart';
@@ -17,7 +17,6 @@ import 'package:MSXIV_Driver_Display/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'widgets/head_lights.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 void main() {
@@ -59,7 +58,7 @@ class _MainDisplayState extends State<MainDisplay> {
   bool _turningLeft = false;
   bool _turningRight = false;
   LightStatus _lightStatus = LightStatus.DaytimeRunning;
-  DriveStates _driveState = DriveStates.Park;
+  DriveStates _driveState = DriveStates.Neutral;
   bool _cruiseControlOn = false;
   List<ErrorStates> _errors = [];
   double _chargePercent = 0.25;
@@ -156,14 +155,12 @@ class _MainDisplayState extends State<MainDisplay> {
 
   void toggleDriveState() {
     setState(() {
-      if (_driveState == DriveStates.Park) {
-        _driveState = DriveStates.Reverse;
-      } else if (_driveState == DriveStates.Reverse) {
+      if (_driveState == DriveStates.Reverse) {
         _driveState = DriveStates.Neutral;
       } else if (_driveState == DriveStates.Neutral) {
         _driveState = DriveStates.Drive;
       } else {
-        _driveState = DriveStates.Park;
+        _driveState = DriveStates.Reverse;
       }
     });
   }
