@@ -1,4 +1,4 @@
-import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
+import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 import 'package:flutter/material.dart';
 
 class CruiseControl extends StatelessWidget {
@@ -28,18 +28,18 @@ class CruiseControl extends StatelessWidget {
             decoration: BoxDecoration(
                 border: Border.all(
                     color: cruiseControl
-                        ? Color.fromRGBO(255, 255, 255, 0)
-                        : Color.fromRGBO(255, 255, 255, 0),
-                    width: 0),
-                borderRadius: BorderRadius.circular(10)),
+                        ? StdColors.green
+                        : Color.fromRGBO(140, 50, 0, 1),
+                    width: 3),
+                borderRadius: BorderRadius.circular(5)),
             child: Text(
               cruiseControl ? "ON" : "OFF",
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 30,
                   color: cruiseControl
-                      ? stdColors.white
-                      : Color.fromRGBO(255, 255, 255, 1),
+                      ? StdColors.green
+                      : Color.fromRGBO(140, 50, 0, 1),
                   fontWeight: FontWeight.bold),
             ),
             margin: EdgeInsets.fromLTRB(5, 5, 0, 5),

@@ -1,17 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
+import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
+import 'package:MSXIV_Driver_Display/widgets/bg_gradient.dart';
 import 'package:MSXIV_Driver_Display/widgets/clock.dart';
 import 'package:MSXIV_Driver_Display/widgets/errors.dart';
 import 'package:MSXIV_Driver_Display/widgets/head_lights.dart';
 import 'package:MSXIV_Driver_Display/widgets/left_arrow.dart';
+import 'package:MSXIV_Driver_Display/widgets/rec_speed.dart';
 import 'package:MSXIV_Driver_Display/widgets/right_arrow.dart';
 import 'package:MSXIV_Driver_Display/widgets/soc.dart';
-import 'package:MSXIV_Driver_Display/widgets/speedometer.dart';
+import 'package:MSXIV_Driver_Display/widgets/speedometer/speedometer.dart';
 import 'package:MSXIV_Driver_Display/widgets/cruise_control.dart';
-import 'package:MSXIV_Driver_Display/widgets/digital_speed.dart';
 import 'package:MSXIV_Driver_Display/widgets/drive_state.dart';
+import 'package:MSXIV_Driver_Display/utils/units.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -31,7 +33,7 @@ class Display extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'MSXIV Driver Display',
       theme: ThemeData(
-        backgroundColor: stdColors.background,
+        backgroundColor: StdColors.background,
       ),
       home: MainDisplay(title: 'Main Display'),
     );
@@ -53,6 +55,7 @@ class _MainDisplayState extends State<MainDisplay> {
 
   // Vehicle
   double _manualSpeed = 0;
+  double _recSpeed = 65;
   bool _turningLeft = false;
   bool _turningRight = false;
   LightStatus _lightStatus = LightStatus.DaytimeRunning;
@@ -65,7 +68,7 @@ class _MainDisplayState extends State<MainDisplay> {
   bool _charging = false;
   Units units = Units.Kmh;
   String _timeString =
-      "${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}";
+      "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";
 
   @override
   void initState() {
@@ -85,7 +88,7 @@ class _MainDisplayState extends State<MainDisplay> {
 
   void _getTime() {
     final String formattedDateTime =
-        "${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}";
+        "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";
     setState(() {
       _timeString = formattedDateTime;
     });
@@ -94,6 +97,12 @@ class _MainDisplayState extends State<MainDisplay> {
   void _speedChange([double change]) {
     setState(() {
       _manualSpeed = change;
+    });
+  }
+
+  void _recSpeedChange([double change]) {
+    setState(() {
+      _recSpeed = change;
     });
   }
 
@@ -316,38 +325,48 @@ class _MainDisplayState extends State<MainDisplay> {
     } else if (msgName.contains(new RegExp(r'FAULT'))) {
       addWarnings(msgName);
     }
+
+    // TODO: Handle recommeded speed message (?)
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: StdColors.background,
       body: SafeArea(
         top: false,
         child: Stack(
           children: [
-            //speed analog
-            Speedometer(_manualSpeed, units),
-            //left arrow
-            GestureDetector(
-              onTap: toggleTurnLeft,
-              onDoubleTap: removeWarnings,
-              child: LeftArrow(turningLeft: _turningLeft),
-            ),
-            //right arrow
-            GestureDetector(
-              onTap: toggleTurnRight,
-              child: RightArrow(turningRight: _turningRight),
-            ),
-            //speed digital
+            BgGradient(),
+
+            // Speedometer
             GestureDetector(
               onPanUpdate: (details) {
                 _speedChange(details.delta.dx / 5);
               },
               onTap: toggleUnits,
-              child: DigitalSpeed(_manualSpeed, units),
+              child: Speedometer(_manualSpeed, units),
             ),
-            //battery info
+
+            // Recommended Speed
+            GestureDetector(
+                onTap: () => _recSpeedChange(_recSpeed + 5),
+                child: RecSpeed(_recSpeed, units)),
+
+            // Left Arrow
+            GestureDetector(
+              onTap: toggleTurnLeft,
+              onDoubleTap: removeWarnings,
+              child: LeftArrow(turningLeft: _turningLeft),
+            ),
+
+            // Right Arrow
+            GestureDetector(
+              onTap: toggleTurnRight,
+              child: RightArrow(turningRight: _turningRight),
+            ),
+
+            // Battery Info
             GestureDetector(
               onPanUpdate: (details) {
                 batteryChange(details.delta.dx / 400);
@@ -356,30 +375,31 @@ class _MainDisplayState extends State<MainDisplay> {
                   distanceToEmpty: _distanceToEmpty, timeToFull: _timeToFull),
             ),
 
-            //headlights
+            // Headlights
             GestureDetector(
               onTap: toggleLights,
               child: HeadLights(_lightStatus),
             ),
 
-            // errors
+            // Errors
             GestureDetector(
               onTap: removeWarnings,
               child: Errors(_errors),
             ),
 
-            //cruise control
+            // Cruise Control
             GestureDetector(
               onTap: toggleCruise,
               child: CruiseControl(_cruiseControlOn),
             ),
-            //Drive States
+
+            // Drive States
             GestureDetector(
               onTap: toggleDriveState,
               child: DriveState(_driveState),
             ),
 
-            //Clock
+            // Clock
             Clock(_timeString)
           ],
         ),

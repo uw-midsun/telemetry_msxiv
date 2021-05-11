@@ -1,7 +1,7 @@
-import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
+import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 import 'package:flutter/material.dart';
 
-import '../constants/stdColors.dart';
+import '../constants/std_colors.dart';
 
 enum EEDriveOutput {
   EE_DRIVE_OUTPUT_OFF,
@@ -16,13 +16,13 @@ extension on DriveStates {
   Color get color {
     switch (this) {
       case (DriveStates.Reverse):
-        return stdColors.reverseState;
+        return StdColors.reverseState;
       case (DriveStates.Neutral):
-        return stdColors.error;
+        return StdColors.error;
       case (DriveStates.Drive):
-        return stdColors.green;
+        return StdColors.green;
       default:
-        return stdColors.parkState;
+        return StdColors.parkState;
     }
   }
 
@@ -40,22 +40,21 @@ class DriveState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      child: Container(
-        width: 50,
-        margin: EdgeInsets.only(left: 38, bottom: 10),
-        decoration: BoxDecoration(
-            border: Border.all(color: _driveStates.color, width: 3),
-            borderRadius: BorderRadius.circular(5)),
-        child: Text(
-          _driveStates.symbol,
-          style: TextStyle(
-              fontSize: 34,
-              fontWeight: FontWeight.bold,
-              color: _driveStates.color),
-          textAlign: TextAlign.center,
-        ),
-      ),
-      alignment: Alignment.bottomLeft,
-    );
+        alignment: Alignment(0.0, 0.7),
+        child: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+              border: Border.all(color: _driveStates.color, width: 3),
+              borderRadius: BorderRadius.circular(5)),
+          child: Text(
+            _driveStates.symbol,
+            style: TextStyle(
+                fontSize: 34,
+                fontWeight: FontWeight.bold,
+                color: _driveStates.color),
+            textAlign: TextAlign.center,
+          ),
+        ));
   }
 }
