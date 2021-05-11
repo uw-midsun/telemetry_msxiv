@@ -20,23 +20,27 @@ class Speedometer extends StatelessWidget {
     // take the minimum of container width and height
     double minDimension = min(width, height);
     return Container(
-        child: Stack(alignment: Alignment(0, 0), children: <Widget>[
-      Align(
-        alignment: Alignment(0.0, 0.7),
-        child: Container(
-          width: minDimension,
-          height: minDimension,
-          child: CustomPaint(
-            painter: SpeedometerPainter(speed, unit),
-          ),
-        ),
-      ),
-      Align(
-          alignment: Alignment(0.0, 0.7),
-          child: Container(
+      child: Stack(
+        alignment: Alignment(0, 0),
+        children: <Widget>[
+          Align(
+            alignment: Alignment(0.0, 0.7),
+            child: Container(
               width: minDimension,
               height: minDimension,
-              child: DigitalSpeed(speed, unit)))
-    ]));
+              child: CustomPaint(
+                painter: SpeedometerPainter(speed, unit),
+              ),
+            ),
+          ),
+          Align(
+              alignment: Alignment(0.0, 0.7),
+              child: Container(
+                  width: minDimension,
+                  height: minDimension,
+                  child: DigitalSpeed(speed, unit)))
+        ],
+      ),
+    );
   }
 }

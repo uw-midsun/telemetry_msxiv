@@ -24,23 +24,25 @@ class SOC extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.all(24.0),
-        alignment: Alignment.bottomLeft,
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              BatterySymbol(
-                chargePercent: chargePercent,
-                charging: chargeType,
-              ),
-              SOCText(distanceToEmpty, units),
-              chargeType == ChargeType.solar
-                  ? ChargingIcon(
-                      icon: "assets/images/charge_symbols/solar_high.svg",
-                      chargePercent: chargePercent)
-                  : SizedBox.shrink()
-            ]));
+      margin: EdgeInsets.all(24.0),
+      alignment: Alignment.bottomLeft,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          BatterySymbol(
+            chargePercent: chargePercent,
+            charging: chargeType,
+          ),
+          SOCText(distanceToEmpty, units),
+          chargeType == ChargeType.solar
+              ? ChargingIcon(
+                  icon: "assets/images/charge_symbols/solar_high.svg",
+                  chargePercent: chargePercent)
+              : SizedBox.shrink()
+        ],
+      ),
+    );
   }
 }
 
@@ -56,12 +58,13 @@ class SOCText extends StatelessWidget {
     String unitStr = units == Units.Kmh ? " km" : " mi";
     String distStr = distance.toStringAsFixed(PRECISION);
     return Row(
-        crossAxisAlignment: CrossAxisAlignment.baseline,
-        textBaseline: TextBaseline.ideographic,
-        children: <Widget>[
-          Text(distStr, style: Fonts.sh2),
-          Text(unitStr, style: Fonts.body)
-        ]);
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.ideographic,
+      children: <Widget>[
+        Text(distStr, style: Fonts.sh2),
+        Text(unitStr, style: Fonts.body)
+      ],
+    );
   }
 }
 
