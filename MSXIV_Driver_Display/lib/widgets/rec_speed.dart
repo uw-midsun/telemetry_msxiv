@@ -1,6 +1,6 @@
 import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 import 'package:MSXIV_Driver_Display/constants/std_fonts.dart';
-import 'package:MSXIV_Driver_Display/utils/units.dart';
+import 'package:MSXIV_Driver_Display/utils/enums.dart';
 import 'package:flutter/material.dart';
 
 class RecSpeed extends StatefulWidget {

@@ -13,12 +13,12 @@ class LeftArrow extends StatelessWidget {
       child: turningLeft
           ? Image(
               height: 60,
-              image: AssetImage('assets/images/LeftTurnArrow.png'),
+              image: AssetImage('assets/images/old/LeftTurnArrow.png'),
               color: StdColors.green,
             )
           : Image(
               height: 60,
-              image: AssetImage('assets/images/LeftTurnArrowOutline.png'),
+              image: AssetImage('assets/images/old/LeftTurnArrowOutline.png'),
               color: StdColors.green.withOpacity(0.1),
             ),
       margin: EdgeInsets.only(top: 90, left: 15),

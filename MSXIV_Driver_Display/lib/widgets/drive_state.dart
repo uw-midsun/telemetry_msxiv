@@ -1,37 +1,14 @@
-import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 import 'package:flutter/material.dart';
-
-import '../constants/std_colors.dart';
-
-enum EEDriveOutput {
-  EE_DRIVE_OUTPUT_OFF,
-  EE_DRIVE_OUTPUT_DRIVE,
-  EE_DRIVE_OUTPUT_REVERSE,
-  NUM_EE_DRIVE_OUTPUTS,
-}
-
-enum DriveStates { Drive, Park, Reverse, Neutral }
-
-extension on DriveStates {
-  Color get color {
-    switch (this) {
-      case (DriveStates.Reverse):
-        return StdColors.reverseState;
-      case (DriveStates.Neutral):
-        return StdColors.error;
-      case (DriveStates.Drive):
-        return StdColors.green;
-      default:
-        return StdColors.parkState;
-    }
-  }
-
-  String get symbol {
-    return this.toString().split('.')[1][0];
-  }
-}
+import 'package:MSXIV_Driver_Display/utils/enums.dart';
+import 'package:MSXIV_Driver_Display/constants/std_fonts.dart';
 
 // ignore: must_be_immutable
+const driveStateOrder = [
+  DriveStates.Reverse,
+  DriveStates.Neutral,
+  DriveStates.Drive
+];
+
 class DriveState extends StatelessWidget {
   final DriveStates _driveStates;
 
@@ -39,22 +16,27 @@ class DriveState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Text> textArray = [];
+    for (final driveState in driveStateOrder) {
+      if (_driveStates == driveState) {
+        textArray.add(Text(driveState.symbol, style: Fonts.h3));
+      } else {
+        textArray.add(Text(driveState.symbol, style: Fonts.sh1Light));
+      }
+    }
+
     return Align(
+      alignment: Alignment.center,
+      child: Container(
+        width: 73,
         alignment: Alignment(0.0, 0.7),
-        child: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-              border: Border.all(color: _driveStates.color, width: 3),
-              borderRadius: BorderRadius.circular(5)),
-          child: Text(
-            _driveStates.symbol,
-            style: TextStyle(
-                fontSize: 34,
-                fontWeight: FontWeight.bold,
-                color: _driveStates.color),
-            textAlign: TextAlign.center,
-          ),
-        ));
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.ideographic,
+          children: textArray,
+        ),
+      ),
+    );
   }
 }

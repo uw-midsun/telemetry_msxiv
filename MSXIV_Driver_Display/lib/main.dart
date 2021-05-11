@@ -5,7 +5,7 @@ import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 import 'package:MSXIV_Driver_Display/widgets/bg_gradient.dart';
 import 'package:MSXIV_Driver_Display/widgets/clock.dart';
 import 'package:MSXIV_Driver_Display/widgets/errors.dart';
-import 'package:MSXIV_Driver_Display/widgets/head_lights.dart';
+import 'package:MSXIV_Driver_Display/widgets/indicators.dart';
 import 'package:MSXIV_Driver_Display/widgets/left_arrow.dart';
 import 'package:MSXIV_Driver_Display/widgets/rec_speed.dart';
 import 'package:MSXIV_Driver_Display/widgets/right_arrow.dart';
@@ -13,11 +13,10 @@ import 'package:MSXIV_Driver_Display/widgets/soc.dart';
 import 'package:MSXIV_Driver_Display/widgets/speedometer/speedometer.dart';
 import 'package:MSXIV_Driver_Display/widgets/cruise_control.dart';
 import 'package:MSXIV_Driver_Display/widgets/drive_state.dart';
-import 'package:MSXIV_Driver_Display/utils/units.dart';
+import 'package:MSXIV_Driver_Display/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'widgets/head_lights.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 void main() {
@@ -59,13 +58,14 @@ class _MainDisplayState extends State<MainDisplay> {
   bool _turningLeft = false;
   bool _turningRight = false;
   LightStatus _lightStatus = LightStatus.DaytimeRunning;
-  DriveStates _driveState = DriveStates.Park;
+  BrakeStatus _brakeStatus = BrakeStatus.Off;
+  DriveStates _driveState = DriveStates.Neutral;
   bool _cruiseControlOn = false;
   List<ErrorStates> _errors = [];
-  double _chargePercent = 1.00;
+  double _chargePercent = 0.25;
   double _timeToFull = 3.0;
-  double _distanceToEmpty = 1000;
-  bool _charging = false;
+  double _distanceToEmpty = 862.2;
+  ChargeType _charging = ChargeType.grid;
   Units units = Units.Kmh;
   String _timeString =
       "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";
@@ -130,10 +130,10 @@ class _MainDisplayState extends State<MainDisplay> {
       }
       if (change > 0) {
         _timeToFull = TIME_TO_FULL * (1 - _chargePercent);
-        _charging = true;
+        _charging = ChargeType.solar;
       } else {
         _distanceToEmpty = MAX_DISTANCE * _chargePercent;
-        _charging = false;
+        _charging = ChargeType.none;
       }
     });
   }
@@ -156,14 +156,12 @@ class _MainDisplayState extends State<MainDisplay> {
 
   void toggleDriveState() {
     setState(() {
-      if (_driveState == DriveStates.Park) {
-        _driveState = DriveStates.Reverse;
-      } else if (_driveState == DriveStates.Reverse) {
+      if (_driveState == DriveStates.Reverse) {
         _driveState = DriveStates.Neutral;
       } else if (_driveState == DriveStates.Neutral) {
         _driveState = DriveStates.Drive;
       } else {
-        _driveState = DriveStates.Park;
+        _driveState = DriveStates.Reverse;
       }
     });
   }
@@ -326,7 +324,9 @@ class _MainDisplayState extends State<MainDisplay> {
       addWarnings(msgName);
     }
 
-    // TODO: Handle recommeded speed message (?)
+    // TODO: Determine recommended speed
+    // TODO: Determine charging type - solar, grid, off
+    // TODO: Determine braking status - on, off, warning
   }
 
   @override
@@ -372,13 +372,15 @@ class _MainDisplayState extends State<MainDisplay> {
                 batteryChange(details.delta.dx / 400);
               },
               child: SOC(_chargePercent, _charging,
-                  distanceToEmpty: _distanceToEmpty, timeToFull: _timeToFull),
+                  distanceToEmpty: _distanceToEmpty,
+                  timeToFull: _timeToFull,
+                  units: units),
             ),
 
             // Headlights
             GestureDetector(
               onTap: toggleLights,
-              child: HeadLights(_lightStatus),
+              child: Indicators(_lightStatus, _brakeStatus),
             ),
 
             // Errors
