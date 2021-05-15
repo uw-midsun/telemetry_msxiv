@@ -26,12 +26,12 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /* TODO: 
 
 Following items need messages: 
-  Determine recommended speed
-  Determine charging type - solar, grid, off
-  Determine braking status - on, off, warning
-  Determine units, mph or kmh
+  recommended speed
+  charging type - solar, grid, off
+  braking status - on, off, warning
+  units, mph or kmh
+  severity of some errors
 
-Need a way to turn off errors
 */
 void main() {
   runApp(Display());

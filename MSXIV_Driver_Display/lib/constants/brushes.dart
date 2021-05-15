@@ -67,14 +67,11 @@ class Brushes {
       ..strokeCap = StrokeCap.round;
   }
 
-  // angle for needle gradient stops
-  static const double gradientAngle = pi / 4;
-
   static Paint getOuterGradientBrush(
       double startAngle, double endAngle, Rect boundingRect) {
     final List<Color> colors = [StdColors.brightBlue, Colors.white];
     final List<double> stops = [
-      (endAngle - gradientAngle - startAngle) / (2 * pi),
+      (endAngle - startAngle - pi / 4) / (2 * pi),
       (endAngle - startAngle) / (2 * pi)
     ];
 
@@ -101,9 +98,9 @@ class Brushes {
       StdColors.spdInnerOutline
     ];
     final List<double> stops = [
-      (endAngle - gradientAngle - startAngle) / (2 * pi),
+      (endAngle - pi / 6 - startAngle) / (2 * pi),
       (endAngle - startAngle) / (2 * pi),
-      (endAngle + gradientAngle - startAngle) / (2 * pi)
+      (endAngle + pi / 6 - startAngle) / (2 * pi)
     ];
 
     return Paint()
