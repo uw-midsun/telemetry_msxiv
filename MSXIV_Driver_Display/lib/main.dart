@@ -7,9 +7,8 @@ import 'package:MSXIV_Driver_Display/widgets/bg_gradient.dart';
 import 'package:MSXIV_Driver_Display/widgets/clock.dart';
 import 'package:MSXIV_Driver_Display/widgets/errors.dart';
 import 'package:MSXIV_Driver_Display/widgets/indicators.dart';
-import 'package:MSXIV_Driver_Display/widgets/left_arrow.dart';
+import 'package:MSXIV_Driver_Display/widgets/turn_indicators.dart';
 import 'package:MSXIV_Driver_Display/widgets/rec_speed.dart';
-import 'package:MSXIV_Driver_Display/widgets/right_arrow.dart';
 import 'package:MSXIV_Driver_Display/widgets/soc.dart';
 import 'package:MSXIV_Driver_Display/widgets/speedometer/speedometer.dart';
 import 'package:MSXIV_Driver_Display/widgets/cruise_control.dart';
@@ -62,14 +61,14 @@ class _MainDisplayState extends State<MainDisplay> {
   bool _turningLeft = false;
   bool _turningRight = false;
   LightStatus _lightStatus = LightStatus.DaytimeRunning;
-  BrakeStatus _brakeStatus = BrakeStatus.Off;
+  BrakeStatus _brakeStatus = BrakeStatus.Warning;
   DriveStates _driveState = DriveStates.Neutral;
   bool _cruiseControlOn = false;
   List<ErrorStates> _errors = [];
   double _chargePercent = 0.25;
   double _timeToFull = 3.0;
   double _distanceToEmpty = 862.2;
-  ChargeType _charging = ChargeType.grid;
+  ChargeType _charging = ChargeType.Grid;
   Units units = Units.Kmh;
   String _timeString =
       "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";
@@ -134,10 +133,10 @@ class _MainDisplayState extends State<MainDisplay> {
       }
       if (change > 0) {
         _timeToFull = TIME_TO_FULL * (1 - _chargePercent);
-        _charging = ChargeType.solar;
+        _charging = ChargeType.Solar;
       } else {
         _distanceToEmpty = MAX_DISTANCE * _chargePercent;
-        _charging = ChargeType.none;
+        _charging = ChargeType.None;
       }
     });
   }
@@ -355,17 +354,12 @@ class _MainDisplayState extends State<MainDisplay> {
                 onTap: () => _recSpeedChange(_recSpeed + 5),
                 child: RecSpeed(_recSpeed, units)),
 
-            // Left Arrow
+            // Turn Indicators
             GestureDetector(
               onTap: toggleTurnLeft,
-              onDoubleTap: removeWarnings,
-              child: LeftArrow(turningLeft: _turningLeft),
-            ),
-
-            // Right Arrow
-            GestureDetector(
-              onTap: toggleTurnRight,
-              child: RightArrow(turningRight: _turningRight),
+              onDoubleTap: toggleTurnRight,
+              child: TurnIndicators(
+                  turningLeft: _turningLeft, turningRight: _turningRight),
             ),
 
             // Battery Info

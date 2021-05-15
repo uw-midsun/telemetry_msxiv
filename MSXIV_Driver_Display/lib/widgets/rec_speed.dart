@@ -68,31 +68,35 @@ class _RecSpeedState extends State<RecSpeed>
     updateSpeed(widget._speedKm);
     final displaySpeed = (_speedKm * widget._units.kmFactor).round().toString();
     return Container(
-        alignment: Alignment.topRight,
-        margin: EdgeInsets.all(24),
+      alignment: Alignment.topRight,
+      margin: EdgeInsets.all(24),
+      child: Container(
+        // Outer border created with nested containers - not good semantically.
+        height: containerWidth,
+        width: containerWidth,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [_colorAnimation.value, Colors.white],
+              stops: [0.3, 1.0],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter),
+          borderRadius: radius,
+        ),
         child: Container(
-            // Outer border created with nested containers - not good semantically.
-            height: containerWidth,
-            width: containerWidth,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [_colorAnimation.value, Colors.white],
-                  stops: [0.3, 1.0],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter),
-              borderRadius: radius,
-            ),
-            child: Container(
-                margin: EdgeInsets.all(borderWidth),
-                height: containerWidth,
-                width: containerWidth,
-                decoration: BoxDecoration(
-                    borderRadius: radius, color: StdColors.background),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text("Rec. Speed", style: Fonts.caption),
-                      Text(displaySpeed, style: Fonts.h2),
-                    ]))));
+          margin: EdgeInsets.all(borderWidth),
+          height: containerWidth,
+          width: containerWidth,
+          decoration:
+              BoxDecoration(borderRadius: radius, color: StdColors.background),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Rec. Speed", style: Fonts.caption),
+              Text(displaySpeed, style: Fonts.h2),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

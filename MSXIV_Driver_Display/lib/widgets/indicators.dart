@@ -1,6 +1,7 @@
 import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
+import 'package:MSXIV_Driver_Display/utils/enums.dart'
+    show LightStatus, BrakeStatus;
 import 'package:flutter/material.dart';
-import 'package:MSXIV_Driver_Display/utils/enums.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Indicators extends StatelessWidget {
@@ -52,6 +53,6 @@ class Brakes extends StatelessWidget {
     } else if (brakeStatus == BrakeStatus.Off) {
       svgURI = "assets/images/rbs/rbs_off.svg";
     }
-    return Container(child: SvgPicture.asset(svgURI, height: 32, width: 32));
+    return Container(child: SvgPicture.asset(svgURI, width: 32));
   }
 }
