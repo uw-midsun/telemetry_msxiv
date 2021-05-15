@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
+
 import 'package:MSXIV_Driver_Display/widgets/bg_gradient.dart';
 import 'package:MSXIV_Driver_Display/widgets/clock.dart';
 import 'package:MSXIV_Driver_Display/widgets/errors.dart';
@@ -13,7 +14,10 @@ import 'package:MSXIV_Driver_Display/widgets/soc.dart';
 import 'package:MSXIV_Driver_Display/widgets/speedometer/speedometer.dart';
 import 'package:MSXIV_Driver_Display/widgets/cruise_control.dart';
 import 'package:MSXIV_Driver_Display/widgets/drive_state.dart';
+
 import 'package:MSXIV_Driver_Display/utils/enums.dart';
+import 'package:MSXIV_Driver_Display/utils/errors.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -227,9 +231,7 @@ class _MainDisplayState extends State<MainDisplay> {
   }
 
   void addWarnings(String msgName) {
-    if (msgName == 'FAULT_SEQUENCE') {
-      _errors.add(ErrorStates.CentreConsoleFault);
-    } else if (msgName == 'FAULT_SEQUENCE_ACK_FROM_MOTOR_CONTROLLER') {
+    if (msgName == 'FAULT_SEQUENCE_ACK_FROM_MOTOR_CONTROLLER') {
       _errors.add(ErrorStates.MCIAckFailed);
     } else if (msgName == 'FAULT_SEQUENCE_ACK_FROM_PEDAL') {
       _errors.add(ErrorStates.PedalACKFail);

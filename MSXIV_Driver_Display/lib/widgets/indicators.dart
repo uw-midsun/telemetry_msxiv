@@ -3,24 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:MSXIV_Driver_Display/utils/enums.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-enum EELightType {
-  EE_LIGHT_TYPE_DRL,
-  EE_LIGHT_TYPE_BRAKES,
-  EE_LIGHT_TYPE_STROBE,
-  EE_LIGHT_TYPE_SIGNAL_RIGHT,
-  EE_LIGHT_TYPE_SIGNAL_LEFT,
-  EE_LIGHT_TYPE_SIGNAL_HAZARD,
-  EE_LIGHT_TYPE_HIGH_BEAMS,
-  EE_LIGHT_TYPE_LOW_BEAMS,
-  NUM_EE_LIGHT_TYPES,
-}
-
-enum EELightState {
-  EE_LIGHT_STATE_OFF,
-  EE_LIGHT_STATE_ON,
-  NUM_EE_LIGHT_STATES,
-}
-
 class Indicators extends StatelessWidget {
   final LightStatus lightStatus;
   final BrakeStatus brakeStatus;
