@@ -16,22 +16,21 @@ async def hello(websocket, path):
         # await asyncio.sleep(2)
 
         # Test left/right signal (left then right)
-        await websocket.send("LIGHTS-STEERING-{'lights_id': 0, 'state': 1}")
-        await asyncio.sleep(2)
-        await websocket.send("LIGHTS-STEERING-{'lights_id': 5, 'state': 1}")
-        await asyncio.sleep(2)
-        await websocket.send("LIGHTS-STEERING-{'lights_id': 0, 'state': 0}")
-        await asyncio.sleep(2)
-        await websocket.send("LIGHTS-STEERING-{'lights_id': 5, 'state': 0}")
-        await asyncio.sleep(2)
+        await websocket.send("LIGHTS-STEERING-{'lights_id': 3, 'state': 1}")
+        await asyncio.sleep(5)
+        await websocket.send("LIGHTS-STEERING-{'lights_id': 4, 'state': 1}")
+        await asyncio.sleep(5)
+        await websocket.send("LIGHTS-STEERING-{'lights_id': 3, 'state': 0}")
+        await asyncio.sleep(5)
+        await websocket.send("LIGHTS-STEERING-{'lights_id': 4, 'state': 0}")
 
         # Test speed
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-\
-        {'vehicle_velocity_left': 20,'vehicle_velocity_right': 20}")
-        await asyncio.sleep(1)
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-\
-        {'vehicle_velocity_left': 40,'vehicle_velocity_right': 40}")
-        await asyncio.sleep(1)
+        # await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-\
+        # {'vehicle_velocity_left': 20,'vehicle_velocity_right': 20}")
+        # await asyncio.sleep(1)
+        # await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-\
+        # {'vehicle_velocity_left': 40,'vehicle_velocity_right': 40}")
+        # await asyncio.sleep(1)
         await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-\
         {'vehicle_velocity_left': 60,'vehicle_velocity_right': 60}")
         await asyncio.sleep(1)

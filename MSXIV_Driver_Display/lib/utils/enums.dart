@@ -43,13 +43,6 @@ enum EEDriveOutput {
   EE_DRIVE_OUTPUT_REVERSE,
   NUM_EE_DRIVE_OUTPUTS,
 }
-<<<<<<< Updated upstream
-
-/// Braking status.
-enum BrakeStatus { On, Off, Warning }
-
-/// HeadLight status.
-enum LightStatus { Off, LowBeam, HighBeams, FogLights, DaytimeRunning }
 
 enum EELightType {
   EE_LIGHT_TYPE_DRL,
@@ -68,5 +61,3 @@ enum EELightState {
   EE_LIGHT_STATE_ON,
   NUM_EE_LIGHT_STATES,
 }
-=======
->>>>>>> Stashed changes
