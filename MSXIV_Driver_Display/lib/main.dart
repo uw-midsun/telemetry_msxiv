@@ -23,6 +23,16 @@ import 'package:flutter/services.dart';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+/* TODO: 
+
+Following items need messages: 
+  Determine recommended speed
+  Determine charging type - solar, grid, off
+  Determine braking status - on, off, warning
+  Determine units, mph or kmh
+
+Need a way to turn off errors
+*/
 void main() {
   runApp(Display());
 }
@@ -59,20 +69,24 @@ class _MainDisplayState extends State<MainDisplay> {
   // Vehicle
   double _manualSpeed = 0;
   double _recSpeed = 65;
+
   bool _turningLeft = false;
   bool _turningRight = false;
+
   LightStatus _lightStatus = LightStatus.DaytimeRunning;
   BrakeStatus _brakeStatus = BrakeStatus.Off;
   DriveStates _driveState = DriveStates.Neutral;
-  bool _cruiseControlOn = false;
-  List<ErrorStates> _errors = [];
+
   double _chargePercent = 0.25;
   double _timeToFull = 3.0;
   double _distanceToEmpty = 862.2;
   ChargeType _charging = ChargeType.grid;
+
   Units units = Units.Kmh;
   String _timeString =
       "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";
+  bool _cruiseControlOn = false;
+  List<ErrorStates> _errors = [];
 
   @override
   void initState() {
@@ -325,10 +339,6 @@ class _MainDisplayState extends State<MainDisplay> {
     } else if (msgName.contains(new RegExp(r'FAULT'))) {
       addWarnings(msgName);
     }
-
-    // TODO: Determine recommended speed
-    // TODO: Determine charging type - solar, grid, off
-    // TODO: Determine braking status - on, off, warning
   }
 
   @override

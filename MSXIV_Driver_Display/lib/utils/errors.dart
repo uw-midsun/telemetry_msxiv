@@ -59,3 +59,7 @@ enum ErrorStates {
   BMSOverVoltage,
   MCIOverTemp,
 }
+
+enum ErrorSeverity { Dangerous, Warning }
+
+// TODO: Function returning heading, caption, and severity of and ErrorState

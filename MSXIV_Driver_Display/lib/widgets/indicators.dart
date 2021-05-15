@@ -1,4 +1,3 @@
-import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:MSXIV_Driver_Display/utils/enums.dart';
 import 'package:flutter_svg/flutter_svg.dart';
