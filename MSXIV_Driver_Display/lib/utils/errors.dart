@@ -62,4 +62,166 @@ enum ErrorStates {
 
 enum ErrorSeverity { Dangerous, Warning }
 
-// TODO: Function returning heading, caption, and severity of and ErrorState
+const List<ErrorStates> minorErrors = [
+  ErrorStates.ChargerFaultWrongVoltage,
+  ErrorStates.ChargerFaultPolarityFailure,
+  ErrorStates.ChargerFaultCommunicationTimeout,
+  ErrorStates.ChargerFaultChargerOff,
+  ErrorStates.SolarFaultMCP3427,
+];
+
+extension ErrorExtension on ErrorStates {
+  /// Gets heading, caption, and severity of the error.
+  Map get errorInfo {
+    var error = Map<dynamic, dynamic>();
+    error['severity'] = minorErrors.contains(this)
+        ? ErrorSeverity.Warning
+        : ErrorSeverity.Dangerous;
+    switch (this) {
+      // CC Faults
+      case ErrorStates.CentreConsoleStateTransitionFault:
+        error["heading"] = "CC";
+        error["caption"] = "State Fault";
+        break;
+
+      // MCI Faults
+      case ErrorStates.MCIOverTemp:
+        error["heading"] = "MCI";
+        error["caption"] = "Over Temp";
+        break;
+
+      case ErrorStates.MCIAckFailed:
+        error["heading"] = "MCI";
+        error["caption"] = "ACK Fail";
+        break;
+
+      // Pedal Faults
+      case ErrorStates.PedalACKFail:
+        error["heading"] = "PED";
+        error["caption"] = "ACK Fail";
+        break;
+
+      // Charger Faults
+      case ErrorStates.ChargerFaultHardwareFailure:
+        error["heading"] = "CHG";
+        error["caption"] = "Hardware Fail";
+        break;
+
+      case ErrorStates.ChargerFaultOverTemperature:
+        error["heading"] = "CHG";
+        error["caption"] = "Over Temp";
+        break;
+
+      case ErrorStates.ChargerFaultWrongVoltage:
+        error["heading"] = "CHG";
+        error["caption"] = "Wrong Volt";
+        break;
+
+      case ErrorStates.ChargerFaultPolarityFailure:
+        error["heading"] = "CHG";
+        error["caption"] = "Polar Fail";
+        break;
+
+      case ErrorStates.ChargerFaultCommunicationTimeout:
+        error["heading"] = "CHG";
+        error["caption"] = "Comm Timeout";
+        break;
+
+      case ErrorStates.ChargerFaultChargerOff:
+        error["heading"] = "CHG";
+        error["caption"] = "Charger Off";
+        break;
+
+      // MPPT Faults
+      case ErrorStates.SolarFaultMPPTOverCurrent:
+        error["heading"] = "MPPT";
+        error["caption"] = "Over Curr";
+        break;
+
+      case ErrorStates.SolarFaultMPPTOverVoltage:
+        error["heading"] = "MPPT";
+        error["caption"] = "Over Volt";
+        break;
+
+      case ErrorStates.SolarFaultMPPTOverTemperature:
+        error["heading"] = "MPPT";
+        error["caption"] = "Over Temp";
+        break;
+
+      // Solar Faults
+      case ErrorStates.SolarFaultMCP3427:
+        error["heading"] = "SOL";
+        error["caption"] = "MCP 3427";
+        break;
+
+      case ErrorStates.SolarFaultOverCurrent:
+        error["heading"] = "SOL";
+        error["caption"] = "Over Curr";
+        break;
+
+      case ErrorStates.SolarFaultNegativeCurrent:
+        error["heading"] = "SOL";
+        error["caption"] = "Neg Curr";
+        break;
+
+      case ErrorStates.SolarFaultOverVoltage:
+        error["heading"] = "SOL";
+        error["caption"] = "Over Volt";
+        break;
+
+      case ErrorStates.SolarFaultOverTemperature:
+        error["heading"] = "SOL";
+        error["caption"] = "Over Temp";
+        break;
+
+      // BPS Faults
+      case ErrorStates.BPSACKFailed:
+        error["heading"] = "BPS";
+        error["caption"] = "ACK Fail";
+        break;
+
+      case ErrorStates.BPSKillSwitch:
+        error["heading"] = "BPS";
+        error["caption"] = "Killswitch";
+        break;
+
+      case ErrorStates.BPSRelayFault:
+        error["heading"] = "BPS";
+        error["caption"] = "Relay";
+        break;
+
+      case ErrorStates.BPSCurrentSenseFault:
+        error["heading"] = "BPS";
+        error["caption"] = "Curr Sense";
+        break;
+
+      // AFE Faults
+      case ErrorStates.BPSAFECellFault:
+        error["heading"] = "AFE";
+        error["caption"] = "Cell Fault";
+        break;
+
+      case ErrorStates.BPSAFETempFault:
+        error["heading"] = "AFE";
+        error["caption"] = "Temp Fault";
+        break;
+
+      case ErrorStates.BPSAFEFSMFault:
+        error["heading"] = "AFE";
+        error["caption"] = "FSM Fault";
+        break;
+
+      // BMS Faults
+      case ErrorStates.BMSOverVoltage:
+        error["heading"] = "BMS";
+        error["caption"] = "Over Volt";
+        break;
+
+      // Sanity check in case of unknown error.
+      default:
+        error["heading"] = "???";
+        error["caption"] = "Unknown Error";
+    }
+    return error;
+  }
+}

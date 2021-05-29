@@ -43,7 +43,7 @@ enum EEDriveOutput {
 enum BrakeStatus { On, Off, Warning }
 
 /// HeadLight status.
-enum LightStatus { Off, LowBeam, HighBeams, FogLights, DaytimeRunning }
+enum LightStatus { Off, DaytimeRunning }
 
 enum EELightType {
   EE_LIGHT_TYPE_DRL,

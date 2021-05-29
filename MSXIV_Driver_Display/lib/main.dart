@@ -25,13 +25,17 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 /* TODO: 
 
-Following items need messages: 
-  recommended speed
-  charging type - solar, grid, off
-  braking status - on, off, warning
-  units, mph or kmh
-  severity of some errors
+Following items needed: 
+  recommended speed - strategy
+  state of charge - strategy (ASK STRATEGY/FIRMWARE?)
 
+  Options for getting strategy stuff
+  - Polling from csv
+  - Websocket
+  - CAN
+
+  charging type - solar, grid, off (NOT CLEAR YET)
+  braking status - on, off, warning (IN PROGRESS FROM FIRMWARE)
 */
 void main() {
   runApp(Display());
@@ -82,7 +86,7 @@ class _MainDisplayState extends State<MainDisplay> {
   double _distanceToEmpty = 862.2;
   ChargeType _charging = ChargeType.grid;
 
-  Units units = Units.Kmh;
+  Units units = Units.MPH;
   String _timeString =
       "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";
   bool _cruiseControlOn = false;
@@ -199,10 +203,6 @@ class _MainDisplayState extends State<MainDisplay> {
   void toggleLights() {
     setState(() {
       if (_lightStatus == LightStatus.DaytimeRunning) {
-        _lightStatus = LightStatus.FogLights;
-      } else if (_lightStatus == LightStatus.FogLights) {
-        _lightStatus = LightStatus.HighBeams;
-      } else if (_lightStatus == LightStatus.HighBeams) {
         _lightStatus = LightStatus.Off;
       } else if (_lightStatus == LightStatus.Off) {
         _lightStatus = LightStatus.DaytimeRunning;

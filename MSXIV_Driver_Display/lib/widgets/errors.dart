@@ -2,10 +2,11 @@ import 'package:MSXIV_Driver_Display/constants/std_fonts.dart';
 import 'package:MSXIV_Driver_Display/utils/errors.dart';
 import 'package:flutter/material.dart';
 
-// TODO: implement flexible severity for errors which can be both danger/warning
-// Perhaps instead of ErrorState enum, there should be an ErrorState class with severity member?
-// All errors which are ambiguous are marked below with comments
+const int MAX_ERRORS = 4;
 
+/// Renders errors.
+///
+/// Receives a List of ErrorStates to render.
 class Errors extends StatelessWidget {
   final List<ErrorStates> errors;
 
@@ -13,92 +14,55 @@ class Errors extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<ErrorStates> filtered = List.from(errors);
-    if (filtered.length > 4) {
-      filtered = filtered.sublist(0, 3);
+    // Filter duplicate errors.
+    List<ErrorStates> filtered = errors.toSet().toList();
+
+    // Sort errors such that dangerous errors come first.
+    filtered.sort((a, b) {
+      final severity1 = a.errorInfo["severity"];
+      final severity2 = b.errorInfo["severity"];
+      if (severity1 == severity2) {
+        return 0;
+      } else if (severity1 == ErrorSeverity.Dangerous) {
+        return -1;
+      }
+      return 1;
+    });
+
+    bool isTooManyErrors = filtered.length > MAX_ERRORS;
+
+    // If too many errors, slice list based on MAX_ERRORS.
+    if (isTooManyErrors) {
+      filtered = filtered.sublist(0, MAX_ERRORS - 1);
     }
+
+    List<Widget> errorWidgets = filtered.map((error) {
+      final errorInfo = error.errorInfo;
+      return ErrorItem(
+          errorInfo["heading"], errorInfo["caption"], errorInfo["severity"]);
+    }).toList();
+
+    if (isTooManyErrors) {
+      errorWidgets.add(ErrorItem(
+          "+" + (errors.length - 3).toString(), "", ErrorSeverity.Dangerous));
+    }
+
     return Container(
       margin: EdgeInsets.only(top: 100, left: 24),
       alignment: Alignment.topLeft,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          if (filtered.contains(ErrorStates.MCIAckFailed))
-            ErrorItem("MCI", "ACK Fail", ErrorSeverity.Dangerous),
-          if (filtered.contains(ErrorStates.PedalACKFail))
-            ErrorItem("PED", "ACK Fail", ErrorSeverity.Dangerous),
-          if (filtered.contains(ErrorStates.CentreConsoleStateTransitionFault))
-            ErrorItem("CC", "State Fault",
-                ErrorSeverity.Dangerous), // possibly a problem
-          if (filtered.contains(ErrorStates.ChargerFaultHardwareFailure))
-            ErrorItem("CHG", "Hardware Fail",
-                ErrorSeverity.Dangerous), // possibly a problem
-          if (filtered.contains(ErrorStates.ChargerFaultOverTemperature))
-            ErrorItem("CHG", "Over Temp", ErrorSeverity.Dangerous),
-          if (filtered.contains(ErrorStates.ChargerFaultWrongVoltage))
-            ErrorItem("CHG", "Wrong Volt", ErrorSeverity.Warning),
-          if (filtered.contains(ErrorStates.ChargerFaultPolarityFailure))
-            ErrorItem("CHG", "Polar Fail", ErrorSeverity.Warning),
-          if (filtered.contains(ErrorStates.ChargerFaultCommunicationTimeout))
-            ErrorItem("CHG", "Comm Timeout", ErrorSeverity.Warning),
-          if (filtered.contains(ErrorStates.ChargerFaultChargerOff))
-            ErrorItem("CHG", "Charger Off", ErrorSeverity.Warning),
-          if (filtered.contains(ErrorStates.SolarFaultMCP3427))
-            ErrorItem("SOL", "MCP 3427", ErrorSeverity.Warning),
-          if (filtered.contains(ErrorStates.SolarFaultMPPTOverCurrent))
-            ErrorItem("MPPT", "Over Curr",
-                ErrorSeverity.Dangerous), // possibly a problem
-          if (filtered.contains(ErrorStates.SolarFaultMPPTOverVoltage))
-            ErrorItem("MPPT", "Over Volt",
-                ErrorSeverity.Dangerous), // possibly a problem
-          if (filtered.contains(ErrorStates.SolarFaultMPPTOverTemperature))
-            ErrorItem("MPPT", "Over Temp",
-                ErrorSeverity.Dangerous), // possibly a problem
-          if (filtered.contains(ErrorStates.SolarFaultOverCurrent))
-            ErrorItem("SOL", "Over Curr",
-                ErrorSeverity.Dangerous), // possibly a problem
-          if (filtered.contains(ErrorStates.SolarFaultNegativeCurrent))
-            ErrorItem("SOL", "Neg Curr",
-                ErrorSeverity.Dangerous), // possibly a problem
-          if (filtered.contains(ErrorStates.SolarFaultOverVoltage))
-            ErrorItem("SOL", "Over Volt",
-                ErrorSeverity.Dangerous), // possibly a problem
-          if (filtered.contains(ErrorStates.SolarFaultOverTemperature))
-            ErrorItem("SOL", "Over Temp",
-                ErrorSeverity.Dangerous), // possibly a problem
-          if (filtered.contains(ErrorStates.BPSKillSwitch))
-            ErrorItem("BPS", "Killswitch",
-                ErrorSeverity.Dangerous), // possibly a problem
-          if (filtered.contains(ErrorStates.BPSACKFailed))
-            ErrorItem("BPS", "ACK Fail", ErrorSeverity.Dangerous),
-          if (filtered.contains(ErrorStates.BPSAFECellFault))
-            ErrorItem("AFE", "Cell Fault", ErrorSeverity.Dangerous),
-          if (filtered.contains(ErrorStates.BPSAFETempFault))
-            ErrorItem("AFE", "Temp Fault", ErrorSeverity.Dangerous),
-          if (filtered.contains(ErrorStates.BPSAFEFSMFault))
-            ErrorItem("AFE", "FSM Fault", ErrorSeverity.Dangerous),
-          if (filtered.contains(ErrorStates.BPSRelayFault))
-            ErrorItem("BPS", "Relay", ErrorSeverity.Dangerous),
-          if (filtered.contains(ErrorStates.BPSCurrentSenseFault))
-            ErrorItem("BPS", "Curr Sense", ErrorSeverity.Dangerous),
-          if (filtered.contains(ErrorStates.BMSOverVoltage))
-            ErrorItem("BMS", "Over Volt", ErrorSeverity.Dangerous),
-          if (filtered.contains(ErrorStates.MCIOverTemp))
-            ErrorItem("MCI", "Over Temp", ErrorSeverity.Dangerous),
-          if (errors.length > 4)
-            ErrorItem("+" + (errors.length - 3).toString(), "",
-                ErrorSeverity.Dangerous)
-        ],
+        children: errorWidgets,
       ),
     );
   }
 }
 
 class ErrorItem extends StatelessWidget {
-  final String part, name;
+  final String heading, caption;
   final severity;
-  ErrorItem(this.part, this.name, this.severity);
+  ErrorItem(this.heading, this.caption, this.severity);
 
   @override
   Widget build(BuildContext context) {
@@ -106,8 +70,8 @@ class ErrorItem extends StatelessWidget {
       padding: EdgeInsets.only(top: 13, bottom: 13),
       child: Column(
         children: <Widget>[
-          Text(part, style: Fonts.getErrorHeader(severity)),
-          Text(name, style: Fonts.getErrorCaption(severity))
+          Text(heading, style: Fonts.getErrorHeader(severity)),
+          Text(caption, style: Fonts.getErrorCaption(severity))
         ],
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
