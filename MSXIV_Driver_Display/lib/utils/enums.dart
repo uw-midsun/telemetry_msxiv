@@ -39,8 +39,8 @@ enum EEDriveOutput {
   NUM_EE_DRIVE_OUTPUTS,
 }
 
-/// Braking status.
-enum BrakeStatus { On, Off, Warning }
+/// Regen braking status.
+enum RbsStatus { On, Off, Warning }
 
 /// HeadLight status.
 enum LightStatus { Off, DaytimeRunning }

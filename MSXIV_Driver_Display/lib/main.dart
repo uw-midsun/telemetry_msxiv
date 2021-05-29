@@ -36,6 +36,7 @@ Following items needed:
 
   charging type - solar, grid, off (NOT CLEAR YET)
   braking status - on, off, warning (IN PROGRESS FROM FIRMWARE)
+  https://uwmidsun.atlassian.net/wiki/spaces/ELEC/pages/2495414287/Regen+braking+toggling
 */
 void main() {
   runApp(Display());
@@ -78,7 +79,7 @@ class _MainDisplayState extends State<MainDisplay> {
   bool _turningRight = false;
 
   LightStatus _lightStatus = LightStatus.DaytimeRunning;
-  BrakeStatus _brakeStatus = BrakeStatus.Off;
+  RbsStatus _rbsStatus = RbsStatus.On;
   DriveStates _driveState = DriveStates.Neutral;
 
   double _chargePercent = 0.25;
@@ -238,6 +239,16 @@ class _MainDisplayState extends State<MainDisplay> {
     });
   }
 
+  // TODO: "A warning indicator will be displayed if there is an issue with RBS"
+  // Determine whether this is needed/how this information is received.
+  void toggleRbs() {
+    if (_rbsStatus == RbsStatus.Off) {
+      _rbsStatus = RbsStatus.On;
+    } else {
+      _rbsStatus = RbsStatus.Off;
+    }
+  }
+
   void removeWarnings() {
     setState(() {
       _errors = [];
@@ -328,6 +339,8 @@ class _MainDisplayState extends State<MainDisplay> {
       // TODO: Figure out voltage levels versus battery charge
     } else if (msgName == 'CRUISE_CONTROL_COMMAND') {
       toggleCruise();
+    } else if (msgName == 'SYSTEM_CAN_MESSAGE_REGEN_BRAKING') {
+      toggleRbs();
     } else if (msgName == 'DRIVE_STATE') {
       selectDriveState(EEDriveOutput.values[parsedInternalData['drive_state']]);
     } else if (msgName == 'BPS_HEARTBEAT') {
@@ -392,7 +405,7 @@ class _MainDisplayState extends State<MainDisplay> {
             // Headlights
             GestureDetector(
               onTap: toggleLights,
-              child: Indicators(_lightStatus, _brakeStatus),
+              child: Indicators(_lightStatus, _rbsStatus),
             ),
 
             // Errors

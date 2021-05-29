@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class Indicators extends StatelessWidget {
   final LightStatus lightStatus;
-  final BrakeStatus brakeStatus;
+  final RbsStatus brakeStatus;
   Indicators(this.lightStatus, this.brakeStatus, {Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -40,15 +40,15 @@ class HeadLights extends StatelessWidget {
 }
 
 class Brakes extends StatelessWidget {
-  final BrakeStatus brakeStatus;
+  final RbsStatus brakeStatus;
   Brakes(this.brakeStatus, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String svgURI = "assets/images/rbs/rbs_warning.svg";
-    if (brakeStatus == BrakeStatus.On) {
+    if (brakeStatus == RbsStatus.On) {
       svgURI = "assets/images/rbs/rbs_active.svg";
-    } else if (brakeStatus == BrakeStatus.Off) {
+    } else if (brakeStatus == RbsStatus.Off) {
       svgURI = "assets/images/rbs/rbs_off.svg";
     }
     return Container(child: SvgPicture.asset(svgURI, height: 32, width: 32));
