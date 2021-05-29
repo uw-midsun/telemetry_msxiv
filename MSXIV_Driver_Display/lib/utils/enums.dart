@@ -1,3 +1,5 @@
+/// Misc/general enums go here.
+
 /// Units for speed and distance.
 enum Units { Kmh, MPH }
 
@@ -37,8 +39,26 @@ enum EEDriveOutput {
   NUM_EE_DRIVE_OUTPUTS,
 }
 
-/// HeadLight status.
-enum LightStatus { Off, LowBeam, HighBeams, FogLights, DaytimeRunning }
+/// Regen braking status.
+enum RbsStatus { On, Off, Warning }
 
-/// Braking status.
-enum BrakeStatus { On, Off, Warning }
+/// HeadLight status.
+enum LightStatus { Off, DaytimeRunning }
+
+enum EELightType {
+  EE_LIGHT_TYPE_DRL,
+  EE_LIGHT_TYPE_BRAKES,
+  EE_LIGHT_TYPE_STROBE,
+  EE_LIGHT_TYPE_SIGNAL_RIGHT,
+  EE_LIGHT_TYPE_SIGNAL_LEFT,
+  EE_LIGHT_TYPE_SIGNAL_HAZARD,
+  EE_LIGHT_TYPE_HIGH_BEAMS,
+  EE_LIGHT_TYPE_LOW_BEAMS,
+  NUM_EE_LIGHT_TYPES,
+}
+
+enum EELightState {
+  EE_LIGHT_STATE_OFF,
+  EE_LIGHT_STATE_ON,
+  NUM_EE_LIGHT_STATES,
+}

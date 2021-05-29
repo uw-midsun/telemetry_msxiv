@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 class StdColors {
   /// Standard colours for Driver Display.
-  
+
   // Old colors in previous version.
   static const Color parkState = Color.fromRGBO(255, 103, 20, 1);
   static const Color reverseState = Color.fromRGBO(255, 199, 0, 1);
   static const Color green = Color.fromRGBO(68, 214, 0, 1);
-  static const Color error = Color.fromRGBO(255, 77, 77, 1);
+  static const Color error = Color.fromRGBO(255, 83, 83, 1);
+  static const Color warning = Color.fromRGBO(255, 199, 0, 1);
 
   // New colors.
   static const Color background = Color.fromRGBO(12, 18, 38, 1);

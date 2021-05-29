@@ -4,55 +4,55 @@ import websockets
 
 
 async def hello(websocket, path):
+    async def testSpeed(speed: float):
+        await websocket.send(f"MOTOR_VELOCITY-MOTOR_CONTROLLER-{{'vehicle_velocity_left': {speed},'vehicle_velocity_right': {speed}}}")
+        await asyncio.sleep(1)
+
+    async def testDriveState(drive_state: int):
+        await websocket.send(f"DRIVE_STATE-MOTOR_CONTROLLER-{{'drive_state': {drive_state}}}")
+        await asyncio.sleep(1)
+
+    async def testLights(lights_id: int, isOn: bool):
+        state = 1 if isOn else 0
+        await websocket.send(f"LIGHTS-STEERING-{{'lights_id': {lights_id}, 'state': {state}}}")
+        await asyncio.sleep(1)
+
     while True:
         # Test faults
-        # await websocket.send("BPS_HEARTBEAT-BMS_CARRIER-{'status': 1}")
-        # await asyncio.sleep(2)
-        # await websocket.send("CHARGER_FAULT-CHARGER-{'fault': 1}")
-        # await asyncio.sleep(2)
-        # await websocket.send("CHARGER_FAULT-CHARGER-{'fault': 3}")
-        # await asyncio.sleep(2)
-        # await websocket.send("SOLAR_FAULT-CHARGER-{'fault': 5}")
-        # await asyncio.sleep(2)
+        await websocket.send("BPS_HEARTBEAT-BMS_CARRIER-{'status': 1}")
+        await asyncio.sleep(2)
+        await websocket.send("CHARGER_FAULT-CHARGER-{'fault': 1}")
+        await asyncio.sleep(2)
+        await websocket.send("CHARGER_FAULT-CHARGER-{'fault': 3}")
+        await asyncio.sleep(2)
+        await websocket.send("SOLAR_FAULT-CHARGER-{'fault': 5}")
+        await asyncio.sleep(2)
+        await websocket.send("SOLAR_FAULT-CHARGER-{'fault': 3}")
+        await asyncio.sleep(2)
 
         # Test speed
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-\
-        {'vehicle_velocity_left': 20,'vehicle_velocity_right': 20}")
-        await asyncio.sleep(1)
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-\
-        {'vehicle_velocity_left': 40,'vehicle_velocity_right': 40}")
-        await asyncio.sleep(1)
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-\
-        {'vehicle_velocity_left': 60,'vehicle_velocity_right': 60}")
-        await asyncio.sleep(1)
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-\
-        {'vehicle_velocity_left': 80,'vehicle_velocity_right': 80}")
-        await asyncio.sleep(1)
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-\
-        {'vehicle_velocity_left': 100,'vehicle_velocity_right': 100}")
-        await asyncio.sleep(1)
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-\
-        {'vehicle_velocity_left': 120,'vehicle_velocity_right': 120}")
-        await asyncio.sleep(1)
-        await websocket.send("MOTOR_VELOCITY-MOTOR_CONTROLLER-\
-        {'vehicle_velocity_left': 140,'vehicle_velocity_right': 140}")
-        await asyncio.sleep(1)
+        for i in range(0, 140, 20):
+            await testSpeed(i)
 
         # Test changing states (off,drive,reverse)
-        await websocket.send("DRIVE_STATE-MOTOR_CONTROLLER-{'drive_state': 0}")
-        await asyncio.sleep(2)
-        await websocket.send("DRIVE_STATE-MOTOR_CONTROLLER-{'drive_state': 1}")
-        await asyncio.sleep(2)
-        await websocket.send("DRIVE_STATE-MOTOR_CONTROLLER-{'drive_state': 2}")
+        for i in range(3):
+            await testDriveState(i)
 
-        # Test left/right signal (left then right)
-        await websocket.send("LIGHTS-STEERING-{'lights_id': 0, 'state': 1}")
+        # Test lights (turn signals and DRL)
+        for i in [0, 3, 4, 5]:
+            await testLights(i, True)
+            await testLights(i, False)
+
+        # Test cruise
+        await websocket.send("CRUISE_CONTROL_COMMAND-STEERING-{'command': 147}")
         await asyncio.sleep(2)
-        await websocket.send("LIGHTS-STEERING-{'lights_id': 5, 'state': 1}")
+        await websocket.send("CRUISE_CONTROL_COMMAND-STEERING-{'command': 147}")
         await asyncio.sleep(2)
-        await websocket.send("LIGHTS-STEERING-{'lights_id': 0, 'state': 0}")
+
+        # Test Lights
+        await websocket.send("REGEN_BRAKING-STEERING-{'test': 1}")
         await asyncio.sleep(2)
-        await websocket.send("LIGHTS-STEERING-{'lights_id': 5, 'state': 0}")
+        await websocket.send("REGEN_BRAKING-STEERING-{'test': 1}")
         await asyncio.sleep(2)
 
 

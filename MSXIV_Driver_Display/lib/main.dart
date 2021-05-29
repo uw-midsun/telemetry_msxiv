@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
+
 import 'package:MSXIV_Driver_Display/widgets/bg_gradient.dart';
 import 'package:MSXIV_Driver_Display/widgets/clock.dart';
 import 'package:MSXIV_Driver_Display/widgets/errors.dart';
@@ -13,12 +14,28 @@ import 'package:MSXIV_Driver_Display/widgets/soc.dart';
 import 'package:MSXIV_Driver_Display/widgets/speedometer/speedometer.dart';
 import 'package:MSXIV_Driver_Display/widgets/cruise_control.dart';
 import 'package:MSXIV_Driver_Display/widgets/drive_state.dart';
+
 import 'package:MSXIV_Driver_Display/utils/enums.dart';
+import 'package:MSXIV_Driver_Display/utils/errors.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+/* TODO: 
+
+Following items needed: 
+  recommended speed - strategy
+  state of charge - strategy (ASK STRATEGY/FIRMWARE?)
+
+  Options for getting strategy stuff
+  - Polling from csv
+  - Websocket
+  - CAN
+
+  charging type - solar, grid, off (NOT CLEAR YET)
+*/
 void main() {
   runApp(Display());
 }
@@ -55,20 +72,24 @@ class _MainDisplayState extends State<MainDisplay> {
   // Vehicle
   double _manualSpeed = 0;
   double _recSpeed = 65;
+
   bool _turningLeft = false;
   bool _turningRight = false;
+
   LightStatus _lightStatus = LightStatus.DaytimeRunning;
-  BrakeStatus _brakeStatus = BrakeStatus.Off;
+  RbsStatus _rbsStatus = RbsStatus.On;
   DriveStates _driveState = DriveStates.Neutral;
-  bool _cruiseControlOn = false;
-  List<ErrorStates> _errors = [];
+
   double _chargePercent = 0.25;
   double _timeToFull = 3.0;
   double _distanceToEmpty = 862.2;
   ChargeType _charging = ChargeType.grid;
-  Units units = Units.Kmh;
+
+  Units units = Units.MPH;
   String _timeString =
       "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";
+  bool _cruiseControlOn = false;
+  List<ErrorStates> _errors = [];
 
   @override
   void initState() {
@@ -181,10 +202,6 @@ class _MainDisplayState extends State<MainDisplay> {
   void toggleLights() {
     setState(() {
       if (_lightStatus == LightStatus.DaytimeRunning) {
-        _lightStatus = LightStatus.FogLights;
-      } else if (_lightStatus == LightStatus.FogLights) {
-        _lightStatus = LightStatus.HighBeams;
-      } else if (_lightStatus == LightStatus.HighBeams) {
         _lightStatus = LightStatus.Off;
       } else if (_lightStatus == LightStatus.Off) {
         _lightStatus = LightStatus.DaytimeRunning;
@@ -220,6 +237,16 @@ class _MainDisplayState extends State<MainDisplay> {
     });
   }
 
+  // TODO: "A warning indicator will be displayed if there is an issue with RBS"
+  // Determine whether this is needed/how this information is received.
+  void toggleRbs() {
+    if (_rbsStatus == RbsStatus.Off) {
+      _rbsStatus = RbsStatus.On;
+    } else {
+      _rbsStatus = RbsStatus.Off;
+    }
+  }
+
   void removeWarnings() {
     setState(() {
       _errors = [];
@@ -227,9 +254,7 @@ class _MainDisplayState extends State<MainDisplay> {
   }
 
   void addWarnings(String msgName) {
-    if (msgName == 'FAULT_SEQUENCE') {
-      _errors.add(ErrorStates.CentreConsoleFault);
-    } else if (msgName == 'FAULT_SEQUENCE_ACK_FROM_MOTOR_CONTROLLER') {
+    if (msgName == 'FAULT_SEQUENCE_ACK_FROM_MOTOR_CONTROLLER') {
       _errors.add(ErrorStates.MCIAckFailed);
     } else if (msgName == 'FAULT_SEQUENCE_ACK_FROM_PEDAL') {
       _errors.add(ErrorStates.PedalACKFail);
@@ -312,6 +337,8 @@ class _MainDisplayState extends State<MainDisplay> {
       // TODO: Figure out voltage levels versus battery charge
     } else if (msgName == 'CRUISE_CONTROL_COMMAND') {
       toggleCruise();
+    } else if (msgName == 'REGEN_BRAKING') {
+      toggleRbs();
     } else if (msgName == 'DRIVE_STATE') {
       selectDriveState(EEDriveOutput.values[parsedInternalData['drive_state']]);
     } else if (msgName == 'BPS_HEARTBEAT') {
@@ -323,10 +350,6 @@ class _MainDisplayState extends State<MainDisplay> {
     } else if (msgName.contains(new RegExp(r'FAULT'))) {
       addWarnings(msgName);
     }
-
-    // TODO: Determine recommended speed
-    // TODO: Determine charging type - solar, grid, off
-    // TODO: Determine braking status - on, off, warning
   }
 
   @override
@@ -380,7 +403,7 @@ class _MainDisplayState extends State<MainDisplay> {
             // Headlights
             GestureDetector(
               onTap: toggleLights,
-              child: Indicators(_lightStatus, _brakeStatus),
+              child: Indicators(_lightStatus, _rbsStatus),
             ),
 
             // Errors
