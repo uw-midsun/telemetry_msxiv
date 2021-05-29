@@ -35,8 +35,6 @@ Following items needed:
   - CAN
 
   charging type - solar, grid, off (NOT CLEAR YET)
-  braking status - on, off, warning (IN PROGRESS FROM FIRMWARE)
-  https://uwmidsun.atlassian.net/wiki/spaces/ELEC/pages/2495414287/Regen+braking+toggling
 */
 void main() {
   runApp(Display());
@@ -339,7 +337,7 @@ class _MainDisplayState extends State<MainDisplay> {
       // TODO: Figure out voltage levels versus battery charge
     } else if (msgName == 'CRUISE_CONTROL_COMMAND') {
       toggleCruise();
-    } else if (msgName == 'SYSTEM_CAN_MESSAGE_REGEN_BRAKING') {
+    } else if (msgName == 'REGEN_BRAKING') {
       toggleRbs();
     } else if (msgName == 'DRIVE_STATE') {
       selectDriveState(EEDriveOutput.values[parsedInternalData['drive_state']]);
