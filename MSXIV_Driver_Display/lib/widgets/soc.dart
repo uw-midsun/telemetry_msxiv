@@ -56,7 +56,7 @@ class SOCText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String unitStr = units == Units.Kmh ? " km" : " mi";
-    String distStr = distance.toStringAsFixed(PRECISION);
+    String distStr = (distance * units.kmFactor).toStringAsFixed(PRECISION);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.baseline,
       textBaseline: TextBaseline.ideographic,
