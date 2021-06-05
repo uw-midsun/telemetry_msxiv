@@ -20,7 +20,7 @@ extension UnitsExtension on Units {
 }
 
 /// Charging type for car - none means discharging.
-enum ChargeType { none, solar, grid }
+enum ChargeType { None, Solar, Grid }
 
 /// Driving state.
 enum DriveStates { Drive, Reverse, Neutral }
@@ -31,7 +31,9 @@ extension DriveExtension on DriveStates {
   }
 }
 
-///
+/// Braking status.
+enum BrakeStatus { On, Off, Warning }
+
 enum EEDriveOutput {
   EE_DRIVE_OUTPUT_OFF,
   EE_DRIVE_OUTPUT_DRIVE,
