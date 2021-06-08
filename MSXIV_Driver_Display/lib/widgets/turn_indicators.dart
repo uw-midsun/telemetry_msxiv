@@ -11,7 +11,7 @@ class TurnIndicators extends StatefulWidget {
 }
 
 // Turn Indicator blink duration in milliseconds.
-const int blinkDuration = 450;
+const int BLINK_DURATION = 450;
 
 class _TurnIndicatorsState extends State<TurnIndicators>
     with SingleTickerProviderStateMixin {
@@ -22,7 +22,7 @@ class _TurnIndicatorsState extends State<TurnIndicators>
   void initState() {
     super.initState();
     _controller = AnimationController(
-        vsync: this, duration: Duration(milliseconds: blinkDuration));
+        vsync: this, duration: Duration(milliseconds: BLINK_DURATION));
 
     // Listener will reset animation controller to 0.0 when it reaches 1.0.
     _controller.addStatusListener((status) {
