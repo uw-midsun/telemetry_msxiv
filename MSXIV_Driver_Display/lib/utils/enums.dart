@@ -31,9 +31,6 @@ extension DriveExtension on DriveStates {
   }
 }
 
-/// Braking status.
-enum BrakeStatus { On, Off, Warning }
-
 enum EEDriveOutput {
   EE_DRIVE_OUTPUT_OFF,
   EE_DRIVE_OUTPUT_DRIVE,

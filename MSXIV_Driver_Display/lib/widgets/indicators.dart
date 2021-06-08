@@ -6,8 +6,8 @@ import 'package:MSXIV_Driver_Display/utils/enums.dart'
 
 class Indicators extends StatelessWidget {
   final LightStatus lightStatus;
-  final RbsStatus brakeStatus;
-  Indicators(this.lightStatus, this.brakeStatus, {Key key}) : super(key: key);
+  final RbsStatus rbsStatus;
+  Indicators(this.lightStatus, this.rbsStatus, {Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -18,7 +18,7 @@ class Indicators extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           HeadLights(lightStatus),
-          Brakes(brakeStatus),
+          RegenBrakeStatus(rbsStatus),
         ],
       ),
     );
@@ -41,16 +41,16 @@ class HeadLights extends StatelessWidget {
   }
 }
 
-class Brakes extends StatelessWidget {
-  final RbsStatus brakeStatus;
-  Brakes(this.brakeStatus, {Key key}) : super(key: key);
+class RegenBrakeStatus extends StatelessWidget {
+  final RbsStatus rbsStatus;
+  RegenBrakeStatus(this.rbsStatus, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String svgURI = "assets/images/rbs/rbs_warning.svg";
-    if (brakeStatus == RbsStatus.On) {
+    if (rbsStatus == RbsStatus.On) {
       svgURI = "assets/images/rbs/rbs_active.svg";
-    } else if (brakeStatus == RbsStatus.Off) {
+    } else if (rbsStatus == RbsStatus.Off) {
       svgURI = "assets/images/rbs/rbs_off.svg";
     }
     return Container(child: SvgPicture.asset(svgURI, width: 32));
