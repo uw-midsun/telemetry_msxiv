@@ -35,7 +35,7 @@ class SOC extends StatelessWidget {
             charging: chargeType,
           ),
           SOCText(distanceToEmpty, units),
-          chargeType == ChargeType.solar
+          chargeType == ChargeType.Solar
               ? ChargingIcon(
                   icon: "assets/images/charge_symbols/solar_high.svg",
                   chargePercent: chargePercent)
@@ -56,7 +56,7 @@ class SOCText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String unitStr = units == Units.Kmh ? " km" : " mi";
-    String distStr = distance.toStringAsFixed(PRECISION);
+    String distStr = (distance * units.kmFactor).toStringAsFixed(PRECISION);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.baseline,
       textBaseline: TextBaseline.ideographic,
@@ -82,7 +82,7 @@ class BatterySymbol extends StatelessWidget {
   Widget build(BuildContext context) {
     int chargeRounded = (chargePercent * 5).ceil() * 20;
 
-    String svgUrl = charging == ChargeType.grid
+    String svgUrl = charging == ChargeType.Grid
         ? 'assets/images/battery/chrg$chargeRounded.svg'
         : 'assets/images/battery/btt$chargeRounded.svg';
     return Container(
