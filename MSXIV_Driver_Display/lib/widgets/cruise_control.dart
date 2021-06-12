@@ -17,7 +17,9 @@ class CruiseControl extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 30,
-                      color: Colors.white,
+                      color: cruiseControl
+                          ? StdColors.green
+                          : Color.fromRGBO(128, 128, 128, 1),
                       fontWeight: FontWeight.bold)),
             ],
           ),
@@ -25,13 +27,6 @@ class CruiseControl extends StatelessWidget {
         FittedBox(
           child: Container(
             width: 70,
-            decoration: BoxDecoration(
-                border: Border.all(
-                    color: cruiseControl
-                        ? StdColors.green
-                        : Color.fromRGBO(140, 50, 0, 1),
-                    width: 3),
-                borderRadius: BorderRadius.circular(5)),
             child: Text(
               cruiseControl ? "ON" : "OFF",
               textAlign: TextAlign.center,
@@ -39,7 +34,7 @@ class CruiseControl extends StatelessWidget {
                   fontSize: 30,
                   color: cruiseControl
                       ? StdColors.green
-                      : Color.fromRGBO(140, 50, 0, 1),
+                      : Color.fromRGBO(255, 255, 255, 0.6),
                   fontWeight: FontWeight.bold),
             ),
             margin: EdgeInsets.fromLTRB(5, 5, 0, 5),

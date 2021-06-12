@@ -1,30 +1,13 @@
-import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:MSXIV_Driver_Display/utils/enums.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-enum EELightType {
-  EE_LIGHT_TYPE_DRL,
-  EE_LIGHT_TYPE_BRAKES,
-  EE_LIGHT_TYPE_STROBE,
-  EE_LIGHT_TYPE_SIGNAL_RIGHT,
-  EE_LIGHT_TYPE_SIGNAL_LEFT,
-  EE_LIGHT_TYPE_SIGNAL_HAZARD,
-  EE_LIGHT_TYPE_HIGH_BEAMS,
-  EE_LIGHT_TYPE_LOW_BEAMS,
-  NUM_EE_LIGHT_TYPES,
-}
-
-enum EELightState {
-  EE_LIGHT_STATE_OFF,
-  EE_LIGHT_STATE_ON,
-  NUM_EE_LIGHT_STATES,
-}
+import 'package:MSXIV_Driver_Display/utils/enums.dart'
+    show LightStatus, RbsStatus;
 
 class Indicators extends StatelessWidget {
   final LightStatus lightStatus;
-  final BrakeStatus brakeStatus;
-  Indicators(this.lightStatus, this.brakeStatus, {Key key}) : super(key: key);
+  final RbsStatus rbsStatus;
+  Indicators(this.lightStatus, this.rbsStatus, {Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,7 +18,7 @@ class Indicators extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           HeadLights(lightStatus),
-          Brakes(brakeStatus),
+          RegenBrakeStatus(rbsStatus),
         ],
       ),
     );
@@ -58,18 +41,18 @@ class HeadLights extends StatelessWidget {
   }
 }
 
-class Brakes extends StatelessWidget {
-  final BrakeStatus brakeStatus;
-  Brakes(this.brakeStatus, {Key key}) : super(key: key);
+class RegenBrakeStatus extends StatelessWidget {
+  final RbsStatus rbsStatus;
+  RegenBrakeStatus(this.rbsStatus, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String svgURI = "assets/images/rbs/rbs_warning.svg";
-    if (brakeStatus == BrakeStatus.On) {
+    if (rbsStatus == RbsStatus.On) {
       svgURI = "assets/images/rbs/rbs_active.svg";
-    } else if (brakeStatus == BrakeStatus.Off) {
+    } else if (rbsStatus == RbsStatus.Off) {
       svgURI = "assets/images/rbs/rbs_off.svg";
     }
-    return Container(child: SvgPicture.asset(svgURI, height: 32, width: 32));
+    return Container(child: SvgPicture.asset(svgURI, width: 32));
   }
 }
