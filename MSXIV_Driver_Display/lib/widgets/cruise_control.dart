@@ -13,12 +13,14 @@ class CruiseControl extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Text('Cruise',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 18, color: Colors.white)),
-              Text('Control',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 18, color: Colors.white)),
+              Text('CRUISE',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 30,
+                      color: cruiseControl
+                          ? StdColors.green
+                          : Color.fromRGBO(128, 128, 128, 1),
+                      fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -39,15 +41,15 @@ class CruiseControl extends StatelessWidget {
                   fontSize: 30,
                   color: cruiseControl
                       ? StdColors.green
-                      : Color.fromRGBO(140, 50, 0, 1),
+                      : Color.fromRGBO(255, 255, 255, 0.6),
                   fontWeight: FontWeight.bold),
             ),
             margin: EdgeInsets.fromLTRB(5, 5, 0, 5),
           ),
         )
       ]),
-      alignment: Alignment.topRight,
-      margin: EdgeInsets.fromLTRB(0, 190, 22, 0),
+      alignment: Alignment.topCenter,
+      margin: EdgeInsets.fromLTRB(0, 50, 1000, 0),
     );
   }
 }
