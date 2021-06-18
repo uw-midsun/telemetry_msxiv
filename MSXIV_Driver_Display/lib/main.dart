@@ -87,7 +87,7 @@ class _MainDisplayState extends State<MainDisplay> {
   Units units = Units.MPH;
   String _timeString =
       "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";
-  bool _cruiseControlOn = false;
+  bool _cruiseControlOn = true;
   List<ErrorStates> _errors = [];
 
   @override
