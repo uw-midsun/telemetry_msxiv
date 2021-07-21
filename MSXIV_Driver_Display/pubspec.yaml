@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -23,7 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_svg: ^0.22.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -39,7 +39,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -47,18 +46,14 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-      - assets/images/LeftTurnArrowOutline.png
-      - assets/images/RightTurnArrowOutline.png
-      - assets/images/LeftTurnArrow.png
-      - assets/images/RightTurnArrow.png
-      - assets/images/HeadLightsDaytimeRunning.png
-      - assets/images/HeadLightsFogLights.png
-      - assets/images/HeadLightsHighBeams.png
-      - assets/images/sun-high.png
-      - assets/images/plug-high.png
-      - assets/images/sun-low.png
-      - assets/images/plug-low.png
-      
+    - assets/
+    - assets/images/old/
+    - assets/images/battery/
+    - assets/images/charge_symbols/
+    - assets/images/drl/
+    - assets/images/rbs/
+    - assets/images/turn_ind/
+
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
@@ -74,9 +69,9 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-   - family: din1451
-     fonts:
-       - asset: fonts/din1451.ttf
+    - family: din1451
+      fonts:
+        - asset: fonts/din1451.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

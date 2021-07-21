@@ -1,135 +1,97 @@
-import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
+import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
+import 'package:MSXIV_Driver_Display/constants/std_fonts.dart';
+import 'package:MSXIV_Driver_Display/utils/enums.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-const LOW_CHARGE = 0.3;
-const double WIDTH = 325;
+const LOW_CHARGE = 0.2;
+const double WIDTH = 50;
 const double MAX_DISTANCE = 1000.0;
 const double TIME_TO_FULL = 3.0;
+const int PRECISION = 1;
 
+/// Parent state of charge widget.
 class SOC extends StatelessWidget {
   final double chargePercent;
   final double timeToFull;
   final double distanceToEmpty;
-  final bool charging;
-  SOC(this.chargePercent, this.charging,
-      {this.timeToFull, this.distanceToEmpty, Key key})
+  final ChargeType chargeType;
+  final Units units;
+  SOC(this.chargePercent, this.chargeType,
+      {this.timeToFull, this.distanceToEmpty, this.units, Key key})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          height: 20,
-          width: WIDTH +130,
-          margin: EdgeInsets.only(top: 12, bottom: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  charging
-                      ? ChargingIcon(
-                          icon: "assets/images/plug-high.png",
-                          chargePercent: chargePercent)
-                      : Container(),
-                  ChargingIcon(
-                      icon: 'assets/images/sun-high.png',
-                      chargePercent: chargePercent),
-                ],
-              ),
-              SOCBar(chargePercent: chargePercent),
-              Text(
-                '${(chargePercent * 100).toStringAsFixed(0)}%',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              )
-            ],
+    return Container(
+      margin: EdgeInsets.all(24.0),
+      alignment: Alignment.bottomLeft,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          BatterySymbol(
+            chargePercent: chargePercent,
+            charging: chargeType,
           ),
-        ),
-        charging
-            ? SOCText(
-                "${timeToFull.toString().split('.')[0]}h ${(timeToFull % 1 * 60).toString().split('.')[0]}m ",
-                " Until Full")
-            : SOCText(
-                "${distanceToEmpty.toString().split('.')[0]}",
-                "km Left",
-              )
-      ],
+          SOCText(distanceToEmpty, units),
+          chargeType == ChargeType.Solar
+              ? ChargingIcon(
+                  icon: "assets/images/charge_symbols/solar_high.svg",
+                  chargePercent: chargePercent)
+              : SizedBox.shrink()
+        ],
+      ),
     );
   }
 }
 
+/// Renders the distance remaining and units as text.
 class SOCText extends StatelessWidget {
-  const SOCText(this.amount, this.label);
+  const SOCText(this.distance, this.units);
 
-  final String amount, label;
+  final double distance;
+  final Units units;
 
   @override
   Widget build(BuildContext context) {
+    String unitStr = units == Units.Kmh ? " km" : " mi";
+    String distStr = (distance * units.kmFactor).toStringAsFixed(PRECISION);
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.ideographic,
       children: <Widget>[
-        Text(
-          amount,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 30,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        Container(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 15,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          padding: EdgeInsets.only(bottom: 3),
-        ),
+        Text(distStr, style: Fonts.sh2),
+        Text(unitStr, style: Fonts.body)
       ],
     );
   }
 }
 
-class SOCBar extends StatelessWidget {
-  const SOCBar({
+/// Renders the Battery Symbol based on charge left in battery,
+class BatterySymbol extends StatelessWidget {
+  const BatterySymbol({
     @required this.chargePercent,
+    @required this.charging,
   });
 
   final double chargePercent;
+  final ChargeType charging;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Container(
-            width: WIDTH * chargePercent,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              color: chargePercent > LOW_CHARGE ? stdColors.green : stdColors.error,
-            )),
-        Container(
-          width: WIDTH,
-          decoration: BoxDecoration(
-              border: Border.all(
-                color: chargePercent > LOW_CHARGE ? stdColors.green : stdColors.error,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(6)),
-        ),
-      ],
-    );
+    int chargeRounded = (chargePercent * 5).ceil() * 20;
+
+    String svgUrl = charging == ChargeType.Grid
+        ? 'assets/images/battery/chrg$chargeRounded.svg'
+        : 'assets/images/battery/btt$chargeRounded.svg';
+    return Container(
+        margin: EdgeInsets.only(right: 4.0, bottom: 2.0),
+        child: SvgPicture.asset(svgUrl));
   }
 }
 
+/// Renders solar charging icon.
 class ChargingIcon extends StatelessWidget {
   const ChargingIcon({
     @required this.icon,
@@ -141,11 +103,11 @@ class ChargingIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-      child: Image.asset(
+    return Container(
+      margin: EdgeInsets.only(left: 8.0),
+      child: SvgPicture.asset(
         icon,
-        color: chargePercent > LOW_CHARGE ? stdColors.green : stdColors.error,
+        color: chargePercent > LOW_CHARGE ? StdColors.green : StdColors.error,
       ),
     );
   }
