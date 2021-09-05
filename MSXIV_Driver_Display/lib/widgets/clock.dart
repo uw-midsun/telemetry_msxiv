@@ -1,4 +1,4 @@
-
+import 'package:MSXIV_Driver_Display/constants/std_fonts.dart';
 import 'package:flutter/material.dart';
 
 class Clock extends StatelessWidget {
@@ -11,16 +11,17 @@ class Clock extends StatelessWidget {
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.ideographic,
         children: <Widget>[
-          Text(_timeString,
-              style: TextStyle(color: Colors.white, fontSize: 24)),
+          Text(_timeString, style: Fonts.sh2),
           Text(
               " ${TimeOfDay.now().period.toString().split('.')[1].toUpperCase()}",
-              style: TextStyle(color: Colors.white, fontSize: 20)),
+              style: Fonts.body),
         ],
       ),
-      padding: EdgeInsets.only(top: 15, right: 20),
+      margin: EdgeInsets.only(bottom: 24, right: 24),
+      alignment: Alignment.bottomRight,
     );
   }
 }

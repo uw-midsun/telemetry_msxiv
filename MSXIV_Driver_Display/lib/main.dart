@@ -1,23 +1,40 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:MSXIV_Driver_Display/constants/stdColors.dart';
+import 'package:MSXIV_Driver_Display/constants/std_colors.dart';
+
+import 'package:MSXIV_Driver_Display/widgets/bg_gradient.dart';
 import 'package:MSXIV_Driver_Display/widgets/clock.dart';
 import 'package:MSXIV_Driver_Display/widgets/errors.dart';
-import 'package:MSXIV_Driver_Display/widgets/head_lights.dart';
-import 'package:MSXIV_Driver_Display/widgets/left_arrow.dart';
-import 'package:MSXIV_Driver_Display/widgets/right_arrow.dart';
+import 'package:MSXIV_Driver_Display/widgets/indicators.dart';
+import 'package:MSXIV_Driver_Display/widgets/turn_indicators.dart';
+import 'package:MSXIV_Driver_Display/widgets/rec_speed.dart';
 import 'package:MSXIV_Driver_Display/widgets/soc.dart';
-import 'package:MSXIV_Driver_Display/widgets/speedometer.dart';
+import 'package:MSXIV_Driver_Display/widgets/speedometer/speedometer.dart';
 import 'package:MSXIV_Driver_Display/widgets/cruise_control.dart';
-import 'package:MSXIV_Driver_Display/widgets/digital_speed.dart';
 import 'package:MSXIV_Driver_Display/widgets/drive_state.dart';
+
+import 'package:MSXIV_Driver_Display/utils/enums.dart';
+import 'package:MSXIV_Driver_Display/utils/errors.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'widgets/head_lights.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+/* TODO: 
+
+Following items needed: 
+  recommended speed - strategy
+  state of charge - strategy (ASK STRATEGY/FIRMWARE?)
+
+  Options for getting strategy stuff
+  - Polling from csv
+  - Websocket
+  - CAN
+
+  charging type - solar, grid, off (NOT CLEAR YET)
+*/
 void main() {
   runApp(Display());
 }
@@ -31,7 +48,7 @@ class Display extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'MSXIV Driver Display',
       theme: ThemeData(
-        backgroundColor: stdColors.background,
+        backgroundColor: StdColors.background,
       ),
       home: MainDisplay(title: 'Main Display'),
     );
@@ -53,19 +70,25 @@ class _MainDisplayState extends State<MainDisplay> {
 
   // Vehicle
   double _manualSpeed = 0;
+  double _recSpeed = 65;
+
   bool _turningLeft = false;
   bool _turningRight = false;
+
   LightStatus _lightStatus = LightStatus.DaytimeRunning;
-  DriveStates _driveState = DriveStates.Park;
-  bool _cruiseControlOn = false;
-  List<ErrorStates> _errors = [];
-  double _chargePercent = 1.00;
+  RbsStatus _rbsStatus = RbsStatus.On;
+  DriveStates _driveState = DriveStates.Neutral;
+
+  double _chargePercent = 0.25;
   double _timeToFull = 3.0;
-  double _distanceToEmpty = 1000;
-  bool _charging = false;
-  Units units = Units.Kmh;
+  double _distanceToEmpty = 862.2;
+  ChargeType _charging = ChargeType.Grid;
+
+  Units units = Units.MPH;
   String _timeString =
-      "${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}";
+      "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";
+  bool _cruiseControlOn = true;
+  List<ErrorStates> _errors = [];
 
   @override
   void initState() {
@@ -85,7 +108,7 @@ class _MainDisplayState extends State<MainDisplay> {
 
   void _getTime() {
     final String formattedDateTime =
-        "${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}";
+        "${DateTime.now().hour % 12}:${DateTime.now().minute.toString().padLeft(2, '0')}";
     setState(() {
       _timeString = formattedDateTime;
     });
@@ -94,6 +117,12 @@ class _MainDisplayState extends State<MainDisplay> {
   void _speedChange([double change]) {
     setState(() {
       _manualSpeed = change;
+    });
+  }
+
+  void _recSpeedChange([double change]) {
+    setState(() {
+      _recSpeed = change;
     });
   }
 
@@ -121,10 +150,10 @@ class _MainDisplayState extends State<MainDisplay> {
       }
       if (change > 0) {
         _timeToFull = TIME_TO_FULL * (1 - _chargePercent);
-        _charging = true;
+        _charging = ChargeType.Solar;
       } else {
         _distanceToEmpty = MAX_DISTANCE * _chargePercent;
-        _charging = false;
+        _charging = ChargeType.None;
       }
     });
   }
@@ -147,14 +176,12 @@ class _MainDisplayState extends State<MainDisplay> {
 
   void toggleDriveState() {
     setState(() {
-      if (_driveState == DriveStates.Park) {
-        _driveState = DriveStates.Reverse;
-      } else if (_driveState == DriveStates.Reverse) {
+      if (_driveState == DriveStates.Reverse) {
         _driveState = DriveStates.Neutral;
       } else if (_driveState == DriveStates.Neutral) {
         _driveState = DriveStates.Drive;
       } else {
-        _driveState = DriveStates.Park;
+        _driveState = DriveStates.Reverse;
       }
     });
   }
@@ -174,10 +201,6 @@ class _MainDisplayState extends State<MainDisplay> {
   void toggleLights() {
     setState(() {
       if (_lightStatus == LightStatus.DaytimeRunning) {
-        _lightStatus = LightStatus.FogLights;
-      } else if (_lightStatus == LightStatus.FogLights) {
-        _lightStatus = LightStatus.HighBeams;
-      } else if (_lightStatus == LightStatus.HighBeams) {
         _lightStatus = LightStatus.Off;
       } else if (_lightStatus == LightStatus.Off) {
         _lightStatus = LightStatus.DaytimeRunning;
@@ -213,6 +236,16 @@ class _MainDisplayState extends State<MainDisplay> {
     });
   }
 
+  // TODO: "A warning indicator will be displayed if there is an issue with RBS"
+  // Determine whether this is needed/how this information is received.
+  void toggleRbs() {
+    if (_rbsStatus == RbsStatus.Off) {
+      _rbsStatus = RbsStatus.On;
+    } else {
+      _rbsStatus = RbsStatus.Off;
+    }
+  }
+
   void removeWarnings() {
     setState(() {
       _errors = [];
@@ -220,9 +253,7 @@ class _MainDisplayState extends State<MainDisplay> {
   }
 
   void addWarnings(String msgName) {
-    if (msgName == 'FAULT_SEQUENCE') {
-      _errors.add(ErrorStates.CentreConsoleFault);
-    } else if (msgName == 'FAULT_SEQUENCE_ACK_FROM_MOTOR_CONTROLLER') {
+    if (msgName == 'FAULT_SEQUENCE_ACK_FROM_MOTOR_CONTROLLER') {
       _errors.add(ErrorStates.MCIAckFailed);
     } else if (msgName == 'FAULT_SEQUENCE_ACK_FROM_PEDAL') {
       _errors.add(ErrorStates.PedalACKFail);
@@ -305,6 +336,8 @@ class _MainDisplayState extends State<MainDisplay> {
       // TODO: Figure out voltage levels versus battery charge
     } else if (msgName == 'CRUISE_CONTROL_COMMAND') {
       toggleCruise();
+    } else if (msgName == 'REGEN_BRAKING') {
+      toggleRbs();
     } else if (msgName == 'DRIVE_STATE') {
       selectDriveState(EEDriveOutput.values[parsedInternalData['drive_state']]);
     } else if (msgName == 'BPS_HEARTBEAT') {
@@ -321,65 +354,71 @@ class _MainDisplayState extends State<MainDisplay> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: StdColors.background,
       body: SafeArea(
         top: false,
         child: Stack(
           children: [
-            //speed analog
-            Speedometer(_manualSpeed, units),
-            //left arrow
-            GestureDetector(
-              onTap: toggleTurnLeft,
-              onDoubleTap: removeWarnings,
-              child: LeftArrow(turningLeft: _turningLeft),
-            ),
-            //right arrow
-            GestureDetector(
-              onTap: toggleTurnRight,
-              child: RightArrow(turningRight: _turningRight),
-            ),
-            //speed digital
+            BgGradient(),
+
+            // Speedometer
             GestureDetector(
               onPanUpdate: (details) {
                 _speedChange(details.delta.dx / 5);
               },
               onTap: toggleUnits,
-              child: DigitalSpeed(_manualSpeed, units),
+              child: Speedometer(_manualSpeed, units),
             ),
-            //battery info
+
+            // Recommended Speed
+            GestureDetector(
+                onTap: () => _recSpeedChange(_recSpeed + 5),
+                child: RecSpeed(_recSpeed, units)),
+
+            // Turn Indicators
+            GestureDetector(
+              onTap: toggleTurnLeft,
+              onDoubleTap: toggleTurnRight,
+              child: TurnIndicators(
+                  turningLeft: _turningLeft, turningRight: _turningRight),
+            ),
+
+            // Battery Info
             GestureDetector(
               onPanUpdate: (details) {
                 batteryChange(details.delta.dx / 400);
               },
               child: SOC(_chargePercent, _charging,
-                  distanceToEmpty: _distanceToEmpty, timeToFull: _timeToFull),
+                  distanceToEmpty: _distanceToEmpty,
+                  timeToFull: _timeToFull,
+                  units: units),
             ),
 
-            //headlights
+            // Headlights
             GestureDetector(
               onTap: toggleLights,
-              child: HeadLights(_lightStatus),
+              child: Indicators(_lightStatus, _rbsStatus),
             ),
 
-            // errors
+            // Errors
             GestureDetector(
               onTap: removeWarnings,
               child: Errors(_errors),
             ),
 
-            //cruise control
+            // Cruise Control
             GestureDetector(
               onTap: toggleCruise,
               child: CruiseControl(_cruiseControlOn),
             ),
-            //Drive States
+
+            // Drive States
             GestureDetector(
               onTap: toggleDriveState,
               child: DriveState(_driveState),
             ),
 
-            //Clock
+            // Clock
             Clock(_timeString)
           ],
         ),
