@@ -1,5 +1,7 @@
 # MSXIV_Driver_Display
 
+![image](https://github.com/uw-midsun/telemetry_xiv/assets/67433232/0e4b13aa-c284-4cbc-899b-ea5bf0bbd62e)
+
 This is the Driver Display for MSXIV.
 Features such as the speedometer and battery life are displayed in this flutter app
 for our solar car.
